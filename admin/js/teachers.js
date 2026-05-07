@@ -46,13 +46,15 @@ function renderTable() {
 
   if (!allTeachers.length) {
     tbody.innerHTML = `
-      <tr><td colspan="6" style="text-align:center;padding:40px;color:#94A3B8;">
+      <tr><td colspan="7" style="text-align:center;padding:40px;color:#94A3B8;">
         Hali o'qituvchilar yo'q. <strong>"Qo'shish"</strong> tugmasini bosing.
       </td></tr>`;
     return;
   }
 
-  tbody.innerHTML = allTeachers.map(t => `
+  tbody.innerHTML = allTeachers.map(t => {
+    const achCount = Array.isArray(t.achievements) ? t.achievements.length : 0;
+    return `
     <tr>
       <td style="width:60px;">
         ${t.photo
@@ -63,6 +65,7 @@ function renderTable() {
       <td>${escapeHtml(t.subject || '—')}</td>
       <td><span class="badge badge-warning">${escapeHtml(t.category || '—')}</span></td>
       <td>${t.experience || 0} yil</td>
+      <td>${achCount > 0 ? `<span class="badge badge-success">${achCount}</span>` : '—'}</td>
       <td>
         <div class="table-actions">
           <button class="action-btn edit" data-id="${t.id}" title="Tahrirlash">✍️</button>
@@ -70,7 +73,8 @@ function renderTable() {
         </div>
       </td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 
   tbody.querySelectorAll('.action-btn.edit').forEach(btn =>
     btn.addEventListener('click', () => openModal(btn.dataset.id))
@@ -80,6 +84,46 @@ function renderTable() {
   );
 }
 
+// ── Yutuqlar (achievements) ──
+const ACHIEVEMENT_TYPES = [
+  { value: 'olympiad', label: '🏆 Olimpiada' },
+  { value: 'certificate', label: '📜 Sertifikat' },
+  { value: 'competition', label: '🥇 Musobaqa' },
+  { value: 'diploma', label: '🎓 Diplom' },
+  { value: 'other', label: '⭐ Boshqa' }
+];
+
+function buildAchievementRow(data = {}) {
+  const row = document.createElement('div');
+  row.className = 'achievement-row';
+  row.innerHTML = `
+    <select class="form-control achievement-type">
+      ${ACHIEVEMENT_TYPES.map(t => `<option value="${t.value}" ${data.type === t.value ? 'selected' : ''}>${t.label}</option>`).join('')}
+    </select>
+    <input type="text" class="form-control achievement-title" placeholder="Yutuq nomi (masalan: Respublika olimpiadasi 1-o'rin)" value="${escapeHtml(data.title || '')}">
+    <input type="number" class="form-control achievement-year" placeholder="Yil" min="1990" max="2100" value="${data.year || ''}">
+    <button type="button" class="achievement-remove" title="O'chirish">🗑️</button>
+  `;
+  row.querySelector('.achievement-remove').addEventListener('click', () => row.remove());
+  return row;
+}
+
+function addAchievementRow(data = {}) {
+  $('#achievementsList').appendChild(buildAchievementRow(data));
+}
+
+function getAchievementsFromForm() {
+  return [...$$('.achievement-row')].map(row => ({
+    type: row.querySelector('.achievement-type').value,
+    title: row.querySelector('.achievement-title').value.trim(),
+    year: parseInt(row.querySelector('.achievement-year').value, 10) || null
+  })).filter(a => a.title); // bo'sh qatorlarni tashlab yuboramiz
+}
+
+function clearAchievements() {
+  $('#achievementsList').innerHTML = '';
+}
+
 function openModal(id = null) {
   editingId = id;
   uploadedPhoto = null;
@@ -87,6 +131,7 @@ function openModal(id = null) {
   const modal = $('#teacherModal');
   $('#teacherModalTitle').textContent = id ? "O'qituvchini tahrirlash" : "Yangi o'qituvchi qo'shish";
   $('#teacherForm').reset();
+  clearAchievements();
 
   $$('.lang-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
   $$('.lang-panel').forEach((p, i) => p.classList.toggle('active', i === 0));
@@ -106,7 +151,9 @@ function openModal(id = null) {
     $('#teacherSubject').value = item.subject || '';
     $('#teacherCategory').value = item.category || '';
     $('#teacherExperience').value = item.experience || 0;
-    $('#teacherOrder').value = item.order || 0;
+    if (Array.isArray(item.achievements)) {
+      item.achievements.forEach(a => addAchievementRow(a));
+    }
     if (item.photo) {
       $('#teacherPhotoPreview').src = item.photo;
       $('#teacherPhotoPreview').style.display = 'block';
@@ -163,7 +210,7 @@ async function handleSave(e) {
     subject: $('#teacherSubject').value.trim(),
     category: $('#teacherCategory').value.trim(),
     experience: parseInt($('#teacherExperience').value, 10) || 0,
-    order: parseInt($('#teacherOrder').value, 10) || 0,
+    achievements: getAchievementsFromForm(),
     photo: uploadedPhoto?.url || '',
     photoId: uploadedPhoto?.fileId || ''
   };
@@ -235,13 +282,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('#teacherCancelBtn')?.addEventListener('click', closeModal);
   $('#teacherForm')?.addEventListener('submit', handleSave);
   $('#teacherPhotoInput')?.addEventListener('change', (e) => handleImageUpload(e.target.files[0]));
+  $('#addAchievementBtn')?.addEventListener('click', () => addAchievementRow());
   $('#teacherModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'teacherModal') closeModal();
   });
 
   unsubscribe = await subscribeCollection(COLLECTION, (items) => {
-    // order bo'yicha tartiblash
-    items.sort((a, b) => (a.order || 0) - (b.order || 0));
+    // Alfavit bo'yicha (UZ ism)
+    items.sort((a, b) => (a.name_uz || '').localeCompare(b.name_uz || '', 'uz'));
     allTeachers = items;
     renderTable();
   });

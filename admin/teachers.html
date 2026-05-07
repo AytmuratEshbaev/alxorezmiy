@@ -93,11 +93,12 @@
                   <th>Fan</th>
                   <th>Toifa</th>
                   <th>Tajriba</th>
+                  <th>Yutuqlar</th>
                   <th>Amallar</th>
                 </tr>
               </thead>
               <tbody id="teachersTableBody">
-                <tr><td colspan="6" style="text-align:center;padding:40px;color:#94A3B8;">Yuklanmoqda...</td></tr>
+                <tr><td colspan="7" style="text-align:center;padding:40px;color:#94A3B8;">Yuklanmoqda...</td></tr>
               </tbody>
             </table>
           </div>
@@ -154,15 +155,18 @@
             </div>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-            <div class="form-group">
-              <label>Tajriba (yil)</label>
-              <input type="number" class="form-control" id="teacherExperience" min="0" max="60" value="0">
-            </div>
-            <div class="form-group">
-              <label>Tartib raqami</label>
-              <input type="number" class="form-control" id="teacherOrder" min="0" value="0">
-            </div>
+          <div class="form-group">
+            <label>Tajriba (yil)</label>
+            <input type="number" class="form-control" id="teacherExperience" min="0" max="60" value="0" style="max-width:200px;">
+          </div>
+
+          <!-- Yutuqlar -->
+          <div class="form-group">
+            <label>Yutuqlar</label>
+            <div id="achievementsList" class="achievements-list"></div>
+            <button type="button" class="add-achievement-btn" id="addAchievementBtn">
+              + Yutuq qo'shish
+            </button>
           </div>
 
           <!-- Til tablari (ism uchun) -->

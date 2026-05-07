@@ -100,7 +100,7 @@
 
   <!-- ══════ TEACHER MODAL ══════ -->
   <div class="modal-overlay" id="teacherModal">
-    <div class="modal">
+    <div class="modal" style="max-width:780px;">
       <div class="modal-header">
         <h3 id="modalName">O'qituvchi</h3>
         <div class="modal-close" onclick="closeModal('teacherModal')">✕</div>
@@ -112,18 +112,19 @@
             <strong style="display:block;font-size:0.85rem;color:var(--text-tertiary);text-transform:uppercase;">Fan</strong>
             <span id="modalSubject" style="font-size:1.1rem;color:var(--primary);font-weight:600;"></span>
           </div>
-          <div style="margin-bottom:var(--space-md);">
+          <div style="margin-bottom:var(--space-md);" id="modalCategoryWrap">
             <strong style="display:block;font-size:0.85rem;color:var(--text-tertiary);text-transform:uppercase;">Toifa</strong>
             <span id="modalCategory"></span>
           </div>
-          <div style="margin-bottom:var(--space-md);">
+          <div style="margin-bottom:var(--space-md);" id="modalExperienceWrap">
             <strong style="display:block;font-size:0.85rem;color:var(--text-tertiary);text-transform:uppercase;">Tajriba</strong>
             <span id="modalExperience"></span> yil
           </div>
-          <p style="font-size:0.95rem;line-height:1.6;margin-top:var(--space-lg);">
-            Oliy toifali o'qituvchi bo'lib, o'z sohasi bo'yicha ko'plab shogirdlar chiqargan. Uning o'quvchilari respublika va xalqaro olimpiadalarda faxrli o'rinlarni egallab kelmoqda.
-          </p>
         </div>
+      </div>
+      <div id="modalAchievementsWrap" style="margin-top:var(--space-xl);display:none;">
+        <h4 style="margin-bottom:var(--space-md);display:flex;align-items:center;gap:8px;">🏅 Yutuqlar</h4>
+        <ul id="modalAchievements" style="display:flex;flex-direction:column;gap:8px;"></ul>
       </div>
     </div>
   </div>
@@ -219,7 +220,9 @@
         return;
       }
       noResults.classList.add('hidden');
-      grid.innerHTML = filtered.map((t, i) => `
+      grid.innerHTML = filtered.map((t, i) => {
+        const achCount = Array.isArray(t.achievements) ? t.achievements.length : 0;
+        return `
         <div class="card card-hover animate-on-scroll" style="text-align:center;animation-delay:${i * 0.1}s;cursor:pointer;" data-id="${t.id}">
           <div style="width:120px;height:120px;border-radius:50%;margin:0 auto var(--space-md);overflow:hidden;border:4px solid var(--primary-bg);background:#E2E8F0;display:flex;align-items:center;justify-content:center;font-size:2rem;">
             ${t.photo
@@ -231,9 +234,11 @@
           <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
             ${t.category ? `<span style="font-size:0.75rem;background:var(--bg-secondary);padding:2px 8px;border-radius:12px;">${escapeHtml(t.category)}</span>` : ''}
             ${t.experience ? `<span style="font-size:0.75rem;background:var(--bg-secondary);padding:2px 8px;border-radius:12px;">${t.experience} yil tajriba</span>` : ''}
+            ${achCount ? `<span style="font-size:0.75rem;background:var(--warning-bg);color:var(--warning);padding:2px 8px;border-radius:12px;">🏅 ${achCount} yutuq</span>` : ''}
           </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
 
       grid.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', () => showTeacherModal(card.dataset.id));
@@ -241,13 +246,36 @@
       });
     }
 
+    const ACHIEVEMENT_LABELS = {
+      olympiad: '🏆 Olimpiada',
+      certificate: '📜 Sertifikat',
+      competition: '🥇 Musobaqa',
+      diploma: '🎓 Diplom',
+      other: '⭐ Boshqa'
+    };
+
     function showTeacherModal(id) {
       const t = allTeachers.find(x => x.id === id);
       if (!t) return;
       document.getElementById('modalName').textContent = window.getLocalizedField(t, 'name');
       document.getElementById('modalSubject').textContent = t.subject || '';
-      document.getElementById('modalCategory').textContent = t.category || '';
-      document.getElementById('modalExperience').textContent = t.experience || 0;
+
+      const catWrap = document.getElementById('modalCategoryWrap');
+      if (t.category) {
+        document.getElementById('modalCategory').textContent = t.category;
+        catWrap.style.display = '';
+      } else {
+        catWrap.style.display = 'none';
+      }
+
+      const expWrap = document.getElementById('modalExperienceWrap');
+      if (t.experience) {
+        document.getElementById('modalExperience').textContent = t.experience;
+        expWrap.style.display = '';
+      } else {
+        expWrap.style.display = 'none';
+      }
+
       const img = document.getElementById('modalPhoto');
       if (t.photo) {
         img.src = t.photo;
@@ -255,6 +283,23 @@
       } else {
         img.style.display = 'none';
       }
+
+      // Yutuqlar
+      const achWrap = document.getElementById('modalAchievementsWrap');
+      const achList = document.getElementById('modalAchievements');
+      if (Array.isArray(t.achievements) && t.achievements.length) {
+        achList.innerHTML = t.achievements.map(a => `
+          <li style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg-secondary);border-radius:8px;">
+            <span style="font-size:1.1rem;white-space:nowrap;color:var(--primary);font-weight:600;">${ACHIEVEMENT_LABELS[a.type] || '⭐'}</span>
+            <span style="flex:1;">${escapeHtml(a.title)}</span>
+            ${a.year ? `<span style="color:var(--text-tertiary);font-size:0.85rem;white-space:nowrap;">${a.year}</span>` : ''}
+          </li>
+        `).join('');
+        achWrap.style.display = 'block';
+      } else {
+        achWrap.style.display = 'none';
+      }
+
       openModal('teacherModal');
     }
 
@@ -279,7 +324,7 @@
     document.addEventListener('DOMContentLoaded', async () => {
       grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94A3B8;">Yuklanmoqda...</div>';
       await subscribeCollection('teachers', (items) => {
-        items.sort((a, b) => (a.order || 0) - (b.order || 0));
+        items.sort((a, b) => (a.name_uz || '').localeCompare(b.name_uz || '', 'uz'));
         allTeachers = items;
         renderTeachers();
       });

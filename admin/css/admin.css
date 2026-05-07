@@ -154,6 +154,20 @@
    .image-uploader { padding: 20px; border: 2px dashed var(--border-color); border-radius: 10px; text-align: center; transition: border-color 0.2s; }
    .image-uploader:hover { border-color: var(--primary); }
 
+   /* ── Achievements ── */
+   .achievements-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+   .achievement-row { display: grid; grid-template-columns: 160px 1fr 90px 40px; gap: 8px; align-items: center; padding: 10px; background: #F8FAFC; border-radius: 8px; border: 1px solid var(--border-color); }
+   .achievement-row .form-control { padding: 8px 10px; font-size: 0.875rem; background: white; }
+   .achievement-remove { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--danger); background: rgba(239, 68, 68, 0.1); border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 1rem; }
+   .achievement-remove:hover { background: var(--danger); color: white; }
+   .add-achievement-btn { width: 100%; padding: 12px; border: 2px dashed #CBD5E1; border-radius: 8px; color: var(--text-secondary); background: transparent; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+   .add-achievement-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+   @media (max-width: 600px) {
+     .achievement-row { grid-template-columns: 1fr 40px; grid-auto-flow: row; }
+     .achievement-row .achievement-type, .achievement-row .achievement-title, .achievement-row .achievement-year { grid-column: 1 / 2; }
+     .achievement-row .achievement-remove { grid-column: 2 / 3; grid-row: 1 / 4; height: 100%; }
+   }
+
    /* ── Login Page ── */
    .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1A1A2E 0%, #1F4E79 100%); padding: 20px; }
    .login-card { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 420px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); text-align: center; }
