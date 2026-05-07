@@ -163,86 +163,92 @@
   <script src="js/theme.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const grid = document.getElementById('newsGridPage');
-      const noResults = document.getElementById('noResults');
-      const filterBtns = document.querySelectorAll('#newsFilters .filter-btn');
-      
-      let allNews = window.DemoData ? window.DemoData.news : [];
-      let currentFilter = 'all';
+  <script type="module">
+    import { subscribeCollection, formatDate } from './js/firestore-helpers.js';
 
-      const catMap = {
-        'news': "Yangilik",
-        'events': "Tadbir",
-        'announcements': "E'lon"
-      };
+    const grid = document.getElementById('newsGridPage');
+    const noResults = document.getElementById('noResults');
+    const filterBtns = document.querySelectorAll('#newsFilters .filter-btn');
 
-      function renderNews() {
-        if (!grid) return;
-        
-        let filtered = allNews;
-        
-        if (currentFilter !== 'all') {
-          filtered = filtered.filter(n => n.category === currentFilter);
-        }
+    let allNews = [];
+    let currentFilter = 'all';
 
-        if (filtered.length === 0) {
-          grid.innerHTML = '';
-          noResults.classList.remove('hidden');
-        } else {
-          noResults.classList.add('hidden');
-          grid.innerHTML = filtered.map((item, i) => `
-            <div class="card card-hover news-card animate-on-scroll" style="animation-delay:${i * 0.1}s;cursor:pointer;" onclick="showNewsModal('${item.id}')">
-              <div class="card-img">
-                <img src="${item.image}" alt="${window.getLocalizedField(item, 'title')}" loading="lazy">
-              </div>
-              <div class="card-meta">
-                <span class="card-category">${catMap[item.category] || item.category}</span>
-                <span class="card-date">${item.createdAt}</span>
-              </div>
-              <h3>${window.getLocalizedField(item, 'title')}</h3>
-              <p>${window.getLocalizedField(item, 'content').substring(0, 120)}...</p>
-              <span class="read-more" style="margin-top:var(--space-sm);display:inline-block;" data-i18n="common.read_more">Batafsil →</span>
-            </div>
-          `).join('');
-          
-          setTimeout(() => {
-            grid.querySelectorAll('.animate-on-scroll').forEach(el => el.classList.add('visible'));
-          }, 50);
-        }
+    const catMap = {
+      'events': "Tadbir",
+      'announcements': "E'lon"
+    };
+
+    function renderNews() {
+      if (!grid) return;
+      let filtered = allNews.filter(n => n.status === 'published');
+      if (currentFilter !== 'all') filtered = filtered.filter(n => n.category === currentFilter);
+
+      if (!filtered.length) {
+        grid.innerHTML = '';
+        noResults.classList.remove('hidden');
+        return;
       }
-
-      renderNews();
-
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentFilter = btn.getAttribute('data-filter');
-          renderNews();
-        });
+      noResults.classList.add('hidden');
+      grid.innerHTML = filtered.map((item, i) => `
+        <div class="card card-hover news-card animate-on-scroll" style="animation-delay:${i * 0.1}s;cursor:pointer;" data-id="${item.id}">
+          <div class="card-img">
+            <img src="${window.transformImage ? window.transformImage(item.image, { width: 600 }) : item.image}" alt="${escapeHtml(window.getLocalizedField(item, 'title'))}" loading="lazy" onerror="this.style.display='none'">
+          </div>
+          <div class="card-meta">
+            <span class="card-category">${catMap[item.category] || item.category}</span>
+            <span class="card-date">${formatDate(item.createdAt)}</span>
+          </div>
+          <h3>${escapeHtml(window.getLocalizedField(item, 'title'))}</h3>
+          <p>${escapeHtml((window.getLocalizedField(item, 'content') || '').substring(0, 120))}...</p>
+          <span class="read-more" style="margin-top:var(--space-sm);display:inline-block;" data-i18n="common.read_more">Batafsil →</span>
+        </div>
+      `).join('');
+      grid.querySelectorAll('.news-card').forEach(card => {
+        card.addEventListener('click', () => showNewsModal(card.dataset.id));
+        setTimeout(() => card.classList.add('visible'), 50);
       });
+    }
 
-      window.onLanguageChange = () => {
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    function showNewsModal(id) {
+      const item = allNews.find(n => n.id === id);
+      if (!item) return;
+      document.getElementById('modalCategory').textContent = catMap[item.category] || item.category;
+      document.getElementById('modalTitle').textContent = window.getLocalizedField(item, 'title');
+      document.getElementById('modalDate').textContent = formatDate(item.createdAt);
+      document.getElementById('modalViews').textContent = '';
+      const img = document.getElementById('modalImg');
+      if (item.image) {
+        img.src = item.image;
+        img.style.display = 'block';
+      } else {
+        img.style.display = 'none';
+      }
+      const paragraphs = (window.getLocalizedField(item, 'content') || '').split('\n\n').map(p => `<p style="margin-bottom:1rem;">${escapeHtml(p)}</p>`).join('');
+      document.getElementById('modalContent').innerHTML = paragraphs;
+      openModal('newsModal');
+    }
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-filter');
         renderNews();
-      };
-      
-      window.showNewsModal = function(id) {
-        const item = allNews.find(n => n.id === id);
-        if (item) {
-          document.getElementById('modalCategory').textContent = catMap[item.category] || item.category;
-          document.getElementById('modalTitle').textContent = window.getLocalizedField(item, 'title');
-          document.getElementById('modalDate').textContent = item.createdAt;
-          document.getElementById('modalViews').textContent = `👁️ ${Math.floor(Math.random() * 500) + 100} marta o'qildi`;
-          document.getElementById('modalImg').src = item.image;
-          // Simple paragraphs split
-          const paragraphs = window.getLocalizedField(item, 'content').split('\n\n').map(p => `<p style="margin-bottom:1rem;">${p}</p>`).join('');
-          document.getElementById('modalContent').innerHTML = paragraphs;
-          
-          openModal('newsModal');
-        }
-      };
+      });
+    });
+
+    window.onLanguageChange = renderNews;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94A3B8;">Yuklanmoqda...</div>';
+      await subscribeCollection('news', (items) => {
+        allNews = items;
+        renderNews();
+      }, { orderBy: 'createdAt', direction: 'desc' });
     });
   </script>
 </body>

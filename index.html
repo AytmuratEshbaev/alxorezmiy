@@ -290,72 +290,74 @@
   <script src="js/i18n.js"></script>
   <script src="js/stats.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    // Load latest news from demo data
-    document.addEventListener('DOMContentLoaded', () => {
-      const lang = localStorage.getItem('lang') || 'uz';
+  <script type="module">
+    import { subscribeCollection, formatDate } from './js/firestore-helpers.js';
+
+    let latestNews = [];
+    const catLabels = { events: 'Tadbirlar', announcements: "E'lonlar" };
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    function renderLatestNews() {
       const newsGrid = document.getElementById('newsGrid');
-      if (newsGrid && window.DemoData) {
-        const news = DemoData.news.slice(0, 3);
-        newsGrid.innerHTML = news.map((item, i) => `
-          <div class="card card-hover news-card animate-on-scroll animate-delay-${i + 1}">
-            <div class="card-img">
-              <img src="${item.image}" alt="${getLocalizedField(item, 'title')}" loading="lazy">
-            </div>
-            <div class="card-meta">
-              <span class="card-category">${item.category === 'events' ? 'Tadbirlar' : "E'lonlar"}</span>
-              <span class="card-date">${item.createdAt}</span>
-            </div>
-            <h3><a href="news.html">${getLocalizedField(item, 'title')}</a></h3>
-            <p>${getLocalizedField(item, 'content').substring(0, 100)}...</p>
-            <a href="news.html" class="read-more" data-i18n="common.read_more">Batafsil →</a>
-          </div>
-        `).join('');
+      if (!newsGrid) return;
+      const items = latestNews.filter(n => n.status === 'published').slice(0, 3);
+      if (!items.length) {
+        newsGrid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-tertiary);padding:var(--space-xl);">Hozircha yangiliklar yo\'q</p>';
+        return;
       }
-
-      // Load achievements carousel
-      const carousel = document.getElementById('achievementsCarousel');
-      if (carousel && window.DemoData) {
-        const results = DemoData.olympiad;
-        carousel.innerHTML = results.map(item => `
-          <div class="card" style="min-width:300px;flex-shrink:0;text-align:center;scroll-snap-align:start;">
-            <div style="width:60px;height:60px;border-radius:50%;background:var(--warning-bg);color:var(--warning);display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-md);font-size:1.5rem;font-weight:800;">
-              ${item.place}
-            </div>
-            <h3 style="margin-bottom:4px;">${item.student}</h3>
-            <p style="color:var(--primary);font-weight:600;margin-bottom:4px;">${item.subject}</p>
-            <p style="font-size:0.85rem;">${item.olympiad_name} — ${item.year}</p>
-            <span class="card-badge" style="position:static;display:inline-block;margin-top:var(--space-sm);">
-              ${item.level === 'xalqaro' ? '🌍 Xalqaro' : item.level === 'respublika' ? '🏛️ Respublika' : item.level}
-            </span>
+      newsGrid.innerHTML = items.map((item, i) => `
+        <div class="card card-hover news-card animate-on-scroll animate-delay-${i + 1}">
+          <div class="card-img">
+            <img src="${window.transformImage ? window.transformImage(item.image, { width: 600 }) : item.image}" alt="${escapeHtml(window.getLocalizedField(item, 'title'))}" loading="lazy" onerror="this.style.display='none'">
           </div>
-        `).join('');
-      }
-
-      // Re-observe new animated elements
-      document.querySelectorAll('.animate-on-scroll:not(.visible)').forEach(el => {
+          <div class="card-meta">
+            <span class="card-category">${catLabels[item.category] || item.category}</span>
+            <span class="card-date">${formatDate(item.createdAt)}</span>
+          </div>
+          <h3><a href="news.html">${escapeHtml(window.getLocalizedField(item, 'title'))}</a></h3>
+          <p>${escapeHtml((window.getLocalizedField(item, 'content') || '').substring(0, 100))}...</p>
+          <a href="news.html" class="read-more" data-i18n="common.read_more">Batafsil →</a>
+        </div>
+      `).join('');
+      newsGrid.querySelectorAll('.animate-on-scroll').forEach(el => {
         const obs = new IntersectionObserver((entries) => {
           entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
         }, { threshold: 0.1 });
         obs.observe(el);
       });
-    });
+    }
 
-    // Language change handler
-    window.onLanguageChange = function() {
-      // Reload news with new language
-      const newsGrid = document.getElementById('newsGrid');
-      if (newsGrid && window.DemoData) {
-        const news = DemoData.news.slice(0, 3);
-        newsGrid.querySelectorAll('.news-card').forEach((card, i) => {
-          const item = news[i];
-          if (item) {
-            card.querySelector('h3 a').textContent = getLocalizedField(item, 'title');
-            card.querySelector('p').textContent = getLocalizedField(item, 'content').substring(0, 100) + '...';
-          }
-        });
-      }
-    };
+    function renderAchievements() {
+      const carousel = document.getElementById('achievementsCarousel');
+      if (!carousel || !window.DemoData) return;
+      const results = window.DemoData.olympiad;
+      carousel.innerHTML = results.map(item => `
+        <div class="card" style="min-width:300px;flex-shrink:0;text-align:center;scroll-snap-align:start;">
+          <div style="width:60px;height:60px;border-radius:50%;background:var(--warning-bg);color:var(--warning);display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-md);font-size:1.5rem;font-weight:800;">
+            ${item.place}
+          </div>
+          <h3 style="margin-bottom:4px;">${item.student}</h3>
+          <p style="color:var(--primary);font-weight:600;margin-bottom:4px;">${item.subject}</p>
+          <p style="font-size:0.85rem;">${item.olympiad_name} — ${item.year}</p>
+          <span class="card-badge" style="position:static;display:inline-block;margin-top:var(--space-sm);">
+            ${item.level === 'xalqaro' ? '🌍 Xalqaro' : item.level === 'respublika' ? '🏛️ Respublika' : item.level}
+          </span>
+        </div>
+      `).join('');
+    }
+
+    window.onLanguageChange = renderLatestNews;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderAchievements();
+      await subscribeCollection('news', (items) => {
+        latestNews = items;
+        renderLatestNews();
+      }, { orderBy: 'createdAt', direction: 'desc', limit: 6 });
+    });
   </script>
 </body>
 </html>

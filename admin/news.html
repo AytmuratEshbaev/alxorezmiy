@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yangiliklar qampi - Admin Panel | Al-Xorazmiy</title>
+  <title>Yangiliklar — Admin Panel | Al-Xorazmiy</title>
   <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
   <div class="admin-layout">
+    <!-- ══════ SIDEBAR ══════ -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">AX</div>
@@ -55,15 +56,23 @@
     <main class="main-content">
       <header class="admin-navbar">
         <div class="navbar-left">
-          <button class="sidebar-toggle" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg></button>
+          <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
           <div class="page-title">Yangiliklar</div>
         </div>
         <div class="navbar-right">
           <div class="user-profile">
             <div class="user-avatar">A</div>
-            <div class="user-info"><span class="user-name">Admin</span><span class="user-role">Superadmin</span></div>
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Superadmin</span>
+            </div>
           </div>
-          <button class="btn-logout" id="logoutBtn">Chiqish</button>
+          <button class="btn-logout" id="logoutBtn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Chiqish
+          </button>
         </div>
       </header>
 
@@ -71,7 +80,7 @@
         <div class="admin-card">
           <div class="card-header">
             <h2 class="card-title">Barcha yangiliklar</h2>
-            <button class="btn btn-primary" onclick="openModal('newsModal')">
+            <button class="btn btn-primary" id="addNewsBtn">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Qo'shish
             </button>
@@ -80,6 +89,7 @@
             <table class="admin-table">
               <thead>
                 <tr>
+                  <th>Rasm</th>
                   <th>Sarlavha (UZ)</th>
                   <th>Sana</th>
                   <th>Kategoriya</th>
@@ -88,7 +98,7 @@
                 </tr>
               </thead>
               <tbody id="newsTableBody">
-                <!-- Loaded by JS -->
+                <tr><td colspan="6" style="text-align:center;padding:40px;color:#94A3B8;">Yuklanmoqda...</td></tr>
               </tbody>
             </table>
           </div>
@@ -97,64 +107,122 @@
     </main>
   </div>
 
-  <!-- Modal -->
+  <!-- ══════ NEWS MODAL ══════ -->
   <div class="modal-overlay" id="newsModal">
-    <div class="modal">
+    <div class="modal" style="max-width:760px;">
       <div class="modal-header">
-        <h3 class="modal-title">Yangilik formasi</h3>
-        <button class="modal-close" onclick="closeModal('newsModal')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        <h3 class="modal-title" id="newsModalTitle">Yangi yangilik qo'shish</h3>
+        <button class="modal-close" id="newsModalClose" type="button">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
-      <div class="modal-body">
-        <form>
+      <form id="newsForm">
+        <div class="modal-body">
+
+          <!-- Rasm yuklash -->
           <div class="form-group">
-            <label>Sarlavha (UZ)</label>
-            <input type="text" class="form-control" required>
+            <label>Rasm</label>
+            <div class="image-uploader">
+              <input type="file" id="newsImageInput" accept="image/*" hidden>
+              <button type="button" class="btn btn-outline" onclick="document.getElementById('newsImageInput').click()">
+                📷 Rasm tanlash
+              </button>
+              <img id="newsImagePreview" style="display:none;width:100%;max-height:240px;object-fit:cover;border-radius:8px;margin-top:12px;">
+              <div id="newsImageProgress" style="display:none;margin-top:8px;">
+                <div style="background:#E2E8F0;border-radius:4px;overflow:hidden;height:6px;">
+                  <div id="newsImageProgressBar" style="background:#3B82F6;height:100%;width:0%;transition:width 0.2s;"></div>
+                </div>
+                <small id="newsImageProgressText" style="color:#64748B;">0%</small>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Kategoriya</label>
-            <select class="form-control">
-              <option value="events">Tadbirlar</option>
-              <option value="announcements">E'lonlar</option>
-            </select>
+
+          <!-- Kategoriya + Holat -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label>Kategoriya</label>
+              <select class="form-control" id="newsCategory" required>
+                <option value="announcements">E'lon</option>
+                <option value="events">Tadbir</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Holati</label>
+              <select class="form-control" id="newsStatus" required>
+                <option value="published">Nashr etilgan</option>
+                <option value="draft">Qoralama</option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Matn (UZ)</label>
-            <textarea class="form-control" required></textarea>
+
+          <!-- Til tablari -->
+          <div class="lang-tabs-bar">
+            <button type="button" class="lang-tab active" data-lang="uz">🇺🇿 O'zbek</button>
+            <button type="button" class="lang-tab" data-lang="ru">🇷🇺 Русский</button>
+            <button type="button" class="lang-tab" data-lang="kk">🏳️ Qaraqalpaq</button>
+            <button type="button" class="lang-tab" data-lang="en">🇬🇧 English</button>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="closeModal('newsModal')">Bekor qilish</button>
-        <button class="btn btn-primary" onclick="closeModal('newsModal')">Saqlash</button>
-      </div>
+
+          <!-- Til paneli — UZ -->
+          <div class="lang-panel active" data-lang="uz">
+            <div class="form-group">
+              <label>Sarlavha (UZ) *</label>
+              <input type="text" class="form-control" id="newsTitle_uz" required>
+            </div>
+            <div class="form-group">
+              <label>Matn (UZ) *</label>
+              <textarea class="form-control" id="newsContent_uz" rows="6" required></textarea>
+            </div>
+          </div>
+
+          <!-- Til paneli — RU -->
+          <div class="lang-panel" data-lang="ru">
+            <div class="form-group">
+              <label>Заголовок (RU)</label>
+              <input type="text" class="form-control" id="newsTitle_ru">
+            </div>
+            <div class="form-group">
+              <label>Текст (RU)</label>
+              <textarea class="form-control" id="newsContent_ru" rows="6"></textarea>
+            </div>
+          </div>
+
+          <!-- Til paneli — KK -->
+          <div class="lang-panel" data-lang="kk">
+            <div class="form-group">
+              <label>Sarlawhası (KK)</label>
+              <input type="text" class="form-control" id="newsTitle_kk">
+            </div>
+            <div class="form-group">
+              <label>Tekst (KK)</label>
+              <textarea class="form-control" id="newsContent_kk" rows="6"></textarea>
+            </div>
+          </div>
+
+          <!-- Til paneli — EN -->
+          <div class="lang-panel" data-lang="en">
+            <div class="form-group">
+              <label>Title (EN)</label>
+              <input type="text" class="form-control" id="newsTitle_en">
+            </div>
+            <div class="form-group">
+              <label>Content (EN)</label>
+              <textarea class="form-control" id="newsContent_en" rows="6"></textarea>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="newsCancelBtn">Bekor qilish</button>
+          <button type="submit" class="btn btn-primary" id="newsSubmitBtn">Saqlash</button>
+        </div>
+      </form>
     </div>
   </div>
 
   <script type="module" src="../js/firebase-config.js"></script>
+  <script type="module" src="../js/imagekit-upload.js"></script>
   <script type="module" src="js/auth.js"></script>
-  <script>
-    window.openModal = (id) => document.getElementById(id).classList.add('active');
-    window.closeModal = (id) => document.getElementById(id).classList.remove('active');
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const tbody = document.getElementById('newsTableBody');
-      if(window.DemoData && tbody) {
-        tbody.innerHTML = window.DemoData.news.map(n => `
-          <tr>
-            <td><strong>${n.title_uz}</strong></td>
-            <td>${n.createdAt}</td>
-            <td><span class="badge badge-warning">${n.category}</span></td>
-            <td><span class="badge badge-success">${n.status}</span></td>
-            <td>
-              <div class="table-actions">
-                <button class="action-btn edit" onclick="openModal('newsModal')">✍️</button>
-                <button class="action-btn delete">🗑️</button>
-              </div>
-            </td>
-          </tr>
-        `).join('');
-      }
-    });
-  </script>
+  <script type="module" src="js/news.js"></script>
 </body>
 </html>
