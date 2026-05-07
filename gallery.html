@@ -69,9 +69,10 @@
       <div class="flex-between" style="margin-bottom:var(--space-xl);flex-wrap:wrap;gap:var(--space-md);">
         <div class="filter-group" id="galleryFilters" style="margin-bottom:0;">
           <button class="filter-btn active" data-filter="all" data-i18n="common.all">Barchasi</button>
-          <button class="filter-btn" data-filter="campus">Bino</button>
-          <button class="filter-btn" data-filter="study">O'quv jarayoni</button>
-          <button class="filter-btn" data-filter="events">Tadbirlar</button>
+          <button class="filter-btn" data-filter="building">🏛 Bino</button>
+          <button class="filter-btn" data-filter="lessons">📚 Darslar</button>
+          <button class="filter-btn" data-filter="sports">⚽ Sport</button>
+          <button class="filter-btn" data-filter="events">🎉 Tadbirlar</button>
         </div>
       </div>
 
@@ -139,63 +140,78 @@
   </button>
 
   <script type="module" src="js/firebase-config.js"></script>
+  <script type="module" src="js/imagekit-upload.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const grid = document.getElementById('galleryGrid');
-      const filterBtns = document.querySelectorAll('#galleryFilters .filter-btn');
-      let allPhotos = window.DemoData ? window.DemoData.gallery : [];
-      let currentFilter = 'all';
+  <script type="module">
+    import { subscribeCollection } from './js/firestore-helpers.js';
 
-      function renderGallery() {
-        if (!grid) return;
-        
-        let filtered = allPhotos;
-        if (currentFilter !== 'all') {
-          filtered = filtered.filter(p => p.category === currentFilter);
-        }
+    const grid = document.getElementById('galleryGrid');
+    const filterBtns = document.querySelectorAll('#galleryFilters .filter-btn');
+    let allPhotos = [];
+    let currentFilter = 'all';
 
-        grid.innerHTML = filtered.map((item, i) => `
-          <div class="gallery-item animate-on-scroll" style="animation-delay:${i * 0.1}s;cursor:pointer;" onclick="openImage('${item.url}')">
-            <img src="${item.url}" alt="${window.getLocalizedField(item, 'title')}" loading="lazy">
-            <div class="gallery-caption">${window.getLocalizedField(item, 'title')}</div>
-          </div>
-        `).join('');
-        
-        setTimeout(() => {
-          grid.querySelectorAll('.animate-on-scroll').forEach(el => el.classList.add('visible'));
-        }, 50);
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    function renderGallery() {
+      if (!grid) return;
+      let filtered = allPhotos;
+      if (currentFilter !== 'all') filtered = filtered.filter(p => p.category === currentFilter);
+
+      if (!filtered.length) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-tertiary);padding:60px;">Hozircha rasmlar yo\'q</p>';
+        return;
       }
+      grid.innerHTML = filtered.map((item, i) => {
+        const caption = window.getLocalizedField(item, 'caption') || '';
+        const optimized = window.transformImage ? window.transformImage(item.url, { width: 600 }) : item.url;
+        return `
+          <div class="gallery-item animate-on-scroll" style="animation-delay:${i * 0.1}s;cursor:pointer;" data-url="${item.url}">
+            <img src="${optimized}" alt="${escapeHtml(caption)}" loading="lazy">
+            ${caption ? `<div class="gallery-caption">${escapeHtml(caption)}</div>` : ''}
+          </div>
+        `;
+      }).join('');
 
-      renderGallery();
-
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentFilter = btn.getAttribute('data-filter');
-          renderGallery();
-        });
+      grid.querySelectorAll('.gallery-item').forEach(el => {
+        el.addEventListener('click', () => openImage(el.dataset.url));
+        setTimeout(() => el.classList.add('visible'), 50);
       });
+    }
 
-      window.onLanguageChange = () => {
+    function openImage(url) {
+      document.getElementById('enlargedImg').src = url;
+      document.getElementById('imageModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-filter');
         renderGallery();
-      };
-
-      window.openImage = function(url) {
-        document.getElementById('enlargedImg').src = url;
-        document.getElementById('imageModal').classList.add('active');
-        document.body.style.overflow = 'hidden';
-      };
-      
-      document.getElementById('imageModal').addEventListener('click', function(e) {
-        if(e.target === this) {
-          this.classList.remove('active');
-          document.body.style.overflow = '';
-        }
       });
+    });
+
+    window.onLanguageChange = renderGallery;
+
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+      if (e.target === this || e.target.id === 'enlargedImg' === false && e.target.tagName !== 'IMG') {
+        this.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94A3B8;padding:60px;">Yuklanmoqda...</p>';
+      await subscribeCollection('gallery', (items) => {
+        allPhotos = items;
+        renderGallery();
+      }, { orderBy: 'createdAt', direction: 'desc' });
     });
   </script>
 </body>

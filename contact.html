@@ -213,22 +213,33 @@
   <script src="js/theme.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    // Contact form handler (demo — EmailJS keyinroq ulanadi)
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
+  <script type="module">
+    import { addDocument } from './js/firestore-helpers.js';
+
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const btn = document.getElementById('contactSubmit');
       const originalHTML = btn.innerHTML;
       btn.innerHTML = '<span class="loading-spinner" style="width:20px;height:20px;border-width:2px;"></span> Yuborilmoqda...';
       btn.disabled = true;
 
-      // Simulate sending (EmailJS keyinroq ulanadi)
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
-        btn.disabled = false;
+      try {
+        await addDocument('messages', {
+          name: document.getElementById('contactName').value.trim(),
+          email: document.getElementById('contactEmail').value.trim(),
+          subject: document.getElementById('contactSubject').value.trim(),
+          message: document.getElementById('contactMessage').value.trim(),
+          read: false
+        });
         showToast('Xabaringiz muvaffaqiyatli yuborildi!', 'success');
         this.reset();
-      }, 1500);
+      } catch (err) {
+        console.error('Send error:', err);
+        showToast('Xato: xabar yuborilmadi. Qaytadan urinib ko\'ring.', 'error');
+      } finally {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
     });
   </script>
 </body>

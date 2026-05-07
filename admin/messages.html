@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xabarlar — Admin Panel</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <style>
+    .msg-filters { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .msg-filter { padding: 8px 16px; border-radius: 20px; background: var(--card-bg); color: var(--text-secondary); border: 1px solid var(--border-color); cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+    .msg-filter:hover { border-color: var(--primary); color: var(--primary); }
+    .msg-filter.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .msg-filter .count { display: inline-block; padding: 0 6px; min-width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 10px; background: rgba(255,255,255,0.3); font-size: 0.8rem; margin-left: 6px; }
+    .msg-filter:not(.active) .count { background: rgba(0,0,0,0.06); color: var(--text-secondary); }
+
+    .messages-list { display: flex; flex-direction: column; gap: 12px; }
+    .message-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px 20px; transition: box-shadow 0.2s; }
+    .message-card.unread { border-left: 4px solid var(--primary); background: rgba(59, 130, 246, 0.03); }
+    .message-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .message-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .message-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .btn-sm { padding: 6px 14px; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><div class="sidebar-logo">AX</div><div class="sidebar-title">Admin Panel</div></div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Asosiy</div>
+        <a href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Dashboard</a>
+        <div class="nav-section">Kontent</div>
+        <a href="news.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>Yangiliklar</a>
+        <a href="teachers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>O'qituvchilar</a>
+        <a href="olympiad.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>Olimpiada</a>
+        <a href="gallery.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>Galereya</a>
+        <a href="faq.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/></svg>FAQ</a>
+        <a href="messages.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Xabarlar <span id="unreadBadge" style="display:none;background:var(--danger);color:white;border-radius:10px;padding:0 8px;font-size:0.75rem;margin-left:auto;"></span></a>
+        <div class="nav-section">Sozlamalar</div>
+        <a href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>Umumiy</a>
+        <a href="users.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Adminlar</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="admin-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+          <div class="page-title">Xabarlar</div>
+        </div>
+        <div class="navbar-right">
+          <div class="user-profile"><div class="user-avatar">A</div><div class="user-info"><span class="user-name">Admin</span><span class="user-role">Superadmin</span></div></div>
+          <button class="btn-logout" id="logoutBtn">Chiqish</button>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <div class="admin-card">
+          <div class="card-header">
+            <h2 class="card-title">Kelgan xabarlar</h2>
+          </div>
+
+          <div class="msg-filters">
+            <button class="msg-filter active" data-filter="all">Barchasi <span class="count" id="countAll">0</span></button>
+            <button class="msg-filter" data-filter="unread">O'qilmagan <span class="count" id="countUnread">0</span></button>
+            <button class="msg-filter" data-filter="read">O'qilgan <span class="count" id="countRead">0</span></button>
+          </div>
+
+          <div id="messagesList" class="messages-list">
+            <div style="text-align:center;padding:40px;color:#94A3B8;">Yuklanmoqda...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="../js/firebase-config.js"></script>
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/messages.js"></script>
+</body>
+</html>

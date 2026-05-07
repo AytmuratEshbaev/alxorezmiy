@@ -294,7 +294,9 @@
     import { subscribeCollection, formatDate } from './js/firestore-helpers.js';
 
     let latestNews = [];
+    let achievements = [];
     const catLabels = { events: 'Tadbirlar', announcements: "E'lonlar" };
+    const LEVEL_LABELS = { xalqaro: '🌍 Xalqaro', respublika: '🏛️ Respublika', shahar: '🏙️ Shahar', tuman: '🏘️ Tuman' };
 
     function escapeHtml(s) {
       return String(s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -332,18 +334,21 @@
 
     function renderAchievements() {
       const carousel = document.getElementById('achievementsCarousel');
-      if (!carousel || !window.DemoData) return;
-      const results = window.DemoData.olympiad;
-      carousel.innerHTML = results.map(item => `
+      if (!carousel) return;
+      if (!achievements.length) {
+        carousel.innerHTML = '<p style="color:var(--text-tertiary);padding:var(--space-xl);">Hozircha natijalar yo\'q</p>';
+        return;
+      }
+      carousel.innerHTML = achievements.map(item => `
         <div class="card" style="min-width:300px;flex-shrink:0;text-align:center;scroll-snap-align:start;">
           <div style="width:60px;height:60px;border-radius:50%;background:var(--warning-bg);color:var(--warning);display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-md);font-size:1.5rem;font-weight:800;">
             ${item.place}
           </div>
-          <h3 style="margin-bottom:4px;">${item.student}</h3>
-          <p style="color:var(--primary);font-weight:600;margin-bottom:4px;">${item.subject}</p>
-          <p style="font-size:0.85rem;">${item.olympiad_name} — ${item.year}</p>
+          <h3 style="margin-bottom:4px;">${escapeHtml(item.student)}</h3>
+          <p style="color:var(--primary);font-weight:600;margin-bottom:4px;">${escapeHtml(item.subject)}</p>
+          <p style="font-size:0.85rem;">${escapeHtml(item.olympiad_name || '')} ${item.year ? '— ' + item.year : ''}</p>
           <span class="card-badge" style="position:static;display:inline-block;margin-top:var(--space-sm);">
-            ${item.level === 'xalqaro' ? '🌍 Xalqaro' : item.level === 'respublika' ? '🏛️ Respublika' : item.level}
+            ${LEVEL_LABELS[item.level] || item.level}
           </span>
         </div>
       `).join('');
@@ -352,11 +357,17 @@
     window.onLanguageChange = renderLatestNews;
 
     document.addEventListener('DOMContentLoaded', async () => {
-      renderAchievements();
-      await subscribeCollection('news', (items) => {
-        latestNews = items;
-        renderLatestNews();
-      }, { orderBy: 'createdAt', direction: 'desc', limit: 6 });
+      await Promise.all([
+        subscribeCollection('news', (items) => {
+          latestNews = items;
+          renderLatestNews();
+        }, { orderBy: 'createdAt', direction: 'desc', limit: 6 }),
+        subscribeCollection('olympiad', (items) => {
+          items.sort((a, b) => (b.year || 0) - (a.year || 0) || (a.place || 99) - (b.place || 99));
+          achievements = items.slice(0, 10);
+          renderAchievements();
+        })
+      ]);
     });
   </script>
 </body>

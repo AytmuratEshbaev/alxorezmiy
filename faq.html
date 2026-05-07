@@ -138,78 +138,82 @@
   <script src="js/theme.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const accordion = document.getElementById('faqAccordion');
-      const filterBtns = document.querySelectorAll('#faqFilters .filter-btn');
-      let allFaqs = window.DemoData ? window.DemoData.faq : [];
-      let currentFilter = 'all';
+  <script type="module">
+    import { subscribeCollection } from './js/firestore-helpers.js';
 
-      function renderFaqs() {
-        if (!accordion) return;
-        
-        let filtered = allFaqs;
-        if (currentFilter !== 'all') {
-          filtered = filtered.filter(f => f.category === currentFilter);
-        }
+    const accordion = document.getElementById('faqAccordion');
+    const filterBtns = document.querySelectorAll('#faqFilters .filter-btn');
+    let allFaqs = [];
+    let currentFilter = 'all';
 
-        accordion.innerHTML = filtered.map((item, i) => `
-          <div class="accordion-item animate-on-scroll" style="animation-delay:${i * 0.1}s">
-            <div class="accordion-header">
-              <h3 style="font-size:1.1rem;font-weight:600;margin:0;">${window.getLocalizedField(item, 'question')}</h3>
-              <span class="accordion-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
-            </div>
-            <div class="accordion-body">
-              <div class="accordion-body-content">
-                <p style="margin:0;color:var(--text-secondary);line-height:1.6;">${window.getLocalizedField(item, 'answer')}</p>
-              </div>
-            </div>
-          </div>
-        `).join('');
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
 
-        // Re-attach accordion events
-        const headers = accordion.querySelectorAll('.accordion-header');
-        headers.forEach(header => {
-          header.addEventListener('click', () => {
-            const item = header.parentElement;
-            const content = header.nextElementSibling;
-            const isOpen = item.classList.contains('active');
-            
-            // Close all
-            accordion.querySelectorAll('.accordion-item').forEach(el => {
-              el.classList.remove('active');
-              if (el.querySelector('.accordion-body')) {
-                el.querySelector('.accordion-body').style.maxHeight = null;
-              }
-            });
-            
-            // Open clicked if it wasn't open
-            if (!isOpen) {
-              item.classList.add('active');
-              content.style.maxHeight = content.scrollHeight + "px";
-            }
-          });
-        });
-        
-        setTimeout(() => {
-          accordion.querySelectorAll('.animate-on-scroll').forEach(el => el.classList.add('visible'));
-        }, 50);
+    function renderFaqs() {
+      if (!accordion) return;
+      let filtered = allFaqs;
+      if (currentFilter !== 'all') filtered = filtered.filter(f => f.category === currentFilter);
+
+      if (!filtered.length) {
+        accordion.innerHTML = '<p style="text-align:center;color:var(--text-tertiary);padding:60px;">Hozircha savollar yo\'q</p>';
+        return;
       }
 
-      renderFaqs();
+      accordion.innerHTML = filtered.map((item, i) => `
+        <div class="accordion-item animate-on-scroll" style="animation-delay:${i * 0.1}s">
+          <div class="accordion-header">
+            <h3 style="font-size:1.1rem;font-weight:600;margin:0;">${escapeHtml(window.getLocalizedField(item, 'question'))}</h3>
+            <span class="accordion-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-body-content">
+              <p style="margin:0;color:var(--text-secondary);line-height:1.6;white-space:pre-line;">${escapeHtml(window.getLocalizedField(item, 'answer'))}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
 
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentFilter = btn.getAttribute('data-filter');
-          renderFaqs();
+      accordion.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+          const item = header.parentElement;
+          const content = header.nextElementSibling;
+          const isOpen = item.classList.contains('active');
+          accordion.querySelectorAll('.accordion-item').forEach(el => {
+            el.classList.remove('active');
+            const body = el.querySelector('.accordion-body');
+            if (body) body.style.maxHeight = null;
+          });
+          if (!isOpen) {
+            item.classList.add('active');
+            content.style.maxHeight = content.scrollHeight + 'px';
+          }
         });
       });
 
-      window.onLanguageChange = () => {
+      setTimeout(() => {
+        accordion.querySelectorAll('.animate-on-scroll').forEach(el => el.classList.add('visible'));
+      }, 50);
+    }
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-filter');
         renderFaqs();
-      };
+      });
+    });
+
+    window.onLanguageChange = renderFaqs;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      accordion.innerHTML = '<p style="text-align:center;color:#94A3B8;padding:60px;">Yuklanmoqda...</p>';
+      await subscribeCollection('faq', (items) => {
+        items.sort((a, b) => (a.order || 0) - (b.order || 0));
+        allFaqs = items;
+        renderFaqs();
+      });
     });
   </script>
 </body>
