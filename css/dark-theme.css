@@ -1,63 +1,137 @@
 /* ============================================
-   DARK THEME — CSS Variables Override
+   DARK THEME — "Midnight Math"
+   Default theme — premium dark with neon accents
    ============================================ */
 
 [data-theme="dark"] {
-  --primary: #3B82F6;
-  --primary-hover: #60A5FA;
-  --primary-light: #93C5FD;
-  --primary-bg: rgba(59, 130, 246, 0.1);
+  /* Brand glows brighter on dark */
+  --brand-1: #818CF8;
+  --brand-2: #A78BFA;
+  --brand-3: #F472B6;
+  --brand-gradient: linear-gradient(135deg, #818CF8 0%, #A78BFA 50%, #F472B6 100%);
+  --brand-gradient-soft: linear-gradient(135deg, rgba(129,140,248,.14) 0%, rgba(167,139,250,.14) 100%);
 
-  --bg-primary: #0F172A;
-  --bg-secondary: #1E293B;
-  --bg-tertiary: #1A1A2E;
-  --bg-card: #1E293B;
-  --bg-navbar: rgba(15, 23, 42, 0.92);
-  --bg-footer: #020617;
+  /* Surfaces */
+  --bg-base: #0A0A12;
+  --bg-surface: #14141F;
+  --bg-elevated: #1C1C2A;
+  --bg-inset: #232333;
+  --bg-navbar: rgba(10, 10, 18, 0.72);
+  --bg-footer: #050509;
 
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-tertiary: #64748B;
-  --text-inverse: #0F172A;
+  /* Borders */
+  --border: #2A2A3D;
+  --border-subtle: #1E1E2E;
+  --border-strong: #3A3A4F;
 
-  --border-color: #334155;
-  --border-hover: #475569;
+  /* Text */
+  --text-hi: #F1F5F9;
+  --text-mid: #A1A1AA;
+  --text-lo: #71717A;
+  --text-on-brand: #FFFFFF;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.2);
+  /* Status bg deeper */
+  --success-bg: rgba(16, 185, 129, .14);
+  --warning-bg: rgba(245, 158, 11, .14);
+  --danger-bg: rgba(239, 68, 68, .14);
+  --info-bg: rgba(6, 182, 212, .14);
+
+  /* Shadows much darker */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, .5), 0 1px 3px rgba(0, 0, 0, .3);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, .6), 0 4px 12px rgba(0, 0, 0, .4);
+  --shadow-xl: 0 32px 64px rgba(0, 0, 0, .65), 0 8px 16px rgba(0, 0, 0, .4);
+  --shadow-glow: 0 0 60px rgba(129, 140, 248, .35);
+
+  /* Legacy aliases */
+  --primary: var(--brand-1);
+  --primary-hover: var(--brand-2);
+  --primary-light: #A5B4FC;
+  --primary-bg: rgba(129, 140, 248, .12);
+  --bg-primary: var(--bg-base);
+  --bg-secondary: var(--bg-elevated);
+  --bg-tertiary: var(--bg-inset);
+  --bg-card: var(--bg-surface);
+  --text-primary: var(--text-hi);
+  --text-secondary: var(--text-mid);
+  --text-tertiary: var(--text-lo);
+  --border-color: var(--border);
+  --border-hover: var(--border-strong);
 }
 
+/* Hero stays cosmic in dark mode (already dark by default in light) */
 [data-theme="dark"] .hero {
-  background: linear-gradient(135deg, #020617 0%, #0F172A 40%, #1E3A5F 70%, #1F4E79 100%);
+  background:
+    radial-gradient(ellipse at top right, rgba(167,139,250,.18) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom left, rgba(129,140,248,.20) 0%, transparent 50%),
+    radial-gradient(ellipse at center, rgba(244,114,182,.10) 0%, transparent 50%),
+    #050509;
 }
 
 [data-theme="dark"] .page-header {
-  background: linear-gradient(135deg, #020617 0%, #0F172A 50%, #1E3A5F 100%);
+  background:
+    radial-gradient(ellipse at top, rgba(167,139,250,.20) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, rgba(129,140,248,.16) 0%, transparent 50%),
+    #050509;
 }
 
+/* Direction icons brighter in dark */
 [data-theme="dark"] .direction-icon {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
+  background: color-mix(in srgb, var(--sub-color) 18%, transparent);
+  border-color: color-mix(in srgb, var(--sub-color) 32%, transparent);
 }
 
+/* Form controls */
 [data-theme="dark"] .form-control {
-  background: #0F172A;
+  background: var(--bg-elevated);
+  border-color: var(--border);
+}
+[data-theme="dark"] .form-control:focus {
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 4px rgba(129,140,248,.18);
 }
 
+/* Cards in dark have subtle gradient outline on hover */
+[data-theme="dark"] .card-hover:hover {
+  border-color: var(--brand-1);
+  box-shadow: 0 0 0 1px var(--brand-1), var(--shadow-xl), 0 0 60px rgba(129,140,248,.15);
+}
+
+/* Footer is the same dark — keep glow */
+[data-theme="dark"] .footer { background: #050509; }
+
+/* Image slight dim */
+[data-theme="dark"] img:not([src*=".svg"]) { filter: brightness(.95); }
+[data-theme="dark"] .footer-social a:hover img,
+[data-theme="dark"] .navbar-logo img { filter: brightness(1); }
+
+/* Lang dropdown */
+[data-theme="dark"] .lang-dropdown { background: var(--bg-surface); border-color: var(--border); }
+
+/* Modal in dark */
+[data-theme="dark"] .modal { border-color: var(--border); }
+
+/* Map slightly desaturated */
+[data-theme="dark"] .map-container iframe { filter: invert(.92) hue-rotate(180deg) saturate(.6) brightness(.9); }
+
+/* Stat numbers brighter */
+[data-theme="dark"] .stat-number {
+  background: linear-gradient(135deg, #C7D2FE 0%, #DDD6FE 50%, #FBCFE8 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Timeline circle outer ring */
 [data-theme="dark"] .timeline-item::before {
-  border-color: #1E293B;
+  box-shadow: 0 0 0 4px var(--bg-base), 0 0 24px rgba(129,140,248,.6);
 }
 
-[data-theme="dark"] .team-card .card-avatar {
-  border-color: rgba(59, 130, 246, 0.2);
-}
-
-[data-theme="dark"] img {
-  filter: brightness(0.92);
-}
-
-[data-theme="dark"] .footer {
-  background: #020617;
+/* Skeletons */
+[data-theme="dark"] .skeleton,
+[data-theme="dark"] .skeleton-line,
+[data-theme="dark"] .skeleton-img,
+[data-theme="dark"] .skeleton-circle,
+[data-theme="dark"] .skeleton-card {
+  background: linear-gradient(90deg, #1C1C2A 25%, #232333 50%, #1C1C2A 75%);
+  background-size: 200% 100%;
 }

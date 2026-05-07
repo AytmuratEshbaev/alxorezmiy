@@ -4,6 +4,20 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ── Scroll progress bar ──
+  if (!document.querySelector('.scroll-progress')) {
+    const bar = document.createElement('div');
+    bar.className = 'scroll-progress';
+    document.body.appendChild(bar);
+    const updateProgress = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      bar.style.width = scrolled + '%';
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  }
+
   // ── Navbar Scroll Effect ──
   const navbar = document.querySelector('.navbar');
   if (navbar) {
@@ -11,6 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 20);
     });
   }
+
+  // ── 3D Tilt on direction cards ──
+  document.querySelectorAll('.direction-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `perspective(800px) rotateX(${-y * 4}deg) rotateY(${x * 6}deg) translateY(-2px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
 
   // ── Hamburger Menu ──
   const hamburger = document.querySelector('.hamburger');
