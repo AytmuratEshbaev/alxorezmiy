@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O'qituvchilar — Al-Xorazmiy maktabi</title>
+  <meta name="description" content="Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi o'qituvchilari va pedagoglar jamoasi">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dark-theme.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- ══════ NAVBAR ══════ -->
+  <nav class="navbar" id="navbar">
+    <div class="container flex-between">
+      <a href="index.html" class="navbar-logo">
+        <div style="width:42px;height:42px;background:linear-gradient(135deg,#1F4E79,#2E75B6);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.1rem;">AX</div>
+        <span>Al-Xorazmiy<small data-i18n="hero.subtitle">Nukus filiali</small></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" data-i18n="nav.home">Bosh sahifa</a>
+        <a href="about.html" data-i18n="nav.about">Maktab haqida</a>
+        <a href="directions.html" data-i18n="nav.directions">Yo'nalishlar</a>
+        <a href="teachers.html" class="active" data-i18n="nav.teachers">O'qituvchilar</a>
+        <a href="news.html" data-i18n="nav.news">Yangiliklar</a>
+        <a href="contact.html" data-i18n="nav.contact">Kontakt</a>
+      </div>
+      <div class="nav-actions">
+        <div class="lang-switcher">
+          <button class="lang-btn"><span class="lang-current">UZ</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="lang-dropdown">
+            <a href="#" data-lang="uz" class="active">🇺🇿 O'zbekcha</a>
+            <a href="#" data-lang="ru">🇷🇺 Русский</a>
+            <a href="#" data-lang="kk">🏳️ Qaraqalpaqsha</a>
+            <a href="#" data-lang="en">🇬🇧 English</a>
+          </div>
+        </div>
+        <button class="theme-toggle" aria-label="Toggle theme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" data-i18n="nav.home">Bosh sahifa</a>
+    <a href="about.html" data-i18n="nav.about">Maktab haqida</a>
+    <a href="directions.html" data-i18n="nav.directions">Yo'nalishlar</a>
+    <a href="teachers.html" class="active" data-i18n="nav.teachers">O'qituvchilar</a>
+    <a href="news.html" data-i18n="nav.news">Yangiliklar</a>
+    <a href="contact.html" data-i18n="nav.contact">Kontakt</a>
+    <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+    <a href="admission.html" data-i18n="nav.admission">Qabul</a>
+    <a href="gallery.html" data-i18n="nav.gallery">Galereya</a>
+  </div>
+
+  <!-- ══════ PAGE HEADER ══════ -->
+  <div class="page-header">
+    <h1 data-i18n="nav.teachers">O'qituvchilar</h1>
+    <div class="breadcrumb">
+      <a href="index.html" data-i18n="common.home">Bosh sahifa</a>
+      <span class="separator">/</span>
+      <span class="current" data-i18n="nav.teachers">O'qituvchilar</span>
+    </div>
+  </div>
+
+  <!-- ══════ TEACHERS GRID ══════ -->
+  <section class="section">
+    <div class="container">
+      <div class="flex-between" style="margin-bottom:var(--space-2xl);flex-wrap:wrap;gap:var(--space-md);">
+        <div>
+          <h2 style="margin-bottom:8px;">Bizning Pedagoglar</h2>
+          <p>Oliy toifali va tajribali ustozlar jamoasi</p>
+        </div>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="teacherSearch" class="form-control" placeholder="Ism yoki fan bo'yicha qidirish..." style="width:300px;border-radius:var(--radius-full);">
+        </div>
+      </div>
+
+      <div class="filter-group" id="teacherFilters">
+        <button class="filter-btn active" data-filter="all" data-i18n="common.all">Barchasi</button>
+        <button class="filter-btn" data-filter="Matematika" data-i18n="directions_list.math">Matematika</button>
+        <button class="filter-btn" data-filter="Fizika" data-i18n="directions_list.physics">Fizika</button>
+        <button class="filter-btn" data-filter="Informatika" data-i18n="directions_list.informatics">Informatika</button>
+        <button class="filter-btn" data-filter="Kimyo" data-i18n="directions_list.chemistry">Kimyo</button>
+        <button class="filter-btn" data-filter="Biologiya" data-i18n="directions_list.biology">Biologiya</button>
+        <button class="filter-btn" data-filter="Ingliz tili">Ingliz tili</button>
+      </div>
+
+      <div class="grid grid-4" id="teachersGrid">
+        <!-- Filled by JS -->
+      </div>
+      
+      <div id="noResults" class="hidden" style="text-align:center;padding:var(--space-3xl) 0;color:var(--text-tertiary);">
+        <div style="font-size:3rem;margin-bottom:var(--space-md);">🔍</div>
+        <h3 data-i18n="common.no_results">Natija topilmadi</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ TEACHER MODAL ══════ -->
+  <div class="modal-overlay" id="teacherModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalName">O'qituvchi</h3>
+        <div class="modal-close" onclick="closeModal('teacherModal')">✕</div>
+      </div>
+      <div class="grid grid-2" style="gap:var(--space-xl);align-items:start;">
+        <img id="modalPhoto" src="" alt="Teacher" style="width:100%;border-radius:var(--radius-lg);box-shadow:var(--shadow-md);">
+        <div>
+          <div style="margin-bottom:var(--space-md);">
+            <strong style="display:block;font-size:0.85rem;color:var(--text-tertiary);text-transform:uppercase;">Fan</strong>
+            <span id="modalSubject" style="font-size:1.1rem;color:var(--primary);font-weight:600;"></span>
+          </div>
+          <div style="margin-bottom:var(--space-md);">
+            <strong style="display:block;font-size:0.85rem;color:var(--text-tertiary);text-transform:uppercase;">Toifa</strong>
+            <span id="modalCategory"></span>
+          </div>
+          <div style="margin-bottom:var(--space-md);">
+            <strong style="display:block;font-size:0.85rem;color:var(--text-tertiary);text-transform:uppercase;">Tajriba</strong>
+            <span id="modalExperience"></span> yil
+          </div>
+          <p style="font-size:0.95rem;line-height:1.6;margin-top:var(--space-lg);">
+            Oliy toifali o'qituvchi bo'lib, o'z sohasi bo'yicha ko'plab shogirdlar chiqargan. Uning o'quvchilari respublika va xalqaro olimpiadalarda faxrli o'rinlarni egallab kelmoqda.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ FOOTER ══════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <h4>Al-Xorazmiy maktabi</h4>
+          <p data-i18n="footer.about_text">Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi — aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim beruvchi zamonaviy ta'lim muassasasi.</p>
+          <div class="footer-social">
+            <a href="#">✈️</a><a href="#">📷</a><a href="#">📘</a><a href="#">▶️</a>
+          </div>
+        </div>
+        <div>
+          <h4 data-i18n="footer.quick_links">Tezkor havolalar</h4>
+          <ul class="footer-links">
+            <li><a href="about.html" data-i18n="nav.about">Maktab haqida</a></li>
+            <li><a href="directions.html" data-i18n="nav.directions">Yo'nalishlar</a></li>
+            <li><a href="teachers.html" data-i18n="nav.teachers">O'qituvchilar</a></li>
+            <li><a href="admission.html" data-i18n="nav.admission">Qabul</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 data-i18n="footer.contact_info">Kontakt</h4>
+          <ul class="footer-contact">
+            <li><span>📍</span><span data-i18n="contact_page.address">Nukus shahri, Amir Temur ko'chasi 1-uy</span></li>
+            <li><span>📞</span><span data-i18n="contact_page.phone">+998 61 222-33-44</span></li>
+            <li><span>📧</span><span data-i18n="contact_page.email">info@alxorazmiy-nukus.uz</span></li>
+          </ul>
+        </div>
+        <div>
+          <h4 data-i18n="nav.faq">FAQ</h4>
+          <ul class="footer-links">
+            <li><a href="faq.html" data-i18n="nav.faq">FAQ</a></li>
+            <li><a href="news.html" data-i18n="nav.news">Yangiliklar</a></li>
+            <li><a href="contact.html" data-i18n="nav.contact">Kontakt</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span data-i18n="footer.copyright">© 2026 Al-Xorazmiy ixtisoslashtirilgan maktabi. Barcha huquqlar himoyalangan.</span>
+        <span>Made with ❤️ in Nukus</span>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('teachersGrid');
+      const noResults = document.getElementById('noResults');
+      const searchInput = document.getElementById('teacherSearch');
+      const filterBtns = document.querySelectorAll('#teacherFilters .filter-btn');
+      
+      let allTeachers = window.DemoData ? window.DemoData.teachers : [];
+      let currentFilter = 'all';
+      let searchQuery = '';
+
+      function renderTeachers() {
+        if (!grid) return;
+        
+        let filtered = allTeachers;
+        
+        // Apply category filter
+        if (currentFilter !== 'all') {
+          filtered = filtered.filter(t => t.subject === currentFilter);
+        }
+        
+        // Apply search filter
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          filtered = filtered.filter(t => {
+            const name = window.getLocalizedField(t, 'name').toLowerCase();
+            const subject = t.subject.toLowerCase();
+            return name.includes(q) || subject.includes(q);
+          });
+        }
+
+        if (filtered.length === 0) {
+          grid.innerHTML = '';
+          noResults.classList.remove('hidden');
+        } else {
+          noResults.classList.add('hidden');
+          grid.innerHTML = filtered.map((t, i) => `
+            <div class="card card-hover animate-on-scroll" style="text-align:center;animation-delay:${i * 0.1}s;cursor:pointer;" onclick="showTeacherModal('${t.id}')">
+              <div style="width:120px;height:120px;border-radius:50%;margin:0 auto var(--space-md);overflow:hidden;border:4px solid var(--primary-bg);">
+                <img src="${t.photo}" alt="${window.getLocalizedField(t, 'name')}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+              </div>
+              <h3 style="font-size:1.1rem;margin-bottom:4px;">${window.getLocalizedField(t, 'name')}</h3>
+              <p style="color:var(--primary);font-weight:600;font-size:0.9rem;margin-bottom:8px;">${t.subject}</p>
+              <div style="display:flex;justify-content:center;gap:8px;">
+                <span style="font-size:0.75rem;background:var(--bg-secondary);padding:2px 8px;border-radius:12px;">${t.category}</span>
+                <span style="font-size:0.75rem;background:var(--bg-secondary);padding:2px 8px;border-radius:12px;">${t.experience} yil tajriba</span>
+              </div>
+            </div>
+          `).join('');
+          
+          // Re-trigger animations
+          setTimeout(() => {
+            grid.querySelectorAll('.animate-on-scroll').forEach(el => el.classList.add('visible'));
+          }, 50);
+        }
+      }
+
+      renderTeachers();
+
+      // Filter events
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.getAttribute('data-filter');
+          renderTeachers();
+        });
+      });
+
+      // Search event
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value;
+          renderTeachers();
+        });
+      }
+
+      // Language change tracking
+      window.onLanguageChange = () => {
+        renderTeachers();
+      };
+      
+      // Global func for modal
+      window.showTeacherModal = function(id) {
+        const teacher = allTeachers.find(t => t.id === id);
+        if (teacher) {
+          document.getElementById('modalName').textContent = window.getLocalizedField(teacher, 'name');
+          document.getElementById('modalSubject').textContent = teacher.subject;
+          document.getElementById('modalCategory').textContent = teacher.category;
+          document.getElementById('modalExperience').textContent = teacher.experience;
+          document.getElementById('modalPhoto').src = teacher.photo;
+          openModal('teacherModal');
+        }
+      };
+    });
+  </script>
+</body>
+</html>

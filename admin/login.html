@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Admin Panel | Al-Xorazmiy</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-logo">AX</div>
+      <h1 class="login-title">Tizimga kirish</h1>
+      <p class="login-desc">Maktab admin paneliga xush kelibsiz</p>
+      
+      <form id="loginForm">
+        <div class="login-error" id="loginError">Email yoki parol noto'g'ri</div>
+        <div class="form-group">
+          <label for="email">Elektron pochta</label>
+          <input type="email" id="email" class="form-control" required placeholder="admin@alxorazmiy.uz">
+        </div>
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label for="password">Parol</label>
+          <input type="password" id="password" class="form-control" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary" id="loginBtn">
+          <span>Kirish</span>
+          <div class="spinner" id="loginSpinner" style="display:none;margin-left:8px;"></div>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="../js/firebase-config.js"></script>
+  <script type="module" src="js/auth.js"></script>
+</body>
+</html>

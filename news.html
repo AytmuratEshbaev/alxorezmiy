@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yangiliklar — Al-Xorazmiy maktabi</title>
+  <meta name="description" content="Muhammad al-Xorazmiy ixtisoslashtirilgan maktabining eng so'nggi yangiliklari va e'lonlari">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dark-theme.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- ══════ NAVBAR ══════ -->
+  <nav class="navbar" id="navbar">
+    <div class="container flex-between">
+      <a href="index.html" class="navbar-logo">
+        <div style="width:42px;height:42px;background:linear-gradient(135deg,#1F4E79,#2E75B6);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.1rem;">AX</div>
+        <span>Al-Xorazmiy<small data-i18n="hero.subtitle">Nukus filiali</small></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" data-i18n="nav.home">Bosh sahifa</a>
+        <a href="about.html" data-i18n="nav.about">Maktab haqida</a>
+        <a href="directions.html" data-i18n="nav.directions">Yo'nalishlar</a>
+        <a href="teachers.html" data-i18n="nav.teachers">O'qituvchilar</a>
+        <a href="news.html" class="active" data-i18n="nav.news">Yangiliklar</a>
+        <a href="contact.html" data-i18n="nav.contact">Kontakt</a>
+      </div>
+      <div class="nav-actions">
+        <div class="lang-switcher">
+          <button class="lang-btn"><span class="lang-current">UZ</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="lang-dropdown">
+            <a href="#" data-lang="uz" class="active">🇺🇿 O'zbekcha</a>
+            <a href="#" data-lang="ru">🇷🇺 Русский</a>
+            <a href="#" data-lang="kk">🏳️ Qaraqalpaqsha</a>
+            <a href="#" data-lang="en">🇬🇧 English</a>
+          </div>
+        </div>
+        <button class="theme-toggle" aria-label="Toggle theme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" data-i18n="nav.home">Bosh sahifa</a>
+    <a href="about.html" data-i18n="nav.about">Maktab haqida</a>
+    <a href="directions.html" data-i18n="nav.directions">Yo'nalishlar</a>
+    <a href="teachers.html" data-i18n="nav.teachers">O'qituvchilar</a>
+    <a href="news.html" class="active" data-i18n="nav.news">Yangiliklar</a>
+    <a href="contact.html" data-i18n="nav.contact">Kontakt</a>
+    <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+    <a href="admission.html" data-i18n="nav.admission">Qabul</a>
+    <a href="gallery.html" data-i18n="nav.gallery">Galereya</a>
+  </div>
+
+  <!-- ══════ PAGE HEADER ══════ -->
+  <div class="page-header">
+    <h1 data-i18n="nav.news">Yangiliklar va E'lonlar</h1>
+    <div class="breadcrumb">
+      <a href="index.html" data-i18n="common.home">Bosh sahifa</a>
+      <span class="separator">/</span>
+      <span class="current" data-i18n="nav.news">Yangiliklar</span>
+    </div>
+  </div>
+
+  <!-- ══════ NEWS CONTENT ══════ -->
+  <section class="section">
+    <div class="container">
+      <div class="flex-between" style="margin-bottom:var(--space-xl);flex-wrap:wrap;gap:var(--space-md);">
+        <div class="filter-group" id="newsFilters" style="margin-bottom:0;">
+          <button class="filter-btn active" data-filter="all" data-i18n="common.all">Barchasi</button>
+          <button class="filter-btn" data-filter="news">Yangiliklar</button>
+          <button class="filter-btn" data-filter="events">Tadbirlar</button>
+          <button class="filter-btn" data-filter="announcements">E'lonlar</button>
+        </div>
+      </div>
+
+      <div class="grid grid-3" id="newsGridPage">
+        <!-- Filled by JS -->
+      </div>
+      
+      <div id="noResults" class="hidden" style="text-align:center;padding:var(--space-3xl) 0;color:var(--text-tertiary);">
+        <div style="font-size:3rem;margin-bottom:var(--space-md);">📭</div>
+        <h3 data-i18n="common.no_results">Hozircha malumot yo'q</h3>
+      </div>
+      
+      <div style="text-align:center;margin-top:var(--space-2xl);">
+        <button class="btn btn-secondary" id="loadMoreBtn" style="display:none;">Yana yuklash</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════ NEWS MODAL ══════ -->
+  <div class="modal-overlay" id="newsModal">
+    <div class="modal" style="max-width:800px;">
+      <div class="modal-header">
+        <h3 id="modalCategory" style="font-size:0.9rem;color:var(--primary);text-transform:uppercase;">Yangilik</h3>
+        <div class="modal-close" onclick="closeModal('newsModal')">✕</div>
+      </div>
+      <div style="margin-bottom:var(--space-md);">
+        <img id="modalImg" src="" alt="News Image" style="width:100%;height:400px;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:var(--space-md);">
+        <div style="display:flex;justify-content:space-between;color:var(--text-tertiary);font-size:0.9rem;margin-bottom:var(--space-md);">
+          <span id="modalDate"></span>
+          <span id="modalViews">👁️ 0 marta o'qildi</span>
+        </div>
+        <h2 id="modalTitle" style="margin-bottom:var(--space-md);line-height:1.4;"></h2>
+        <div id="modalContent" style="line-height:1.8;color:var(--text-secondary);font-size:1.05rem;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ FOOTER ══════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <h4>Al-Xorazmiy maktabi</h4>
+          <p data-i18n="footer.about_text">Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi — aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim beruvchi zamonaviy ta'lim muassasasi.</p>
+          <div class="footer-social">
+            <a href="#">✈️</a><a href="#">📷</a><a href="#">📘</a><a href="#">▶️</a>
+          </div>
+        </div>
+        <div>
+          <h4 data-i18n="footer.quick_links">Tezkor havolalar</h4>
+          <ul class="footer-links">
+            <li><a href="about.html" data-i18n="nav.about">Maktab haqida</a></li>
+            <li><a href="directions.html" data-i18n="nav.directions">Yo'nalishlar</a></li>
+            <li><a href="teachers.html" data-i18n="nav.teachers">O'qituvchilar</a></li>
+            <li><a href="admission.html" data-i18n="nav.admission">Qabul</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 data-i18n="footer.contact_info">Kontakt</h4>
+          <ul class="footer-contact">
+            <li><span>📍</span><span data-i18n="contact_page.address">Nukus shahri, Amir Temur ko'chasi 1-uy</span></li>
+            <li><span>📞</span><span data-i18n="contact_page.phone">+998 61 222-33-44</span></li>
+            <li><span>📧</span><span data-i18n="contact_page.email">info@alxorazmiy-nukus.uz</span></li>
+          </ul>
+        </div>
+        <div>
+          <h4 data-i18n="nav.faq">FAQ</h4>
+          <ul class="footer-links">
+            <li><a href="faq.html" data-i18n="nav.faq">FAQ</a></li>
+            <li><a href="news.html" data-i18n="nav.news">Yangiliklar</a></li>
+            <li><a href="contact.html" data-i18n="nav.contact">Kontakt</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span data-i18n="footer.copyright">© 2026 Al-Xorazmiy ixtisoslashtirilgan maktabi. Barcha huquqlar himoyalangan.</span>
+        <span>Made with ❤️ in Nukus</span>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('newsGridPage');
+      const noResults = document.getElementById('noResults');
+      const filterBtns = document.querySelectorAll('#newsFilters .filter-btn');
+      
+      let allNews = window.DemoData ? window.DemoData.news : [];
+      let currentFilter = 'all';
+
+      const catMap = {
+        'news': "Yangilik",
+        'events': "Tadbir",
+        'announcements': "E'lon"
+      };
+
+      function renderNews() {
+        if (!grid) return;
+        
+        let filtered = allNews;
+        
+        if (currentFilter !== 'all') {
+          filtered = filtered.filter(n => n.category === currentFilter);
+        }
+
+        if (filtered.length === 0) {
+          grid.innerHTML = '';
+          noResults.classList.remove('hidden');
+        } else {
+          noResults.classList.add('hidden');
+          grid.innerHTML = filtered.map((item, i) => `
+            <div class="card card-hover news-card animate-on-scroll" style="animation-delay:${i * 0.1}s;cursor:pointer;" onclick="showNewsModal('${item.id}')">
+              <div class="card-img">
+                <img src="${item.image}" alt="${window.getLocalizedField(item, 'title')}" loading="lazy">
+              </div>
+              <div class="card-meta">
+                <span class="card-category">${catMap[item.category] || item.category}</span>
+                <span class="card-date">${item.createdAt}</span>
+              </div>
+              <h3>${window.getLocalizedField(item, 'title')}</h3>
+              <p>${window.getLocalizedField(item, 'content').substring(0, 120)}...</p>
+              <span class="read-more" style="margin-top:var(--space-sm);display:inline-block;" data-i18n="common.read_more">Batafsil →</span>
+            </div>
+          `).join('');
+          
+          setTimeout(() => {
+            grid.querySelectorAll('.animate-on-scroll').forEach(el => el.classList.add('visible'));
+          }, 50);
+        }
+      }
+
+      renderNews();
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.getAttribute('data-filter');
+          renderNews();
+        });
+      });
+
+      window.onLanguageChange = () => {
+        renderNews();
+      };
+      
+      window.showNewsModal = function(id) {
+        const item = allNews.find(n => n.id === id);
+        if (item) {
+          document.getElementById('modalCategory').textContent = catMap[item.category] || item.category;
+          document.getElementById('modalTitle').textContent = window.getLocalizedField(item, 'title');
+          document.getElementById('modalDate').textContent = item.createdAt;
+          document.getElementById('modalViews').textContent = `👁️ ${Math.floor(Math.random() * 500) + 100} marta o'qildi`;
+          document.getElementById('modalImg').src = item.image;
+          // Simple paragraphs split
+          const paragraphs = window.getLocalizedField(item, 'content').split('\n\n').map(p => `<p style="margin-bottom:1rem;">${p}</p>`).join('');
+          document.getElementById('modalContent').innerHTML = paragraphs;
+          
+          openModal('newsModal');
+        }
+      };
+    });
+  </script>
+</body>
+</html>

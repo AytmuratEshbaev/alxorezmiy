@@ -1,0 +1,63 @@
+/* ============================================
+   DARK THEME — CSS Variables Override
+   ============================================ */
+
+[data-theme="dark"] {
+  --primary: #3B82F6;
+  --primary-hover: #60A5FA;
+  --primary-light: #93C5FD;
+  --primary-bg: rgba(59, 130, 246, 0.1);
+
+  --bg-primary: #0F172A;
+  --bg-secondary: #1E293B;
+  --bg-tertiary: #1A1A2E;
+  --bg-card: #1E293B;
+  --bg-navbar: rgba(15, 23, 42, 0.92);
+  --bg-footer: #020617;
+
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
+  --text-inverse: #0F172A;
+
+  --border-color: #334155;
+  --border-hover: #475569;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] .hero {
+  background: linear-gradient(135deg, #020617 0%, #0F172A 40%, #1E3A5F 70%, #1F4E79 100%);
+}
+
+[data-theme="dark"] .page-header {
+  background: linear-gradient(135deg, #020617 0%, #0F172A 50%, #1E3A5F 100%);
+}
+
+[data-theme="dark"] .direction-icon {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
+}
+
+[data-theme="dark"] .form-control {
+  background: #0F172A;
+}
+
+[data-theme="dark"] .timeline-item::before {
+  border-color: #1E293B;
+}
+
+[data-theme="dark"] .team-card .card-avatar {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] img {
+  filter: brightness(0.92);
+}
+
+[data-theme="dark"] .footer {
+  background: #020617;
+}

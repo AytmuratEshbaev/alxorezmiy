@@ -1,0 +1,122 @@
+{
+  "site_title": "Nukus branch specialized school named after Muhammad al-Khorezmi",
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "directions": "Programs",
+    "teachers": "Teachers",
+    "news": "News",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "admission": "Admission",
+    "gallery": "Gallery"
+  },
+  "hero": {
+    "title": "Nukus branch specialized school named after Muhammad al-Khorezmi",
+    "subtitle": "Nukus branch of the specialized school named after Muhammad al-Khorezmi under the Agency for Specialized Educational Institutions (ASEI) of the Ministry of Preschool and School Education of the Republic of Uzbekistan (MPSE)",
+    "description": "Advanced education in exact and natural sciences. Preparing the intellectual leaders of tomorrow.",
+    "btn_about": "About Us",
+    "btn_admission": "Admission Info"
+  },
+  "stats": {
+    "students": "Students",
+    "teachers": "Teachers",
+    "experience": "Years of Experience",
+    "olympiad": "Olympiad Winners"
+  },
+  "sections": {
+    "about_short_title": "About the School",
+    "about_short_label": "About Us",
+    "about_short_text": "Muhammad al-Khwarizmi Specialized School (Nukus Branch) is a prestigious educational institution providing advanced education in exact and natural sciences.",
+    "about_btn": "Learn More",
+    "directions_title": "Programs",
+    "directions_label": "Our Strength",
+    "directions_text": "Advanced programs in mathematics, physics, computer science, and more",
+    "news_title": "Latest News",
+    "news_label": "News",
+    "news_text": "The latest news and announcements from school life",
+    "news_all": "All News",
+    "achievements_title": "Our Achievements",
+    "achievements_label": "Our Pride",
+    "contact_title": "Get in Touch",
+    "contact_label": "Contact"
+  },
+  "directions_list": {
+    "math": "Mathematics",
+    "physics": "Physics",
+    "informatics": "Computer Science",
+    "chemistry": "Chemistry",
+    "biology": "Biology",
+    "languages": "Foreign Languages"
+  },
+  "about_page": {
+    "title": "About the School",
+    "history_title": "School History",
+    "history_label": "History",
+    "mission_title": "Mission & Values",
+    "mission_label": "Our Goal",
+    "mission_text": "To fully unlock the intellectual potential of every student and transform them into future leaders in science.",
+    "values": {
+      "excellence": "Scientific Excellence",
+      "excellence_desc": "Achieving the highest academic standards",
+      "innovation": "Innovation",
+      "innovation_desc": "Applying modern educational technologies",
+      "integrity": "Integrity",
+      "integrity_desc": "Building moral values in students",
+      "community": "Collaboration",
+      "community_desc": "An environment of teamwork and mutual respect"
+    },
+    "leadership_title": "Leadership",
+    "leadership_label": "Our Team",
+    "virtual_tour": "Virtual Tour",
+    "virtual_tour_label": "School Building"
+  },
+  "contact_page": {
+    "title": "Contact Us",
+    "address_label": "Address",
+    "address": "Nukus city, Amir Temur street, Building 1",
+    "phone_label": "Phone",
+    "phone": "+998 61 222-33-44",
+    "email_label": "Email",
+    "email": "info@alxorazmiy-nukus.uz",
+    "hours_label": "Working Hours",
+    "hours": "Monday — Saturday, 08:00 — 17:00",
+    "form_title": "Send a Message",
+    "form_name": "Your Name",
+    "form_email": "Your Email",
+    "form_subject": "Subject",
+    "form_message": "Your Message",
+    "form_send": "Send",
+    "form_sending": "Sending...",
+    "form_success": "Your message has been sent successfully!",
+    "form_error": "An error occurred. Please try again.",
+    "social_title": "Social Media",
+    "map_title": "On the Map"
+  },
+  "common": {
+    "read_more": "Read More",
+    "view_all": "View All",
+    "loading": "Loading...",
+    "search": "Search...",
+    "no_results": "No results found",
+    "back": "Back",
+    "home": "Home",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "all": "All",
+    "download": "Download",
+    "place": "place",
+    "year": "year"
+  },
+  "footer": {
+    "about_text": "Muhammad al-Khwarizmi Specialized School is a modern educational institution providing advanced education in exact and natural sciences.",
+    "quick_links": "Quick Links",
+    "contact_info": "Contact",
+    "social": "Social Media",
+    "copyright": "© 2026 Al-Khwarizmi Specialized School. All rights reserved."
+  }
+}

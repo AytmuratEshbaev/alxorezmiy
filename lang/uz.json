@@ -1,0 +1,122 @@
+{
+  "site_title": "Muhammad al-Xorazmiy nomidagi ixtisoslashtirilgan maktabining Nukus filiali",
+  "nav": {
+    "home": "Bosh sahifa",
+    "about": "Maktab haqida",
+    "directions": "Yo'nalishlar",
+    "teachers": "O'qituvchilar",
+    "news": "Yangiliklar",
+    "contact": "Kontakt",
+    "faq": "FAQ",
+    "admission": "Qabul",
+    "gallery": "Galereya"
+  },
+  "hero": {
+    "title": "Muhammad al-Xorazmiy nomidagi ixtisoslashtirilgan maktabining Nukus filiali",
+    "subtitle": "O'zbekiston Respublikasi Maktabgacha va maktab ta'limi vazirligi (MMTV) huzuridagi Ixtisoslashtirilgan ta'lim muassasalari agentligi (ITMA) tizimidagi Muhammad al-Xorazmiy nomidagi ixtisoslashtirilgan maktabi Nukus filiali",
+    "description": "Aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim. Kelajak intellektual yetakchilarini tayyorlaymiz.",
+    "btn_about": "Maktab haqida",
+    "btn_admission": "Qabul shartlari"
+  },
+  "stats": {
+    "students": "O'quvchilar",
+    "teachers": "O'qituvchilar",
+    "experience": "Yillik tajriba",
+    "olympiad": "Olimpiada g'oliblari"
+  },
+  "sections": {
+    "about_short_title": "Maktab haqida",
+    "about_short_label": "Biz haqimizda",
+    "about_short_text": "Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi (Nukus filiali) — aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim beruvchi nufuzli ta'lim muassasasi.",
+    "about_btn": "Batafsil ma'lumot",
+    "directions_title": "Yo'nalishlar",
+    "directions_label": "Bizning kuchimiz",
+    "directions_text": "Matematika, fizika, informatika va boshqa fanlar bo'yicha chuqurlashtirilgan dasturlar",
+    "news_title": "So'nggi yangiliklar",
+    "news_label": "Yangiliklar",
+    "news_text": "Maktab hayotidan eng so'nggi yangilik va e'lonlar",
+    "news_all": "Barcha yangiliklar",
+    "achievements_title": "Yutuqlarimiz",
+    "achievements_label": "Faxrimiz",
+    "contact_title": "Bog'lanish",
+    "contact_label": "Kontakt"
+  },
+  "directions_list": {
+    "math": "Matematika",
+    "physics": "Fizika",
+    "informatics": "Informatika",
+    "chemistry": "Kimyo",
+    "biology": "Biologiya",
+    "languages": "Chet tillari"
+  },
+  "about_page": {
+    "title": "Maktab haqida",
+    "history_title": "Maktab tarixi",
+    "history_label": "Tarix",
+    "mission_title": "Missiya va qadriyatlar",
+    "mission_label": "Bizning maqsad",
+    "mission_text": "Har bir o'quvchining intellektual salohiyatini to'liq ro'yobga chiqarish va ularni kelajak ilm-fan yetakchilariga aylantirish.",
+    "values": {
+      "excellence": "Ilmiy mukammallik",
+      "excellence_desc": "Eng yuqori akademik standartlarga erishish",
+      "innovation": "Innovatsiya",
+      "innovation_desc": "Zamonaviy ta'lim texnologiyalarini qo'llash",
+      "integrity": "Halollik",
+      "integrity_desc": "O'quvchilarda axloqiy qadriyatlarni shakllantirish",
+      "community": "Hamkorlik",
+      "community_desc": "Jamoaviy ishlash va o'zaro hurmat muhiti"
+    },
+    "leadership_title": "Rahbariyat",
+    "leadership_label": "Bizning jamoa",
+    "virtual_tour": "Virtual tur",
+    "virtual_tour_label": "Maktab binosi"
+  },
+  "contact_page": {
+    "title": "Bog'lanish",
+    "address_label": "Manzil",
+    "address": "Nukus shahri, Amir Temur ko'chasi 1-uy",
+    "phone_label": "Telefon",
+    "phone": "+998 61 222-33-44",
+    "email_label": "Elektron pochta",
+    "email": "info@alxorazmiy-nukus.uz",
+    "hours_label": "Ish vaqti",
+    "hours": "Dushanba — Shanba, 08:00 — 17:00",
+    "form_title": "Xabar yuborish",
+    "form_name": "Ismingiz",
+    "form_email": "Email manzilingiz",
+    "form_subject": "Mavzu",
+    "form_message": "Xabaringiz",
+    "form_send": "Yuborish",
+    "form_sending": "Yuborilmoqda...",
+    "form_success": "Xabaringiz muvaffaqiyatli yuborildi!",
+    "form_error": "Xatolik yuz berdi. Qaytadan urinib ko'ring.",
+    "social_title": "Ijtimoiy tarmoqlar",
+    "map_title": "Xaritada"
+  },
+  "common": {
+    "read_more": "Batafsil",
+    "view_all": "Barchasini ko'rish",
+    "loading": "Yuklanmoqda...",
+    "search": "Qidirish...",
+    "no_results": "Natija topilmadi",
+    "back": "Orqaga",
+    "home": "Bosh sahifa",
+    "close": "Yopish",
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash",
+    "add": "Qo'shish",
+    "all": "Barchasi",
+    "download": "Yuklab olish",
+    "place": "o'rin",
+    "year": "yil"
+  },
+  "footer": {
+    "about_text": "Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi — aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim beruvchi zamonaviy ta'lim muassasasi.",
+    "quick_links": "Tezkor havolalar",
+    "contact_info": "Kontakt",
+    "social": "Ijtimoiy tarmoqlar",
+    "copyright": "© 2026 Al-Xorazmiy ixtisoslashtirilgan maktabi. Barcha huquqlar himoyalangan."
+  }
+}

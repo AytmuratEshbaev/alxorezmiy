@@ -1,0 +1,122 @@
+{
+  "site_title": "Muxammed al-Xorezmiy atındaǵı qániygelestirilgen mektebiniń Nókis filialı",
+  "nav": {
+    "home": "Bas bet",
+    "about": "Mektep haqqında",
+    "directions": "Bag'darlar",
+    "teachers": "Oqıtıwshılar",
+    "news": "Jańalıqlar",
+    "contact": "Baylanıs",
+    "faq": "FAQ",
+    "admission": "Qabıl",
+    "gallery": "Galereya"
+  },
+  "hero": {
+    "title": "Muxammed al-Xorezmiy atındaǵı qániygelestirilgen mektebiniń Nókis filialı",
+    "subtitle": "Ózbekstan Respublikası Mektepke shekemgi hám mektep bilimlendiriw ministrligi (MShMBM) qasındaǵı Qániygelestirilgen bilimlendiriw mákemeleri agentligi (QBMA) jigindegi Muxammed al-Xorezmiy atındaǵı qániygelestirilgen mektebiniń Nókis filialı",
+    "description": "Anıq hám tábiyiy pánler boyınsha terénlestirgen bilim. Keleshek intellektual jetekshilerin tayarlaymiz.",
+    "btn_about": "Mektep haqqında",
+    "btn_admission": "Qabıl shartları"
+  },
+  "stats": {
+    "students": "Oqıwshılar",
+    "teachers": "Oqıtıwshılar",
+    "experience": "Jıllıq tájiriybe",
+    "olympiad": "Olimpiada g'alipleri"
+  },
+  "sections": {
+    "about_short_title": "Mektep haqqında",
+    "about_short_label": "Biz haqqımızda",
+    "about_short_text": "Muhammad al-Xorezmiy arnawlı mektebi (Nókis filialı) — anıq hám tábiyiy pánler boyınsha terénlestirgen bilim beretug'ın joqarı da'rejeli bilim beriwshi mákeme.",
+    "about_btn": "Tolıq mag'lıwmat",
+    "directions_title": "Bag'darlar",
+    "directions_label": "Bizin' kushimiz",
+    "directions_text": "Matematika, fizika, informatika hám basqa pánler boyınsha terénlestirgen bag'darlamalar",
+    "news_title": "Aqırg'ı jańalıqlar",
+    "news_label": "Jańalıqlar",
+    "news_text": "Mektep turmusınan eń aqırg'ı jańalıq hám e'lanlar",
+    "news_all": "Barlıq jańalıqlar",
+    "achievements_title": "Jetiskenliklerimiz",
+    "achievements_label": "Paxrımız",
+    "contact_title": "Baylanıs",
+    "contact_label": "Kontakt"
+  },
+  "directions_list": {
+    "math": "Matematika",
+    "physics": "Fizika",
+    "informatics": "Informatika",
+    "chemistry": "Ximiya",
+    "biology": "Biologiya",
+    "languages": "Shet tilleri"
+  },
+  "about_page": {
+    "title": "Mektep haqqında",
+    "history_title": "Mektep tariyxı",
+    "history_label": "Tariyxı",
+    "mission_title": "Missiya hám qádriyatlar",
+    "mission_label": "Bizin' maqset",
+    "mission_text": "Hár bir oqıwshının' intellektual potentsialın tolıq ashıw hám olardı keleshek ilim-pán jetekshilerine aylantırıw.",
+    "values": {
+      "excellence": "Ilimiy mukemmellik",
+      "excellence_desc": "Eń joqarı akademik standartlarg'a jetisiw",
+      "innovation": "Innovatsiya",
+      "innovation_desc": "Zamanagóy bilim texnologiyaların qollanıw",
+      "integrity": "Halallıq",
+      "integrity_desc": "Oqıwshılarda axlaqıy qádriyatlardı qáliplestiriw",
+      "community": "Hámkerlik",
+      "community_desc": "Jáma'átlik islesiw hám ózara húrmet muhiti"
+    },
+    "leadership_title": "Basshılıq",
+    "leadership_label": "Bizin' jáma'á",
+    "virtual_tour": "Virtual tur",
+    "virtual_tour_label": "Mektep binası"
+  },
+  "contact_page": {
+    "title": "Baylanısıw",
+    "address_label": "Mánzil",
+    "address": "Nókis qalası, Ámir Temur kóshesi 1-úy",
+    "phone_label": "Telefon",
+    "phone": "+998 61 222-33-44",
+    "email_label": "Elektron pochta",
+    "email": "info@alxorazmiy-nukus.uz",
+    "hours_label": "Is waqtı",
+    "hours": "Dúyshembi — Shenbi, 08:00 — 17:00",
+    "form_title": "Xabar jiberiw",
+    "form_name": "Ismińiz",
+    "form_email": "Email mánzilińiz",
+    "form_subject": "Tema",
+    "form_message": "Xabarıńız",
+    "form_send": "Jiberiw",
+    "form_sending": "Jiberilmekte...",
+    "form_success": "Xabarıńız tabıslı jiberildi!",
+    "form_error": "Qátelik júz berdi. Qayta urınıp kóriń.",
+    "social_title": "Sociallıq tarmaqllar",
+    "map_title": "Xaritada"
+  },
+  "common": {
+    "read_more": "Tolıq",
+    "view_all": "Barlıg'ın kóriw",
+    "loading": "Júklenip atır...",
+    "search": "Izlew...",
+    "no_results": "Nátiyje tabılmadı",
+    "back": "Artqa",
+    "home": "Bas bet",
+    "close": "Jabıw",
+    "save": "Saqlap qoyıw",
+    "cancel": "Biykar qılıw",
+    "delete": "Óshiriw",
+    "edit": "Ózgertiw",
+    "add": "Qosıw",
+    "all": "Barlıg'ı",
+    "download": "Júklep alıw",
+    "place": "orın",
+    "year": "jıl"
+  },
+  "footer": {
+    "about_text": "Muhammad al-Xorezmiy arnawlı mektebi — anıq hám tábiyiy pánler boyınsha terénlestirgen bilim beretug'ın zamanagóy bilim mákemesi.",
+    "quick_links": "Tez siltewler",
+    "contact_info": "Kontakt",
+    "social": "Sociallıq tarmaqllar",
+    "copyright": "© 2026 Al-Xorezmiy arnawlı mektebi. Barlıq huqıqlar qorg'alg'an."
+  }
+}

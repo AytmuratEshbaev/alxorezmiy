@@ -1,0 +1,14 @@
+{
+  "name": "alxorezmiy-school",
+  "version": "1.0.0",
+  "description": "Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi — Nukus filiali",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
