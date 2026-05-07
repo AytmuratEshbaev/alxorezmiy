@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>O'qituvchilar - Admin Panel | Al-Xorazmiy</title>
+  <title>O'qituvchilar — Admin Panel | Al-Xorazmiy</title>
   <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
@@ -55,15 +55,23 @@
     <main class="main-content">
       <header class="admin-navbar">
         <div class="navbar-left">
-          <button class="sidebar-toggle" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/></svg></button>
+          <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
           <div class="page-title">O'qituvchilar</div>
         </div>
         <div class="navbar-right">
           <div class="user-profile">
             <div class="user-avatar">A</div>
-            <div class="user-info"><span class="user-name">Admin</span><span class="user-role">Superadmin</span></div>
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Superadmin</span>
+            </div>
           </div>
-          <button class="btn-logout" id="logoutBtn">Chiqish</button>
+          <button class="btn-logout" id="logoutBtn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Chiqish
+          </button>
         </div>
       </header>
 
@@ -71,12 +79,16 @@
         <div class="admin-card">
           <div class="card-header">
             <h2 class="card-title">Barcha o'qituvchilar</h2>
-            <button class="btn btn-primary" onclick="openModal('teachersModal')">+ Qo'shish</button>
+            <button class="btn btn-primary" id="addTeacherBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Qo'shish
+            </button>
           </div>
           <div class="table-responsive">
             <table class="admin-table">
               <thead>
                 <tr>
+                  <th>Rasm</th>
                   <th>F.I.O. (UZ)</th>
                   <th>Fan</th>
                   <th>Toifa</th>
@@ -85,7 +97,7 @@
                 </tr>
               </thead>
               <tbody id="teachersTableBody">
-                <!-- Loaded by JS -->
+                <tr><td colspan="6" style="text-align:center;padding:40px;color:#94A3B8;">Yuklanmoqda...</td></tr>
               </tbody>
             </table>
           </div>
@@ -94,60 +106,107 @@
     </main>
   </div>
 
-  <div class="modal-overlay" id="teachersModal">
-    <div class="modal">
+  <!-- ══════ TEACHER MODAL ══════ -->
+  <div class="modal-overlay" id="teacherModal">
+    <div class="modal" style="max-width:760px;">
       <div class="modal-header">
-        <h3 class="modal-title">O'qituvchi formasi</h3>
-        <button class="modal-close" onclick="closeModal('teachersModal')">✕</button>
+        <h3 class="modal-title" id="teacherModalTitle">Yangi o'qituvchi qo'shish</h3>
+        <button class="modal-close" id="teacherModalClose" type="button">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
-      <div class="modal-body">
-        <form>
+      <form id="teacherForm">
+        <div class="modal-body">
+
+          <!-- Rasm -->
           <div class="form-group">
-            <label>Ism-sharifi (UZ)</label>
-            <input type="text" class="form-control" required>
+            <label>Rasm</label>
+            <div class="image-uploader">
+              <input type="file" id="teacherPhotoInput" accept="image/*" hidden>
+              <button type="button" class="btn btn-outline" onclick="document.getElementById('teacherPhotoInput').click()">
+                📷 Rasm tanlash
+              </button>
+              <img id="teacherPhotoPreview" style="display:none;width:140px;height:140px;border-radius:50%;object-fit:cover;margin:12px auto 0;border:4px solid #E2E8F0;">
+              <div id="teacherPhotoProgress" style="display:none;margin-top:8px;">
+                <div style="background:#E2E8F0;border-radius:4px;overflow:hidden;height:6px;">
+                  <div id="teacherPhotoProgressBar" style="background:#3B82F6;height:100%;width:0%;transition:width 0.2s;"></div>
+                </div>
+                <small id="teacherPhotoProgressText" style="color:#64748B;">0%</small>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Fan</label>
-            <input type="text" class="form-control" required>
+
+          <!-- Asosiy ma'lumotlar -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label>Fan *</label>
+              <input type="text" class="form-control" id="teacherSubject" placeholder="Matematika" required>
+            </div>
+            <div class="form-group">
+              <label>Toifa</label>
+              <input type="text" class="form-control" id="teacherCategory" placeholder="Oliy toifa">
+            </div>
           </div>
-          <div class="form-group">
-            <label>Toifa</label>
-            <input type="text" class="form-control" required>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label>Tajriba (yil)</label>
+              <input type="number" class="form-control" id="teacherExperience" min="0" max="60" value="0">
+            </div>
+            <div class="form-group">
+              <label>Tartib raqami</label>
+              <input type="number" class="form-control" id="teacherOrder" min="0" value="0">
+            </div>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="closeModal('teachersModal')">Bekor qilish</button>
-        <button class="btn btn-primary" onclick="closeModal('teachersModal')">Saqlash</button>
-      </div>
+
+          <!-- Til tablari (ism uchun) -->
+          <div class="lang-tabs-bar">
+            <button type="button" class="lang-tab active" data-lang="uz">🇺🇿 O'zbek</button>
+            <button type="button" class="lang-tab" data-lang="ru">🇷🇺 Русский</button>
+            <button type="button" class="lang-tab" data-lang="kk">🏳️ Qaraqalpaq</button>
+            <button type="button" class="lang-tab" data-lang="en">🇬🇧 English</button>
+          </div>
+
+          <div class="lang-panel active" data-lang="uz">
+            <div class="form-group">
+              <label>F.I.O. (UZ) *</label>
+              <input type="text" class="form-control" id="teacherName_uz" placeholder="Karimov Alisher Baxtiyorovich" required>
+            </div>
+          </div>
+
+          <div class="lang-panel" data-lang="ru">
+            <div class="form-group">
+              <label>Ф.И.О. (RU)</label>
+              <input type="text" class="form-control" id="teacherName_ru" placeholder="Каримов Алишер Бахтиёрович">
+            </div>
+          </div>
+
+          <div class="lang-panel" data-lang="kk">
+            <div class="form-group">
+              <label>F.I.O. (KK)</label>
+              <input type="text" class="form-control" id="teacherName_kk" placeholder="Karimov Alisher Baxtiyoroviç">
+            </div>
+          </div>
+
+          <div class="lang-panel" data-lang="en">
+            <div class="form-group">
+              <label>Full Name (EN)</label>
+              <input type="text" class="form-control" id="teacherName_en" placeholder="Alisher Karimov">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="teacherCancelBtn">Bekor qilish</button>
+          <button type="submit" class="btn btn-primary" id="teacherSubmitBtn">Saqlash</button>
+        </div>
+      </form>
     </div>
   </div>
 
   <script type="module" src="../js/firebase-config.js"></script>
+  <script type="module" src="../js/imagekit-upload.js"></script>
   <script type="module" src="js/auth.js"></script>
-  <script>
-    window.openModal = (id) => document.getElementById(id).classList.add('active');
-    window.closeModal = (id) => document.getElementById(id).classList.remove('active');
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const tbody = document.getElementById('teachersTableBody');
-      if(window.DemoData && tbody) {
-        tbody.innerHTML = window.DemoData.teachers.map(t => `
-          <tr>
-            <td><strong>${t.name_uz}</strong></td>
-            <td>${t.subject}</td>
-            <td><span class="badge badge-warning">${t.category}</span></td>
-            <td>${t.experience} yil</td>
-            <td>
-              <div class="table-actions">
-                <button class="action-btn edit" onclick="openModal('teachersModal')">✍️</button>
-                <button class="action-btn delete">🗑️</button>
-              </div>
-            </td>
-          </tr>
-        `).join('');
-      }
-    });
-  </script>
+  <script type="module" src="js/teachers.js"></script>
 </body>
 </html>
