@@ -115,10 +115,12 @@
    .modal-overlay.active { opacity: 1; visibility: visible; }
    .modal { background: var(--card-bg); border-radius: 16px; width: 90%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; transform: scale(0.95); transition: all 0.2s; }
    .modal-overlay.active .modal { transform: scale(1); }
-   .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+   .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
    .modal-title { font-size: 1.25rem; font-weight: 600; }
-   .modal-body { padding: 24px; overflow-y: auto; flex: 1; }
-   .modal-footer { padding: 20px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; }
+   .modal-body { padding: 24px; overflow-y: auto; flex: 1; min-height: 0; }
+   .modal-footer { padding: 20px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0; }
+   /* Form modal ichida ham flex bo'lishi kerak — body scroll qiladi, footer pastda turadi */
+   .modal form { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
    
    /* ── Toast ── */
    .toast-container { position: fixed; top: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
