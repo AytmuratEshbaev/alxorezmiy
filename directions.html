@@ -3,56 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yo'nalishlar — Al-Xorazmiy maktabi</title>
-  <meta name="description" content="Aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan o'quv dasturlari va olimpiada natijalari">
+  <meta name="theme-color" content="#1F4E79">
+  <title>Yo'nalishlar - Aniq va tabiiy fanlar - Al-Xorazmiy maktabi</title>
+  <meta name="description" content="Matematika, fizika, informatika, kimyo, biologiya bo'yicha chuqurlashtirilgan o'quv dasturlari va olimpiada natijalari.">
+  <link rel="canonical" href="https://alxorezmiy.vercel.app/directions">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="manifest" href="manifest.json">
+  <meta property="og:title" content="Yo'nalishlar - Aniq va tabiiy fanlar - Al-Xorazmiy maktabi">
+  <meta property="og:description" content="Matematika, fizika, informatika, kimyo, biologiya bo'yicha chuqurlashtirilgan o'quv dasturlari va olimpiada natijalari.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://alxorezmiy.vercel.app/directions">
+  <meta property="og:site_name" content="Al-Xorazmiy maktabi">
+  <meta property="og:locale" content="uz_UZ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Yo'nalishlar - Aniq va tabiiy fanlar - Al-Xorazmiy maktabi">
+  <meta name="twitter:description" content="Matematika, fizika, informatika, kimyo, biologiya bo'yicha chuqurlashtirilgan o'quv dasturlari va olimpiada natijalari.">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dark-theme.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
 
-  <!-- ══════ NAVBAR ══════ -->
-  <nav class="navbar" id="navbar">
-    <div class="container flex-between">
-      <a href="index.html" class="navbar-logo">
-        <div style="width:42px;height:42px;background:linear-gradient(135deg,#1F4E79,#2E75B6);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.1rem;">AX</div>
-        <span>Al-Xorazmiy<small data-i18n="hero.subtitle">Nukus filiali</small></span>
-      </a>
-      <div class="nav-links">
-        <a href="index.html" data-i18n="nav.home">Bosh sahifa</a>
-        <a href="about.html" data-i18n="nav.about">Maktab haqida</a>
-        <a href="directions.html" class="active" data-i18n="nav.directions">Yo'nalishlar</a>
-        <a href="teachers.html" data-i18n="nav.teachers">O'qituvchilar</a>
-        <a href="news.html" data-i18n="nav.news">Yangiliklar</a>
-        <a href="contact.html" data-i18n="nav.contact">Kontakt</a>
-      </div>
-      <div class="nav-actions">
-        <div class="lang-switcher">
-          <button class="lang-btn"><span class="lang-current">UZ</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
-          <div class="lang-dropdown">
-            <a href="#" data-lang="uz" class="active">🇺🇿 O'zbekcha</a>
-            <a href="#" data-lang="ru">🇷🇺 Русский</a>
-            <a href="#" data-lang="kk">🏳️ Qaraqalpaqsha</a>
-            <a href="#" data-lang="en">🇬🇧 English</a>
-          </div>
-        </div>
-        <button class="theme-toggle" aria-label="Toggle theme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
-        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
-      </div>
-    </div>
-  </nav>
-  <div class="mobile-nav" id="mobileNav">
-    <a href="index.html" data-i18n="nav.home">Bosh sahifa</a>
-    <a href="about.html" data-i18n="nav.about">Maktab haqida</a>
-    <a href="directions.html" class="active" data-i18n="nav.directions">Yo'nalishlar</a>
-    <a href="teachers.html" data-i18n="nav.teachers">O'qituvchilar</a>
-    <a href="news.html" data-i18n="nav.news">Yangiliklar</a>
-    <a href="contact.html" data-i18n="nav.contact">Kontakt</a>
-    <a href="faq.html" data-i18n="nav.faq">FAQ</a>
-    <a href="admission.html" data-i18n="nav.admission">Qabul</a>
-    <a href="gallery.html" data-i18n="nav.gallery">Galereya</a>
-  </div>
-
+  <div id="navbar-mount"></div>
+  <div id="mobile-nav-mount"></div>
   <!-- ══════ PAGE HEADER ══════ -->
   <div class="page-header">
     <h1 data-i18n="sections.directions_title">Yo'nalishlar</h1>
@@ -161,58 +134,16 @@
     </div>
   </section>
 
-  <!-- ══════ FOOTER ══════ -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-about">
-          <h4>Al-Xorazmiy maktabi</h4>
-          <p data-i18n="footer.about_text">Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi — aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim beruvchi zamonaviy ta'lim muassasasi.</p>
-          <div class="footer-social">
-            <a href="#">✈️</a><a href="#">📷</a><a href="#">📘</a><a href="#">▶️</a>
-          </div>
-        </div>
-        <div>
-          <h4 data-i18n="footer.quick_links">Tezkor havolalar</h4>
-          <ul class="footer-links">
-            <li><a href="about.html" data-i18n="nav.about">Maktab haqida</a></li>
-            <li><a href="directions.html" data-i18n="nav.directions">Yo'nalishlar</a></li>
-            <li><a href="teachers.html" data-i18n="nav.teachers">O'qituvchilar</a></li>
-            <li><a href="admission.html" data-i18n="nav.admission">Qabul</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 data-i18n="footer.contact_info">Kontakt</h4>
-          <ul class="footer-contact">
-            <li><span>📍</span><span data-i18n="contact_page.address">Nukus shahri, Amir Temur ko'chasi 1-uy</span></li>
-            <li><span>📞</span><span data-i18n="contact_page.phone">+998 61 222-33-44</span></li>
-            <li><span>📧</span><span data-i18n="contact_page.email">info@alxorazmiy-nukus.uz</span></li>
-          </ul>
-        </div>
-        <div>
-          <h4 data-i18n="nav.faq">FAQ</h4>
-          <ul class="footer-links">
-            <li><a href="faq.html" data-i18n="nav.faq">FAQ</a></li>
-            <li><a href="news.html" data-i18n="nav.news">Yangiliklar</a></li>
-            <li><a href="contact.html" data-i18n="nav.contact">Kontakt</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <span data-i18n="footer.copyright">© 2026 Al-Xorazmiy ixtisoslashtirilgan maktabi. Barcha huquqlar himoyalangan.</span>
-        <span>Made with ❤️ in Nukus</span>
-      </div>
-    </div>
-  </footer>
-
-  <button class="back-to-top" id="backToTop" aria-label="Back to top">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
-  </button>
+  <div id="footer-mount"></div>
+  <div id="back-to-top-mount"></div>
+  <script src="js/site-shell.js"></script>
 
   <script type="module" src="js/firebase-config.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
+
+  <script type="module" src="js/settings-loader.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const tbody = document.querySelector('#olympiadTable tbody');
