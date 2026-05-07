@@ -6,12 +6,11 @@
 //   // returns: 'https://ik.imagekit.io/alxorezmiy/news/abc123_xyz.jpg'
 
 const IMAGEKIT_CONFIG = {
-  publicKey: 'PUBLIC_KEY_HERE', // ← Public key kelgach almashtiramiz
+  publicKey: 'public_x51JCtOf+YDQs1gkCLzSCtog9O4=',
   urlEndpoint: 'https://ik.imagekit.io/alxorezmiy',
-  // Auth endpoint:
-  // - Production'da: '/api/imagekit-auth' (avtomatik to'g'ri yo'l)
-  // - Local dev'da Vercel'siz: deployed URL kerak
-  authEndpoint: '/api/imagekit-auth'
+  // Auth endpoint Vercel'da joylashgan. Local dev (npx serve) va
+  // production (alxorezmiy.vercel.app) uchun bir xil URL ishlaydi.
+  authEndpoint: 'https://alxorezmiy.vercel.app/api/imagekit-auth'
 };
 
 /**

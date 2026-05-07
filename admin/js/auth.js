@@ -23,7 +23,9 @@ function waitForFirebase() {
 
 const { auth } = await waitForFirebase();
 
-const isLoginPage = window.location.pathname.includes('login.html');
+// cleanUrls (vercel.json) tufayli pathname /admin/login yoki /admin/login.html
+// bo'lishi mumkin — ikkalasini ham qabul qilamiz
+const isLoginPage = /\/login(\.html)?\/?$/.test(window.location.pathname);
 
 // ── Auth Guard: kirmagan foydalanuvchini login'ga yo'naltirish ──
 onAuthStateChanged(auth, (user) => {
