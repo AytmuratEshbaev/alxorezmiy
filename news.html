@@ -18,9 +18,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Yangiliklar va e'lonlar - Al-Xorazmiy maktabi">
   <meta name="twitter:description" content="Maktab hayotidan eng so'nggi yangiliklar, tadbirlar va e'lonlar. Olimpiada g'alabalari va muhim sanalar.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ik.imagekit.io" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dark-theme.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
@@ -121,21 +128,22 @@
       }
       noResults.classList.add('hidden');
       grid.innerHTML = filtered.map((item, i) => `
-        <div class="card card-hover news-card animate-on-scroll" style="animation-delay:${i * 0.1}s;cursor:pointer;" data-id="${item.id}">
+        <a href="news/${item.id}" class="card card-hover news-card animate-on-scroll" style="animation-delay:${i * 0.1}s;text-decoration:none;color:inherit;display:block;padding:0;overflow:hidden;">
           <div class="card-img">
             <img src="${window.transformImage ? window.transformImage(item.image, { width: 600 }) : item.image}" alt="${escapeHtml(window.getLocalizedField(item, 'title'))}" loading="lazy" onerror="this.style.display='none'">
           </div>
-          <div class="card-meta">
-            <span class="card-category">${catMap[item.category] || item.category}</span>
-            <span class="card-date">${formatDate(item.createdAt)}</span>
+          <div class="news-card-body" style="padding:var(--space-lg);">
+            <div class="card-meta">
+              <span class="card-category">${catMap[item.category] || item.category}</span>
+              <span class="card-date">${formatDate(item.createdAt)}</span>
+            </div>
+            <h3>${escapeHtml(window.getLocalizedField(item, 'title'))}</h3>
+            <p>${escapeHtml((window.getLocalizedField(item, 'content') || '').substring(0, 120))}...</p>
+            <span class="read-more" style="margin-top:var(--space-sm);display:inline-block;" data-i18n="common.read_more">Batafsil →</span>
           </div>
-          <h3>${escapeHtml(window.getLocalizedField(item, 'title'))}</h3>
-          <p>${escapeHtml((window.getLocalizedField(item, 'content') || '').substring(0, 120))}...</p>
-          <span class="read-more" style="margin-top:var(--space-sm);display:inline-block;" data-i18n="common.read_more">Batafsil →</span>
-        </div>
+        </a>
       `).join('');
       grid.querySelectorAll('.news-card').forEach(card => {
-        card.addEventListener('click', () => showNewsModal(card.dataset.id));
         setTimeout(() => card.classList.add('visible'), 50);
       });
     }

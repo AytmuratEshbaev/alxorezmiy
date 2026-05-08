@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1F4E79">
+  <title>Yangilik — Al-Xorazmiy maktabi</title>
+  <meta name="description" content="Al-Xorazmiy maktabi yangilik">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="manifest" href="manifest.json">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Al-Xorazmiy maktabi">
+  <meta property="og:locale" content="uz_UZ">
+  <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ik.imagekit.io" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dark-theme.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .article-hero { padding: var(--s-12) 0 var(--s-8); margin-top: var(--navbar-h); position: relative; overflow: hidden; isolation: isolate;
+      background: radial-gradient(ellipse at top, rgba(167,139,250,.16) 0%, transparent 50%), radial-gradient(ellipse at bottom, rgba(129,140,248,.14) 0%, transparent 50%), #0A0A12; }
+    .article-hero::before { content: ''; position: absolute; inset: 0; z-index: -1;
+      background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 48px 48px; mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%); }
+    .article-hero .container { position: relative; max-width: 820px; }
+    .article-meta { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-4); flex-wrap: wrap; color: rgba(255,255,255,.7); }
+    .article-cat { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 5px 12px; border-radius: var(--r-full); background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: white; }
+    .article-date { font-family: var(--font-mono); font-size: 0.875rem; color: rgba(255,255,255,.6); }
+    .article-title { color: white; font-size: clamp(1.875rem, 4vw, 3rem); margin-bottom: var(--s-4); line-height: 1.15; letter-spacing: -0.03em; }
+    .article-excerpt { color: rgba(255,255,255,.78); font-size: 1.125rem; line-height: 1.6; max-width: 720px; }
+
+    .article-image { max-width: 1080px; margin: -40px auto 0; padding: 0 var(--s-6); position: relative; z-index: 5; }
+    .article-image img { width: 100%; border-radius: var(--r-lg); box-shadow: var(--shadow-xl); aspect-ratio: 16/9; object-fit: cover; }
+    .article-body { max-width: 760px; margin: var(--s-12) auto; padding: 0 var(--s-6); font-size: 1.0625rem; line-height: 1.8; color: var(--text-mid); }
+    .article-body p { margin-bottom: var(--s-5); white-space: pre-line; }
+    .article-body p:first-of-type::first-letter { font-family: var(--font-display); font-size: 3.5rem; font-weight: 700; float: left; line-height: 1; padding: 4px 12px 0 0; color: var(--brand-1); }
+
+    .share-bar { max-width: 760px; margin: var(--s-10) auto; padding: var(--s-6); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap; }
+    .share-label { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-lo); }
+    .share-buttons { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+    .share-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--r-md); font-size: 0.875rem; font-weight: 500;
+      background: var(--bg-elevated); color: var(--text-hi); border: 1px solid var(--border-subtle); cursor: pointer; transition: all var(--t-fast); }
+    .share-btn:hover { border-color: var(--brand-1); transform: translateY(-2px); }
+    .share-btn.copy { font-family: var(--font-mono); }
+
+    .related-section { max-width: 1080px; margin: var(--s-16) auto var(--s-12); padding: 0 var(--s-6); }
+    .related-section h2 { margin-bottom: var(--s-8); font-size: 1.5rem; }
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-6); }
+    @media (max-width:768px) { .related-grid { grid-template-columns: 1fr; } }
+
+    .article-loading { padding: var(--s-24) var(--s-6); text-align: center; color: var(--text-lo); }
+    .article-not-found { max-width: 600px; margin: var(--s-24) auto; padding: 0 var(--s-6); text-align: center; }
+  </style>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</head>
+<body>
+
+  <div id="navbar-mount"></div>
+  <div id="mobile-nav-mount"></div>
+
+  <article id="article" style="display:none;">
+    <header class="article-hero">
+      <div class="container">
+        <a href="news.html" style="color:rgba(255,255,255,.7);font-size:.875rem;display:inline-flex;align-items:center;gap:6px;margin-bottom:var(--s-6);text-decoration:none;">← Yangiliklar</a>
+        <div class="article-meta">
+          <span class="article-cat" id="art-category">—</span>
+          <span class="article-date" id="art-date">—</span>
+        </div>
+        <h1 class="article-title" id="art-title">—</h1>
+      </div>
+    </header>
+
+    <div class="article-image" id="art-image-wrap" style="display:none;">
+      <img id="art-image" src="" alt="">
+    </div>
+
+    <div class="article-body" id="art-body"></div>
+
+    <div class="share-bar">
+      <span class="share-label">Ulashing</span>
+      <div class="share-buttons" id="share-buttons">
+        <a class="share-btn" id="share-tg" target="_blank" rel="noopener">✈️ Telegram</a>
+        <a class="share-btn" id="share-wa" target="_blank" rel="noopener">💬 WhatsApp</a>
+        <a class="share-btn" id="share-fb" target="_blank" rel="noopener">📘 Facebook</a>
+        <button class="share-btn copy" id="share-copy">🔗 Nusxalash</button>
+      </div>
+    </div>
+
+    <section class="related-section">
+      <h2>Boshqa yangiliklar</h2>
+      <div class="related-grid" id="related-grid"></div>
+    </section>
+  </article>
+
+  <div class="article-loading" id="loading">Yuklanmoqda…</div>
+
+  <div class="article-not-found" id="not-found" style="display:none;">
+    <div style="font-size:5rem;font-weight:800;background:var(--brand-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:var(--s-4);">404</div>
+    <h1 style="margin-bottom:var(--s-4);">Yangilik topilmadi</h1>
+    <p style="margin-bottom:var(--s-8);">Bu yangilik o'chirilgan yoki manzil noto'g'ri.</p>
+    <a href="news.html" class="btn btn-primary btn-lg">📰 Barcha yangiliklar</a>
+  </div>
+
+  <div id="footer-mount"></div>
+  <div id="back-to-top-mount"></div>
+
+  <script src="js/site-shell.js"></script>
+  <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+  <script type="module" src="js/settings-loader.js"></script>
+  <script type="module">
+    import { getDocument, getDocuments, formatDate } from './js/firestore-helpers.js';
+
+    const $ = sel => document.querySelector(sel);
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+
+    function setMeta(key, value) {
+      const isProp = key.startsWith('og:') || key.startsWith('article:');
+      let el = document.querySelector(isProp ? `meta[property="${key}"]` : `meta[name="${key}"]`);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(isProp ? 'property' : 'name', key);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', value);
+    }
+
+    function getId() {
+      const params = new URLSearchParams(location.search);
+      return params.get('id');
+    }
+
+    const CAT_LABELS = { events: 'Tadbir', announcements: "E'lon" };
+
+    async function load() {
+      const id = getId();
+      if (!id) { showNotFound(); return; }
+
+      try {
+        const news = await getDocument('news', id);
+        if (!news) { showNotFound(); return; }
+        renderArticle(news);
+        loadRelated(news);
+      } catch (err) {
+        console.error('Failed to load news:', err);
+        showNotFound();
+      }
+    }
+
+    function renderArticle(news) {
+      $('#loading').style.display = 'none';
+      $('#article').style.display = 'block';
+
+      const title = window.getLocalizedField(news, 'title');
+      const content = window.getLocalizedField(news, 'content');
+      const cat = CAT_LABELS[news.category] || news.category;
+      const date = formatDate(news.createdAt);
+
+      // Set DOM
+      $('#art-title').textContent = title;
+      $('#art-category').textContent = cat;
+      $('#art-date').textContent = date;
+      if (news.image) {
+        $('#art-image').src = window.transformImage ? window.transformImage(news.image, { width: 1200 }) : news.image;
+        $('#art-image').alt = title;
+        $('#art-image-wrap').style.display = '';
+      }
+      // Body — preserve paragraph breaks
+      const paragraphs = (content || '').split(/\n\n+/).filter(p => p.trim());
+      $('#art-body').innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+
+      // Title + meta tags
+      const fullTitle = `${title} · Al-Xorazmiy maktabi`;
+      const desc = (content || '').substring(0, 160);
+      const url = `https://alxorezmiy.uz/news/${news.id}`;
+      document.title = fullTitle;
+      setMeta('description', desc);
+      setMeta('og:title', title);
+      setMeta('og:description', desc);
+      setMeta('og:url', url);
+      if (news.image) setMeta('og:image', news.image);
+      setMeta('twitter:title', title);
+      setMeta('twitter:description', desc);
+      if (news.image) setMeta('twitter:image', news.image);
+
+      // canonical
+      let canonical = document.querySelector('link[rel="canonical"]');
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+      }
+      canonical.setAttribute('href', url);
+
+      // Schema.org NewsArticle
+      const ld = document.createElement('script');
+      ld.setAttribute('type', 'application/ld+json');
+      ld.textContent = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'NewsArticle',
+        headline: title,
+        description: desc,
+        image: news.image ? [news.image] : undefined,
+        datePublished: news.createdAt?.toDate ? news.createdAt.toDate().toISOString() : undefined,
+        author: { '@type': 'Organization', name: 'Al-Xorazmiy maktabi', url: 'https://alxorezmiy.uz' },
+        publisher: { '@type': 'Organization', name: 'Al-Xorazmiy maktabi', logo: { '@type': 'ImageObject', url: 'https://alxorezmiy.uz/assets/icons/favicon.svg' } },
+        mainEntityOfPage: url
+      });
+      document.head.appendChild(ld);
+
+      // Share buttons
+      const encodedUrl = encodeURIComponent(url);
+      const encodedTitle = encodeURIComponent(title);
+      $('#share-tg').href = `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`;
+      $('#share-wa').href = `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`;
+      $('#share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+      $('#share-copy').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(url);
+          const btn = $('#share-copy');
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✓ Nusxalandi!';
+          setTimeout(() => { btn.innerHTML = orig; }, 2000);
+        } catch (e) {
+          alert(url);
+        }
+      });
+    }
+
+    async function loadRelated(current) {
+      try {
+        const all = await getDocuments('news', { orderBy: 'createdAt', direction: 'desc', limit: 10 });
+        const related = all
+          .filter(n => n.id !== current.id && n.status === 'published')
+          .slice(0, 3);
+
+        const grid = $('#related-grid');
+        if (!related.length) {
+          $('.related-section').style.display = 'none';
+          return;
+        }
+        grid.innerHTML = related.map(item => {
+          const t = window.getLocalizedField(item, 'title');
+          const c = window.getLocalizedField(item, 'content');
+          const cat = CAT_LABELS[item.category] || item.category;
+          const img = item.image ? (window.transformImage ? window.transformImage(item.image, { width: 600 }) : item.image) : '';
+          return `
+            <a href="news/${item.id}" class="card card-hover news-card" style="display:block;text-decoration:none;color:inherit;padding:0;overflow:hidden;">
+              ${img ? `<div class="card-img"><img src="${img}" alt="${escapeHtml(t)}" loading="lazy"></div>` : ''}
+              <div class="news-card-body">
+                <div class="card-meta">
+                  <span class="card-category">${cat}</span>
+                  <span class="card-date">${formatDate(item.createdAt)}</span>
+                </div>
+                <h3>${escapeHtml(t)}</h3>
+                <p>${escapeHtml((c || '').substring(0, 100))}…</p>
+              </div>
+            </a>
+          `;
+        }).join('');
+      } catch (err) {
+        console.warn('Related news failed:', err);
+        $('.related-section').style.display = 'none';
+      }
+    }
+
+    function showNotFound() {
+      $('#loading').style.display = 'none';
+      $('#not-found').style.display = '';
+    }
+
+    load();
+  </script>
+</body>
+</html>

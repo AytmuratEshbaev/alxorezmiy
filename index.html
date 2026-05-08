@@ -20,8 +20,11 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Al-Xorazmiy ixtisoslashtirilgan maktabi">
   <meta name="twitter:description" content="Aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim. Nukus filiali.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ik.imagekit.io" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dark-theme.css">
   <link rel="stylesheet" href="css/responsive.css">
@@ -41,6 +44,8 @@
     }
   }
   </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
@@ -222,6 +227,7 @@
   <script src="js/i18n.js"></script>
   <script src="js/stats.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/hero-particles.js" defer></script>
   <script type="module" src="js/settings-loader.js"></script>
   <script type="module">
     import { subscribeCollection, formatDate } from './js/firestore-helpers.js';
@@ -244,18 +250,20 @@
         return;
       }
       newsGrid.innerHTML = items.map((item, i) => `
-        <div class="card card-hover news-card animate-on-scroll animate-delay-${i + 1}">
+        <a href="news/${item.id}" class="card card-hover news-card animate-on-scroll animate-delay-${i + 1}" style="text-decoration:none;color:inherit;display:block;padding:0;overflow:hidden;">
           <div class="card-img">
             <img src="${window.transformImage ? window.transformImage(item.image, { width: 600 }) : item.image}" alt="${escapeHtml(window.getLocalizedField(item, 'title'))}" loading="lazy" onerror="this.style.display='none'">
           </div>
-          <div class="card-meta">
-            <span class="card-category">${catLabels[item.category] || item.category}</span>
-            <span class="card-date">${formatDate(item.createdAt)}</span>
+          <div class="news-card-body" style="padding:var(--space-lg);">
+            <div class="card-meta">
+              <span class="card-category">${catLabels[item.category] || item.category}</span>
+              <span class="card-date">${formatDate(item.createdAt)}</span>
+            </div>
+            <h3>${escapeHtml(window.getLocalizedField(item, 'title'))}</h3>
+            <p>${escapeHtml((window.getLocalizedField(item, 'content') || '').substring(0, 100))}...</p>
+            <span class="read-more" data-i18n="common.read_more">Batafsil →</span>
           </div>
-          <h3><a href="news.html">${escapeHtml(window.getLocalizedField(item, 'title'))}</a></h3>
-          <p>${escapeHtml((window.getLocalizedField(item, 'content') || '').substring(0, 100))}...</p>
-          <a href="news.html" class="read-more" data-i18n="common.read_more">Batafsil →</a>
-        </div>
+        </a>
       `).join('');
       newsGrid.querySelectorAll('.animate-on-scroll').forEach(el => {
         const obs = new IntersectionObserver((entries) => {

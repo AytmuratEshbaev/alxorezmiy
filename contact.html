@@ -18,9 +18,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Bog'lanish - Al-Xorazmiy ixtisoslashtirilgan maktabi">
   <meta name="twitter:description" content="Maktab bilan bog'lanish: manzil, telefon, email. Xarita va onlayn xabar yuborish formasi.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ik.imagekit.io" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/dark-theme.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
@@ -157,14 +164,25 @@
       btn.innerHTML = '<span class="loading-spinner" style="width:20px;height:20px;border-width:2px;"></span> Yuborilmoqda...';
       btn.disabled = true;
 
+      const data = {
+        name: document.getElementById('contactName').value.trim(),
+        email: document.getElementById('contactEmail').value.trim(),
+        subject: document.getElementById('contactSubject').value.trim(),
+        message: document.getElementById('contactMessage').value.trim()
+      };
+
       try {
-        await addDocument('messages', {
-          name: document.getElementById('contactName').value.trim(),
-          email: document.getElementById('contactEmail').value.trim(),
-          subject: document.getElementById('contactSubject').value.trim(),
-          message: document.getElementById('contactMessage').value.trim(),
-          read: false
-        });
+        // 1. Firestore'ga yozish (asosiy — admin paneldan ko'rish uchun)
+        await addDocument('messages', { ...data, read: false });
+
+        // 2. Email yuborish (qo'shimcha — admin emailga darhol)
+        // Email muvaffaqiyatsiz bo'lsa ham, xabar Firestore'da qoladi.
+        fetch('/api/send-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        }).catch(err => console.warn('Email notification failed:', err));
+
         showToast('Xabaringiz muvaffaqiyatli yuborildi!', 'success');
         this.reset();
       } catch (err) {

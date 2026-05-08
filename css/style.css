@@ -3,7 +3,8 @@
    v2.0 — Dark-first, geometric, premium
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Fonts loaded via <link> in HTML head for performance.
+   See preconnect hints in each public HTML page. */
 
 /* ── DESIGN TOKENS (light defaults; dark overrides in dark-theme.css) ── */
 :root {
@@ -391,7 +392,10 @@ p { color: var(--text-mid); line-height: 1.65; }
   50% { transform: translate(30px, -20px) scale(1.05); }
   100% { transform: translate(-20px, 30px) scale(0.95); }
 }
-.hero-content { position: relative; z-index: 2; color: white; max-width: 820px; }
+.hero-canvas { position: absolute; inset: 0; z-index: 0; pointer-events: auto; }
+.hero-content { position: relative; z-index: 2; color: white; max-width: 820px; pointer-events: auto; }
+.hero > .container { position: relative; z-index: 2; pointer-events: none; }
+.hero > .container * { pointer-events: auto; }
 .hero-eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 500;
