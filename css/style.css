@@ -286,15 +286,22 @@ p { color: var(--text-mid); line-height: 1.65; }
 }
 .navbar.scrolled { border-bottom-color: var(--border-subtle); box-shadow: 0 1px 0 var(--border-subtle); }
 .navbar .container { display: flex; align-items: center; justify-content: space-between; height: 100%; }
-.navbar-logo { display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-weight: 700; font-size: 1.0625rem; color: var(--text-hi); letter-spacing: -0.02em; }
-.navbar-logo > div:first-child {
-  width: 40px !important; height: 40px !important;
-  background: var(--brand-gradient) !important;
-  border-radius: var(--r-md) !important;
-  font-family: var(--font-display) !important; font-weight: 800 !important;
-  box-shadow: 0 4px 14px rgba(99,102,241,.3);
+.navbar-logo { display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-weight: 700; font-size: 1.0625rem; color: var(--text-hi); letter-spacing: -0.02em; transition: opacity var(--t-fast); }
+.navbar-logo:hover { opacity: 0.85; }
+.navbar-logo-icon {
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: #FFFFFF;
+  border-radius: var(--r-md);
+  padding: 5px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0,0,0,.12), inset 0 0 0 1px rgba(0,0,0,.04);
+  transition: transform var(--t-base) var(--ease-spring), box-shadow var(--t-base);
 }
-.navbar-logo small { display: block; font-size: 0.6875rem; font-weight: 400; color: var(--text-lo); margin-top: 1px; font-family: var(--font-mono); }
+.navbar-logo:hover .navbar-logo-icon { transform: scale(1.05); box-shadow: 0 6px 20px rgba(99,102,241,.25), inset 0 0 0 1px rgba(99,102,241,.15); }
+.navbar-logo-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.navbar-logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+.navbar-logo small { display: block; font-size: 0.6875rem; font-weight: 400; color: var(--text-lo); margin-top: 2px; font-family: var(--font-mono); letter-spacing: 0; }
 
 .nav-links { display: flex; align-items: center; gap: 2px; }
 .nav-links a {
