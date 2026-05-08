@@ -2,47 +2,47 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://alxorezmiy.vercel.app/</loc>
+    <loc>https://alxorezmiy.uz/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://alxorezmiy.vercel.app/about</loc>
+    <loc>https://alxorezmiy.uz/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://alxorezmiy.vercel.app/directions</loc>
+    <loc>https://alxorezmiy.uz/directions</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://alxorezmiy.vercel.app/teachers</loc>
+    <loc>https://alxorezmiy.uz/teachers</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://alxorezmiy.vercel.app/news</loc>
+    <loc>https://alxorezmiy.uz/news</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://alxorezmiy.vercel.app/gallery</loc>
+    <loc>https://alxorezmiy.uz/gallery</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://alxorezmiy.vercel.app/admission</loc>
+    <loc>https://alxorezmiy.uz/admission</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://alxorezmiy.vercel.app/faq</loc>
+    <loc>https://alxorezmiy.uz/faq</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://alxorezmiy.vercel.app/contact</loc>
+    <loc>https://alxorezmiy.uz/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

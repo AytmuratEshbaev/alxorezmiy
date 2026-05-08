@@ -9,8 +9,8 @@ const IMAGEKIT_CONFIG = {
   publicKey: 'public_x51JCtOf+YDQs1gkCLzSCtog9O4=',
   urlEndpoint: 'https://ik.imagekit.io/alxorezmiy',
   // Auth endpoint Vercel'da joylashgan. Local dev (npx serve) va
-  // production (alxorezmiy.vercel.app) uchun bir xil URL ishlaydi.
-  authEndpoint: 'https://alxorezmiy.vercel.app/api/imagekit-auth'
+  // production (alxorezmiy.uz) uchun bir xil URL ishlaydi.
+  authEndpoint: 'https://alxorezmiy.uz/api/imagekit-auth'
 };
 
 /**
