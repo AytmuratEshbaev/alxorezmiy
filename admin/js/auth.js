@@ -8,7 +8,7 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
-// firebase-config.js modulini kutamiz (modul scriptlar tartib bilan ishga tushadi)
+// firebase-config.js modulini kutamiz
 function waitForFirebase() {
   return new Promise((resolve) => {
     if (window.firebase?.auth) return resolve(window.firebase);
@@ -23,25 +23,67 @@ function waitForFirebase() {
 
 const { auth } = await waitForFirebase();
 
-// cleanUrls (vercel.json) tufayli pathname /admin/login yoki /admin/login.html
-// bo'lishi mumkin — ikkalasini ham qabul qilamiz
 const isLoginPage = /\/login(\.html)?\/?$/.test(window.location.pathname);
 
-// ── Auth Guard: kirmagan foydalanuvchini login'ga yo'naltirish ──
-onAuthStateChanged(auth, (user) => {
-  if (!user && !isLoginPage) {
-    window.location.href = 'login.html';
-  } else if (user && isLoginPage) {
-    window.location.href = 'index.html';
+console.log('[auth] init:', { pathname: window.location.pathname, isLoginPage });
+
+let redirected = false;
+function safeRedirect(target) {
+  if (redirected) return;
+  redirected = true;
+  console.log('[auth] redirect →', target);
+  window.location.replace(target);
+}
+
+// Avval — auth state'ni TO'LIQ kutamiz (Firebase v10+ rasmiy metodi)
+// Bu IndexedDB'dan local sessiyani o'qishini kutadi.
+async function getAuthState() {
+  if (typeof auth.authStateReady === 'function') {
+    await auth.authStateReady();
+  } else {
+    // Fallback: birinchi onAuthStateChanged event'ini kutamiz
+    await new Promise((resolve) => {
+      const unsub = onAuthStateChanged(auth, () => {
+        unsub();
+        resolve();
+      });
+    });
   }
-  // Foydalanuvchi ma'lumotini UI'ga to'ldirish
-  if (user && !isLoginPage) {
-    const userNameEl = document.querySelector('.user-name');
-    const userRoleEl = document.querySelector('.user-role');
-    const userAvatarEl = document.querySelector('.user-avatar');
-    if (userNameEl) userNameEl.textContent = user.displayName || user.email.split('@')[0];
-    if (userRoleEl) userRoleEl.textContent = 'Admin';
-    if (userAvatarEl) userAvatarEl.textContent = (user.displayName || user.email)[0].toUpperCase();
+  return auth.currentUser;
+}
+
+// ── Auth Guard ──
+const initialUser = await getAuthState();
+console.log('[auth] initial user:', initialUser ? initialUser.email : 'null');
+
+if (!initialUser && !isLoginPage) {
+  safeRedirect('/admin/login');
+} else if (initialUser && isLoginPage) {
+  safeRedirect('/admin/index');
+}
+
+// User ma'lumotini UI'ga to'ldirish (initial)
+function fillUserUI(user) {
+  if (!user) return;
+  const userNameEl = document.querySelector('.user-name');
+  const userRoleEl = document.querySelector('.user-role');
+  const userAvatarEl = document.querySelector('.user-avatar');
+  if (userNameEl) userNameEl.textContent = user.displayName || user.email.split('@')[0];
+  if (userRoleEl) userRoleEl.textContent = 'Admin';
+  if (userAvatarEl) userAvatarEl.textContent = (user.displayName || user.email)[0].toUpperCase();
+}
+fillUserUI(initialUser);
+
+// Live state changes (login/logout boshqa tabda) — keyin
+onAuthStateChanged(auth, (user) => {
+  console.log('[auth] state changed:', user ? user.email : 'logged out');
+  fillUserUI(user);
+
+  // Faqat HOLAT O'ZGARGANDA redirect (initial state'da emas)
+  if (!user && !isLoginPage) {
+    safeRedirect('/admin/login');
+  } else if (user && isLoginPage) {
+    safeRedirect('/admin/index');
   }
 });
 
@@ -65,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        // Muvaffaqiyat — onAuthStateChanged index.html'ga yo'naltiradi
+        // Muvaffaqiyat — onAuthStateChanged dashboard'ga yo'naltiradi
       } catch (err) {
         console.error('Login xatosi:', err.code, err.message);
         if (loginError) {
@@ -94,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       try {
         await signOut(auth);
-        window.location.href = 'login.html';
+        window.location.replace('/admin/login');
       } catch (err) {
         console.error('Logout xatosi:', err);
       }
@@ -102,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Sidebar toggle (admin layout uchun)
+// Sidebar toggle
 window.toggleSidebar = function () {
   document.querySelector('.sidebar')?.classList.toggle('active');
 };
