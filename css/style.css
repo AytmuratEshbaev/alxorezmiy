@@ -232,10 +232,18 @@ p { color: var(--text-mid); line-height: 1.65; }
 }
 .btn-secondary:hover { border-color: var(--brand-1); color: var(--brand-1); transform: translateY(-1px); }
 .btn-ghost {
-  background: transparent; color: var(--text-hi);
-  border-color: rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: #FFFFFF;
+  border-color: rgba(255,255,255,.20);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
-.btn-ghost:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.28); }
+.btn-ghost:hover {
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.40);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
 .btn-danger { background: var(--danger); color: white; }
 .btn-danger:hover { background: #DC2626; }
 .btn-sm { padding: 9px 18px; font-size: 0.875rem; }
