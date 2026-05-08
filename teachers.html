@@ -73,9 +73,10 @@
         <!-- Filled by JS -->
       </div>
       
-      <div id="noResults" class="hidden" style="text-align:center;padding:var(--space-3xl) 0;color:var(--text-tertiary);">
-        <div style="font-size:3rem;margin-bottom:var(--space-md);">🔍</div>
+      <div id="noResults" class="empty-state hidden">
+        <div class="empty-state-icon">🔍</div>
         <h3 data-i18n="common.no_results">Natija topilmadi</h3>
+        <p>Boshqa kalit so'z bilan qidirib ko'ring yoki barcha o'qituvchilarni ko'ring.</p>
       </div>
     </div>
   </section>
@@ -260,8 +261,22 @@
 
     window.onLanguageChange = renderTeachers;
 
+    function showSkeletons() {
+      grid.innerHTML = Array(8).fill(0).map(() => `
+        <div class="skeleton-card" style="text-align:center;">
+          <div class="skeleton-circle"></div>
+          <div class="skeleton-line" style="height:14px;width:70%;margin:0 auto 8px;"></div>
+          <div class="skeleton-line short" style="height:10px;width:50%;margin:0 auto;"></div>
+          <div style="display:flex;gap:6px;justify-content:center;margin-top:12px;">
+            <div class="skeleton-line" style="height:18px;width:60px;border-radius:9px;"></div>
+            <div class="skeleton-line" style="height:18px;width:80px;border-radius:9px;"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94A3B8;">Yuklanmoqda...</div>';
+      showSkeletons();
       await subscribeCollection('teachers', (items) => {
         items.sort((a, b) => (a.name_uz || '').localeCompare(b.name_uz || '', 'uz'));
         allTeachers = items;

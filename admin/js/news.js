@@ -18,6 +18,11 @@ let editingId = null;
 let unsubscribe = null;
 let uploadedImage = null; // { url, fileId, name }
 
+// Filter state
+let searchQuery = '';
+let filterCategory = 'all';
+let filterStatus = 'all';
+
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
@@ -38,10 +43,15 @@ function toast(message, type = 'success') {
 
 // ── Confirm modal (oddiy) ──
 function confirmAction(message) {
-  return new Promise((resolve) => {
-    const ok = window.confirm(message);
-    resolve(ok);
-  });
+  if (typeof window.confirmDialog === 'function') {
+    return window.confirmDialog({
+      title: "O'chirish",
+      message,
+      confirmText: "Ha, o'chirish",
+      danger: true
+    });
+  }
+  return Promise.resolve(window.confirm(message));
 }
 
 // ── Jadvalni render qilish ──
@@ -57,10 +67,35 @@ function renderTable() {
     return;
   }
 
+  // Apply filters
+  let filtered = allNews;
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(n => {
+      const title = (n.title_uz || '').toLowerCase();
+      const content = (n.content_uz || '').toLowerCase();
+      return title.includes(q) || content.includes(q);
+    });
+  }
+  if (filterCategory !== 'all') {
+    filtered = filtered.filter(n => n.category === filterCategory);
+  }
+  if (filterStatus !== 'all') {
+    filtered = filtered.filter(n => n.status === filterStatus);
+  }
+
+  if (!filtered.length) {
+    tbody.innerHTML = `
+      <tr><td colspan="6" style="text-align:center;padding:40px;color:#94A3B8;">
+        🔍 Filter shartlariga mos yangilik topilmadi
+      </td></tr>`;
+    return;
+  }
+
   const catLabels = { events: 'Tadbir', announcements: "E'lon" };
   const statusLabels = { published: 'Nashr etilgan', draft: 'Qoralama' };
 
-  tbody.innerHTML = allNews.map(n => `
+  tbody.innerHTML = filtered.map(n => `
     <tr>
       <td style="width:60px;">
         ${n.image
@@ -260,6 +295,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Modal backdrop'ga bosib yopish
   $('#newsModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'newsModal') closeModal();
+  });
+
+  // Search & filters
+  $('#newsSearch')?.addEventListener('input', (e) => {
+    searchQuery = e.target.value.trim();
+    renderTable();
+  });
+  $('#newsFilterCategory')?.addEventListener('change', (e) => {
+    filterCategory = e.target.value;
+    renderTable();
+  });
+  $('#newsFilterStatus')?.addEventListener('change', (e) => {
+    filterStatus = e.target.value;
+    renderTable();
   });
 
   // Real-time subscription

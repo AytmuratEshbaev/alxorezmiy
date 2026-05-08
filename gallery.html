@@ -145,8 +145,14 @@
       }
     });
 
+    function showSkeletons() {
+      grid.innerHTML = Array(9).fill(0).map(() => `
+        <div class="skeleton" style="aspect-ratio:4/3;border-radius:var(--r-md);"></div>
+      `).join('');
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
-      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94A3B8;padding:60px;">Yuklanmoqda...</p>';
+      showSkeletons();
       await subscribeCollection('gallery', (items) => {
         allPhotos = items;
         renderGallery();

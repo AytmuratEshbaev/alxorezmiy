@@ -110,7 +110,7 @@ async function markRead(id, read) {
 }
 
 async function handleDelete(id) {
-  if (!window.confirm("Xabarni butunlay o'chirmoqchimisiz?")) return;
+  if (!await window.confirmDialog({ title: "O\'chirish", message: "Xabarni butunlay o'chirmoqchimisiz?", confirmText: "Ha, o\'chirish", danger: true })) return;
   try {
     await deleteDocument(COLLECTION, id);
     toast("Xabar o'chirildi", 'success');

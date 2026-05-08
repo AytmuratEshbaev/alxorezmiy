@@ -153,7 +153,7 @@ async function handleSave(e) {
 async function handleDelete(id) {
   const item = allItems.find(x => x.id === id);
   if (!item) return;
-  if (!window.confirm(`"${item.student}" natijasini o'chirmoqchimisiz?`)) return;
+  if (!await window.confirmDialog({ title: "O\'chirish", message: `"${item.student}" natijasini o'chirmoqchimisiz?`, confirmText: "Ha, o\'chirish", danger: true })) return;
   try {
     await deleteDocument(COLLECTION, id);
     toast("Natija o'chirildi", 'success');

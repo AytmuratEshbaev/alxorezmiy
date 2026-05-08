@@ -17,6 +17,10 @@ let editingId = null;
 let unsubscribe = null;
 let uploadedPhoto = null;
 
+// Filter state
+let searchQuery = '';
+let filterCategory = 'all';
+
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
@@ -52,7 +56,29 @@ function renderTable() {
     return;
   }
 
-  tbody.innerHTML = allTeachers.map(t => {
+  // Filter
+  let filtered = allTeachers;
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(t => {
+      const name = (t.name_uz || '').toLowerCase();
+      const subject = (t.subject || '').toLowerCase();
+      return name.includes(q) || subject.includes(q);
+    });
+  }
+  if (filterCategory !== 'all') {
+    filtered = filtered.filter(t => t.category === filterCategory);
+  }
+
+  if (!filtered.length) {
+    tbody.innerHTML = `
+      <tr><td colspan="7" style="text-align:center;padding:40px;color:#94A3B8;">
+        🔍 Filter shartlariga mos o'qituvchi topilmadi
+      </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(t => {
     const achCount = Array.isArray(t.achievements) ? t.achievements.length : 0;
     return `
     <tr>
@@ -253,7 +279,7 @@ async function handleSave(e) {
 async function handleDelete(id) {
   const item = allTeachers.find(t => t.id === id);
   if (!item) return;
-  if (!window.confirm(`"${item.name_uz}" o'qituvchisini o'chirmoqchimisiz?`)) return;
+  if (!await window.confirmDialog({ title: "O\'chirish", message: `"${item.name_uz}" o'qituvchisini o'chirmoqchimisiz?`, confirmText: "Ha, o\'chirish", danger: true })) return;
 
   try {
     await deleteDocument(COLLECTION, id);
@@ -285,6 +311,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('#addAchievementBtn')?.addEventListener('click', () => addAchievementRow());
   $('#teacherModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'teacherModal') closeModal();
+  });
+
+  // Search & filters
+  $('#teacherSearch')?.addEventListener('input', (e) => {
+    searchQuery = e.target.value.trim();
+    renderTable();
+  });
+  $('#teacherFilterCategory')?.addEventListener('change', (e) => {
+    filterCategory = e.target.value;
+    renderTable();
   });
 
   unsubscribe = await subscribeCollection(COLLECTION, (items) => {

@@ -84,6 +84,19 @@
               Qo'shish
             </button>
           </div>
+          <div class="admin-toolbar" style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+            <div style="position:relative;flex:1;min-width:240px;max-width:400px;">
+              <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94A3B8;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="teacherSearch" class="form-control" placeholder="F.I.O. yoki fan bo'yicha qidirish..." style="padding-left:40px;">
+            </div>
+            <select class="form-control" id="teacherFilterCategory" style="max-width:200px;">
+              <option value="all">Barcha toifa</option>
+              <option value="Mutaxasis">Mutaxasis</option>
+              <option value="2-toifa">2-toifa</option>
+              <option value="1-toifa">1-toifa</option>
+              <option value="Oliy">Oliy</option>
+            </select>
+          </div>
           <div class="table-responsive">
             <table class="admin-table">
               <thead>
@@ -216,6 +229,7 @@
 
   <script type="module" src="../js/firebase-config.js"></script>
   <script type="module" src="../js/imagekit-upload.js"></script>
+  <script src="js/confirm-dialog.js"></script>
   <script type="module" src="js/auth.js"></script>
   <script type="module" src="js/teachers.js"></script>
 </body>
