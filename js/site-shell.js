@@ -40,7 +40,7 @@
     return `
     <nav class="navbar" id="navbar">
       <div class="container flex-between">
-        <a href="index.html" class="navbar-logo">
+        <a href="index.html" class="navbar-logo" aria-label="Al-Xorazmiy maktabi — bosh sahifa">
           <div style="width:42px;height:42px;background:linear-gradient(135deg,#1F4E79,#2E75B6);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.1rem;">AX</div>
           <span>Al-Xorazmiy<small data-i18n="hero.subtitle">Nukus filiali</small></span>
         </a>
@@ -121,6 +121,10 @@
               <li><a href="contact.html" data-i18n="nav.contact">Kontakt</a></li>
             </ul>
           </div>
+        </div>
+        <div class="footer-official-name" id="footer-official-name" style="margin-bottom:var(--s-5);padding-top:var(--s-5);border-top:1px solid rgba(255,255,255,0.06);text-align:center;display:none;">
+          <span style="font-family:var(--font-mono);font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,.4);display:block;margin-bottom:6px;">Rasmiy nom</span>
+          <p data-setting="full-name" style="font-size:0.8125rem;line-height:1.5;color:rgba(255,255,255,.55);max-width:900px;margin:0 auto;"></p>
         </div>
         <div class="footer-bottom">
           <span data-i18n="footer.copyright">© 2026 Al-Xorazmiy ixtisoslashtirilgan maktabi. Barcha huquqlar himoyalangan.</span>

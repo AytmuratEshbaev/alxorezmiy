@@ -41,8 +41,41 @@ function applySettings(s) {
   const lang = localStorage.getItem('lang') || 'uz';
   const fullName = s[`fullName_${lang}`] || s.fullName_uz;
   const shortName = s[`shortName_${lang}`] || s.shortName_uz;
-  if (fullName) setText('full-name', fullName);
-  if (shortName) setText('short-name', shortName);
+
+  if (fullName) {
+    document.querySelectorAll('[data-setting="full-name"]').forEach(el => {
+      el.textContent = fullName;
+      // Parent containerlarni ko'rsatish (agar yashirilgan bo'lsa)
+      const card = el.closest('#official-name-card, #footer-official-name');
+      if (card) card.style.display = '';
+    });
+
+    // Schema.org JSON-LD'ni yangilash (browser ko'rinishi uchun)
+    updateSchemaOrg(fullName, shortName);
+  }
+  if (shortName) {
+    setText('short-name', shortName);
+  }
+
+  // Browser tab title — short name'ni qo'shish (i18n title bor bo'lsa qo'shimcha)
+  if (shortName && document.title && !document.title.includes(shortName) && !document.title.includes('Al-Xorazmiy')) {
+    document.title = `${document.title} | ${shortName}`;
+  }
+}
+
+function updateSchemaOrg(fullName, shortName) {
+  const ld = document.querySelector('script[type="application/ld+json"]');
+  if (!ld) return;
+  try {
+    const data = JSON.parse(ld.textContent);
+    if (data['@type'] === 'EducationalOrganization') {
+      data.name = fullName;
+      if (shortName) data.alternateName = shortName;
+      ld.textContent = JSON.stringify(data, null, 2);
+    }
+  } catch (e) {
+    // ignore parse errors
+  }
 }
 
 function setText(key, value) {
@@ -93,5 +126,10 @@ async function loadAndApply() {
 window.applySettings = () => {
   if (cached) applySettings(cached);
 };
+
+// i18n.js custom event yuborganda til o'zgarsa — settings'ni qayta qo'llaymiz
+window.addEventListener('langchange', () => {
+  if (cached) applySettings(cached);
+});
 
 document.addEventListener('DOMContentLoaded', loadAndApply);

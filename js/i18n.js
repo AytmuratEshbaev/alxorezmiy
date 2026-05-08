@@ -75,7 +75,9 @@ const I18n = (function() {
 
   function setLanguage(lang) {
     loadLanguage(lang);
-    // Reload Firebase content with new language
+    // Custom event — barcha listenerlar (settings-loader, sahifa kodi) eshitsin
+    window.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
+    // Backward-compat: agar sahifa onLanguageChange'ni belgilab qo'ygan bo'lsa
     if (typeof window.onLanguageChange === 'function') {
       window.onLanguageChange(lang);
     }
