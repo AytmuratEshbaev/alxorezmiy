@@ -6,7 +6,8 @@
     { "source": "/news/:id", "destination": "/news-detail.html?id=:id" }
   ],
   "redirects": [
-    { "source": "/admin", "destination": "/admin/login", "permanent": false }
+    { "source": "/admin", "destination": "/admin/login", "permanent": false },
+    { "source": "/admin/", "destination": "/admin/login", "permanent": false }
   ],
   "headers": [
     {
