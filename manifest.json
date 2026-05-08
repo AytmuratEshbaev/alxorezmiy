@@ -1,18 +1,42 @@
 {
   "name": "Al-Xorazmiy ixtisoslashtirilgan maktabi — Nukus filiali",
   "short_name": "Al-Xorazmiy",
-  "description": "Aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim",
+  "description": "Aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim — Nukus filiali",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#FFFFFF",
+  "orientation": "portrait-primary",
+  "background_color": "#0A0A12",
   "theme_color": "#1F4E79",
   "lang": "uz",
+  "dir": "ltr",
+  "categories": ["education"],
   "icons": [
     {
       "src": "/assets/icons/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Yangiliklar",
+      "short_name": "News",
+      "url": "/news",
+      "icons": [{ "src": "/assets/icons/favicon.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Qabul",
+      "short_name": "Admission",
+      "url": "/admission",
+      "icons": [{ "src": "/assets/icons/favicon.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Bog'lanish",
+      "short_name": "Contact",
+      "url": "/contact",
+      "icons": [{ "src": "/assets/icons/favicon.svg", "sizes": "192x192" }]
     }
   ]
 }

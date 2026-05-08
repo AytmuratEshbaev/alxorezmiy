@@ -2,6 +2,13 @@
 // MAIN.JS — Common Functions
 // ============================================
 
+// ── Service Worker (PWA) ──
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
   // ── Scroll progress bar ──
@@ -69,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── Scroll Animations (Intersection Observer) ──
-  const animatedElements = document.querySelectorAll('.animate-on-scroll');
+  const animatedElements = document.querySelectorAll('.animate-on-scroll, .animate-scale, .animate-slide-left, .animate-slide-right');
   if (animatedElements.length > 0) {
     const scrollObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -78,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
           scrollObserver.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
 
     animatedElements.forEach(el => scrollObserver.observe(el));
   }
