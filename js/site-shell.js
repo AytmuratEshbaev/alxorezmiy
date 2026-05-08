@@ -42,7 +42,7 @@
       <div class="container flex-between">
         <a href="index.html" class="navbar-logo" aria-label="Al-Xorazmiy maktabi — bosh sahifa">
           <div style="width:42px;height:42px;background:linear-gradient(135deg,#1F4E79,#2E75B6);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:1.1rem;">AX</div>
-          <span>Al-Xorazmiy<small data-i18n="hero.subtitle">Nukus filiali</small></span>
+          <span>Al-Xorazmiy<small data-i18n="nav.location">Nukus filiali</small></span>
         </a>
         <div class="nav-links">
           ${NAV_ITEMS.map(i => navLinkHtml(i, activeKey)).join('')}
