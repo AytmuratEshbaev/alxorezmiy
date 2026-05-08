@@ -183,8 +183,20 @@
 
     window.onLanguageChange = renderNews;
 
+    function showSkeletons() {
+      grid.innerHTML = Array(6).fill(0).map(() => `
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-line short" style="height:10px;width:30%;"></div>
+          <div class="skeleton-line" style="height:18px;margin-top:10px;"></div>
+          <div class="skeleton-line medium" style="margin-top:6px;"></div>
+          <div class="skeleton-line short" style="margin-top:6px;width:40%;"></div>
+        </div>
+      `).join('');
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94A3B8;">Yuklanmoqda...</div>';
+      showSkeletons();
       await subscribeCollection('news', (items) => {
         allNews = items;
         renderNews();

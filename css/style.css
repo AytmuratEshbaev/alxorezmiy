@@ -990,6 +990,35 @@ tbody tr:hover { background: var(--brand-gradient-soft); }
   box-shadow: 0 0 12px rgba(99,102,241,.5);
 }
 
+/* ── ACCESSIBILITY ── */
+/* Visible focus for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--brand-1);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* Remove for mouse users */
+:focus:not(:focus-visible) { outline: none; }
+
+/* Skip link */
+.skip-link {
+  position: absolute; top: -40px; left: 12px;
+  background: var(--brand-1); color: white;
+  padding: 10px 16px; border-radius: var(--r-md);
+  z-index: 9999; font-weight: 600;
+  transition: top var(--t-fast);
+}
+.skip-link:focus { top: 12px; }
+
+/* High-contrast support */
+@media (prefers-contrast: more) {
+  :root { --border: #94A3B8; --text-mid: #1E293B; }
+  [data-theme="dark"] { --border: #94A3B8; --text-mid: #E2E8F0; }
+}
+
+/* Better contrast for body text */
+.section p, .news-card p, .footer-about p { color: var(--text-mid); }
+
 /* ── REDUCED MOTION ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

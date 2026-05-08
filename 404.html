@@ -22,14 +22,38 @@
   <div id="navbar-mount"></div>
   <div id="mobile-nav-mount"></div>
 
-  <section style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:var(--space-3xl) var(--space-md);text-align:center;">
-    <div class="container" style="max-width:600px;">
-      <div style="font-size:8rem;font-weight:800;background:linear-gradient(135deg,#1F4E79,#2E75B6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:var(--space-md);">404</div>
-      <h1 style="margin-bottom:var(--space-md);">Sahifa topilmadi</h1>
-      <p style="font-size:1.1rem;margin-bottom:var(--space-xl);">Siz qidirgan sahifa mavjud emas yoki ko'chirilgan bo'lishi mumkin.</p>
-      <div style="display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap;">
-        <a href="/" class="btn btn-primary btn-lg">🏠 Bosh sahifaga</a>
-        <a href="/contact" class="btn btn-secondary btn-lg">📞 Bog'lanish</a>
+  <section style="min-height:90vh;display:flex;align-items:center;justify-content:center;padding:var(--s-12) var(--s-4);text-align:center;position:relative;overflow:hidden;">
+    <div aria-hidden="true" style="position:absolute;inset:0;z-index:-1;
+      background:radial-gradient(ellipse at top,rgba(167,139,250,.18) 0%,transparent 50%),
+                 radial-gradient(ellipse at bottom,rgba(129,140,248,.16) 0%,transparent 50%);
+      opacity:0.6;"></div>
+    <div aria-hidden="true" style="position:absolute;inset:0;z-index:-1;
+      background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:48px 48px;
+      mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);"></div>
+
+    <div class="container" style="max-width:640px;position:relative;">
+      <div style="font-family:var(--font-display);font-size:clamp(6rem,16vw,11rem);font-weight:800;
+                  background:var(--brand-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+                  line-height:.9;margin-bottom:var(--s-6);letter-spacing:-.05em;
+                  animation:float 6s ease-in-out infinite;">404</div>
+      <span class="hero-eyebrow" style="display:inline-flex;margin-bottom:var(--s-4);">Sahifa topilmadi</span>
+      <h1 style="margin-bottom:var(--s-4);font-size:clamp(1.5rem,3vw,2.25rem);">Yo'qolib qoldingiz</h1>
+      <p style="font-size:1.0625rem;margin-bottom:var(--s-8);color:var(--text-mid);line-height:1.6;">
+        Siz qidirgan sahifa mavjud emas, o'chirilgan, yoki manzili o'zgartirilgan bo'lishi mumkin.
+      </p>
+      <div style="display:flex;gap:var(--s-3);justify-content:center;flex-wrap:wrap;">
+        <a href="/" class="btn btn-primary btn-lg">← Bosh sahifaga</a>
+        <a href="/contact" class="btn btn-ghost btn-lg" style="color:var(--text-hi);border-color:var(--border);">Bog'lanish</a>
+      </div>
+      <div style="margin-top:var(--s-12);padding-top:var(--s-6);border-top:1px solid var(--border-subtle);">
+        <p style="font-size:0.875rem;color:var(--text-lo);margin-bottom:var(--s-3);">Yoki bu sahifalarga o'ting:</p>
+        <div style="display:flex;gap:var(--s-4);justify-content:center;flex-wrap:wrap;">
+          <a href="/about" style="font-size:0.9375rem;color:var(--brand-1);text-decoration:none;">Maktab haqida</a>
+          <a href="/teachers" style="font-size:0.9375rem;color:var(--brand-1);text-decoration:none;">O'qituvchilar</a>
+          <a href="/news" style="font-size:0.9375rem;color:var(--brand-1);text-decoration:none;">Yangiliklar</a>
+          <a href="/admission" style="font-size:0.9375rem;color:var(--brand-1);text-decoration:none;">Qabul</a>
+        </div>
       </div>
     </div>
   </section>
