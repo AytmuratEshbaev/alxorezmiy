@@ -891,15 +891,18 @@ em, i { font-style: italic; }
 
 /* Dropdown parent — caret indicator */
 .nav-item-has-children { position: relative; }
+.nav-item-has-children > a { gap: 6px; padding-right: 12px; }
 .nav-caret {
   transition: transform var(--t-base) var(--ease-out);
-  margin-top: 1px;
-  opacity: .7;
+  margin-top: 2px;
+  opacity: .85;
+  flex-shrink: 0;
 }
 .nav-item-has-children:hover .nav-caret,
 .nav-item-has-children:focus-within .nav-caret {
   transform: rotate(180deg);
   opacity: 1;
+  color: var(--amber-2);
 }
 
 /* Dropdown panel */
