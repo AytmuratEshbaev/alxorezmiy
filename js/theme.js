@@ -8,8 +8,8 @@
   function getPreferredTheme() {
     const saved = localStorage.getItem(THEME_KEY);
     if (saved) return saved;
-    // Midnight Math: dark-first default. System preference still respected.
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    // Geometry of Knowledge: paper-first default. System dark preference still respected.
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
   function setTheme(theme) {

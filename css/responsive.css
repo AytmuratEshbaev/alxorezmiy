@@ -1,6 +1,6 @@
-/* ============================================
-   RESPONSIVE — Midnight Math
-   ============================================ */
+/* ════════════════════════════════════════════════════════════════════
+   RESPONSIVE — Geometry of Knowledge
+   ════════════════════════════════════════════════════════════════════ */
 
 /* ── Tablet (1024px) ── */
 @media (max-width: 1024px) {
@@ -14,13 +14,13 @@
   .hamburger { display: flex; }
   .stepper { flex-wrap: wrap; gap: var(--s-4); }
   .step:not(:last-child)::after { display: none; }
-  .page-header { padding: var(--s-16) 0 var(--s-12); }
+  .page-header { padding: calc(var(--navbar-h) + var(--s-12)) 0 var(--s-10); }
 }
 
 /* ── Mobile Nav ── */
 .mobile-nav {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(10, 10, 18, .95);
+  background: rgba(20, 17, 12, .95);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   z-index: 999;
@@ -29,24 +29,27 @@
   opacity: 0; visibility: hidden; pointer-events: none;
   transition: opacity 0.32s var(--ease-out), visibility 0.32s;
   padding-top: var(--navbar-h);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%23B5803A' stroke-width='.5' opacity='.4'><path d='M60 8 L72 48 L112 60 L72 72 L60 112 L48 72 L8 60 L48 48 Z'/><circle cx='60' cy='60' r='3'/></g></svg>");
+  background-size: 120px 120px;
+  background-blend-mode: overlay;
 }
 .mobile-nav.active { opacity: 1; visibility: visible; pointer-events: auto; }
 .mobile-nav a {
-  padding: 14px 32px; font-size: 1.25rem; font-weight: 600;
-  color: rgba(255,255,255,.85);
+  padding: 14px 32px;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: rgba(245,241,232,.85);
   font-family: var(--font-display);
+  font-variation-settings: "opsz" 48, "SOFT" 30;
   border-radius: var(--r-md);
   transition: all var(--t-fast);
   width: 84%; max-width: 360px; text-align: center;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out), background var(--t-fast), color var(--t-fast);
 }
-.mobile-nav.active a {
-  opacity: 1;
-  transform: translateY(0);
-}
+.mobile-nav.active a { opacity: 1; transform: translateY(0); }
 .mobile-nav.active a:nth-child(1) { transition-delay: 0.05s; }
 .mobile-nav.active a:nth-child(2) { transition-delay: 0.08s; }
 .mobile-nav.active a:nth-child(3) { transition-delay: 0.11s; }
@@ -57,53 +60,66 @@
 .mobile-nav.active a:nth-child(8) { transition-delay: 0.26s; }
 .mobile-nav.active a:nth-child(9) { transition-delay: 0.29s; }
 .mobile-nav a:hover, .mobile-nav a.active {
-  background: var(--brand-gradient-soft);
-  color: white;
+  color: var(--ochre);
 }
 
 /* ── Mobile (768px) ── */
 @media (max-width: 768px) {
   html { font-size: 15px; }
+  body { font-size: 16px; }
   .section { padding: var(--s-16) 0; }
-  .section-header { margin-bottom: var(--s-10); }
+  .section-header { margin-bottom: var(--s-12); }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: var(--s-8); }
   .footer-bottom { flex-direction: column; gap: var(--s-2); text-align: center; }
-  .hero { min-height: 70vh; padding: var(--s-12) 0; }
-  .hero h1 { font-size: clamp(2rem, 8vw, 3.25rem); }
+  .hero { min-height: 78vh; padding: calc(var(--navbar-h) + var(--s-8)) 0 var(--s-12); }
+  .hero h1 { font-size: clamp(2.25rem, 9vw, 3.5rem); }
   .hero-content p { font-size: 1.0625rem; }
   .hero-actions { flex-direction: column; align-items: stretch; }
   .hero-actions .btn { width: 100%; justify-content: center; }
-  .stat-card { padding: var(--s-4); text-align: center; }
-  .page-header { padding: var(--s-12) 0 var(--s-8); }
+  .hero::after { display: none; }
+  .stat-card { padding: var(--s-5) 0; }
+  .stat-number { font-size: 2.75rem; }
+  .page-header { padding: calc(var(--navbar-h) + var(--s-8)) 0 var(--s-8); }
   .carousel-track .card { min-width: 280px; }
   .map-container { height: 320px; }
-  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .modal { width: 95%; padding: var(--s-6); }
-  th, td { padding: 12px; font-size: 0.875rem; }
-  .filter-group { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+  th, td { padding: 10px 12px; font-size: 0.875rem; }
+  .filter-group {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    margin-left: calc(-1 * var(--s-5));
+    margin-right: calc(-1 * var(--s-5));
+    padding-left: var(--s-5);
+    padding-right: var(--s-5);
+  }
   .filter-btn { white-space: nowrap; flex-shrink: 0; }
   .back-to-top { bottom: 20px; right: 20px; width: 44px; height: 44px; }
   .timeline { padding-left: var(--s-8); }
   .timeline::before { left: 10px; }
   .timeline-item::before { left: -29px; width: 10px; height: 10px; }
   .lightbox-prev, .lightbox-next { display: none; }
-  .contact-grid-2 { grid-template-columns: 1fr; }
   .navbar { height: 64px; }
   :root { --navbar-h: 64px; }
+  .navbar-logo-text { font-size: 1.0625rem; }
+  .navbar-logo-text small { font-size: .625rem; }
+  .container { padding: 0 var(--s-5); }
 }
 
 /* ── Small Mobile (480px) ── */
 @media (max-width: 480px) {
   .container { padding: 0 var(--s-4); }
-  h1 { font-size: 1.75rem; }
-  h2 { font-size: 1.5rem; }
-  h3 { font-size: 1.125rem; }
-  .btn { padding: 12px 22px; font-size: 0.9375rem; }
-  .btn-lg { padding: 14px 28px; font-size: 1rem; }
+  .btn { padding: 13px 22px; font-size: 0.9375rem; }
+  .btn-lg { padding: 15px 28px; font-size: 1rem; }
   .card { padding: var(--s-5); }
+  .news-card-body { padding: var(--s-5); }
   .gallery-grid { grid-template-columns: 1fr 1fr; gap: var(--s-2); }
-  .hero-eyebrow { font-size: 0.6875rem; padding: 6px 12px; }
+  .hero-eyebrow { font-size: 0.6875rem; }
+  .section-label { font-size: .75rem; }
 }
 
 /* ── Large Desktop (1400px+) ── */
@@ -114,4 +130,5 @@
 /* ── Ultra-wide (1920px+) ── */
 @media (min-width: 1920px) {
   html { font-size: 17px; }
+  :root { --container-w: 1380px; --container-max: 1380px; }
 }
