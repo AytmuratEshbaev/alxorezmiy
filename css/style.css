@@ -602,19 +602,21 @@ em, i { font-style: italic; }
 /* ─── Hero — Full-bleed photo, huge display heading ─── */
 .hero {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;                    /* navbar floats on top — together = 100vh */
+  max-height: 100vh;
+  min-height: 600px;                /* safety floor for short viewports */
   display: flex;
   align-items: center;
-  padding: calc(var(--navbar-total) + var(--s-12)) 0 var(--s-16);
+  padding: calc(var(--navbar-total) + var(--s-8)) 0 var(--s-10);
   background:
-    linear-gradient(95deg, rgba(13,13,92,.78) 0%, rgba(13,13,92,.55) 35%, rgba(13,13,92,.15) 65%, rgba(13,13,92,0) 100%),
+    linear-gradient(95deg, rgba(13,13,92,.80) 0%, rgba(13,13,92,.55) 38%, rgba(13,13,92,.15) 68%, rgba(13,13,92,0) 100%),
     url('/assets/images/hero.webp') center/cover no-repeat;
   color: #FFFFFF;
   overflow: hidden;
   isolation: isolate;
 }
 .hero .container { position: relative; z-index: 1; }
-.hero-content { max-width: 720px; }
+.hero-content { max-width: 760px; }
 
 /* Eyebrow — simple uppercase text, no pill */
 .hero-eyebrow {
@@ -642,17 +644,22 @@ em, i { font-style: italic; }
   animation: none;
 }
 
-/* Huge uppercase display heading */
+/* Display heading — proportional, fits any title length */
 .hero h1 {
   color: #FFFFFF;
-  font-size: clamp(3rem, 9vw, 7rem);
+  font-size: clamp(2rem, 4.5vw, 3.75rem);
   font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: .94;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
   text-transform: uppercase;
-  margin-bottom: var(--s-8);
+  margin-bottom: var(--s-6);
   text-wrap: balance;
-  text-shadow: 0 2px 24px rgba(0,0,0,.18);
+  text-shadow: 0 2px 24px rgba(0,0,0,.22);
+  /* Cap to 4 lines so very long titles don't push hero past viewport */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .hero h1 .accent {
   color: var(--amber);
@@ -662,13 +669,18 @@ em, i { font-style: italic; }
 .hero h1::after { display: none; }
 
 .hero-content p {
-  font-size: clamp(1.0625rem, 1.3vw, 1.1875rem);
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
   color: rgba(255,255,255,.86);
   max-width: 560px;
   line-height: 1.55;
-  margin-bottom: var(--s-10);
+  margin-bottom: var(--s-8);
   font-weight: 400;
   text-shadow: 0 1px 12px rgba(0,0,0,.2);
+  /* Cap paragraph to 3 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .hero-actions {

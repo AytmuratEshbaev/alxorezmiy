@@ -9,7 +9,7 @@
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: repeat(2, 1fr); gap: var(--s-10); }
-  .hero { min-height: 88vh; }
+  .hero { height: 100vh; max-height: 100vh; min-height: 560px; }
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .btn-nav-cta { display: none; }
@@ -68,9 +68,9 @@
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: var(--s-8); }
   .footer-bottom { flex-direction: column; gap: var(--s-2); text-align: center; }
-  .hero { min-height: 84vh; padding: calc(var(--navbar-total) + var(--s-8)) 0 var(--s-12); }
-  .hero h1 { font-size: clamp(2.5rem, 11vw, 4rem); }
-  .hero-content p { font-size: 1.0625rem; }
+  .hero { height: 100vh; max-height: 100vh; min-height: 520px; padding: calc(var(--navbar-total) + var(--s-6)) 0 var(--s-8); }
+  .hero h1 { font-size: clamp(1.75rem, 6vw, 2.75rem); -webkit-line-clamp: 5; }
+  .hero-content p { font-size: 1rem; -webkit-line-clamp: 2; }
   .hero-actions { flex-direction: column; align-items: stretch; }
   .hero-actions .btn { width: 100%; justify-content: center; }
   .stat-card { padding: var(--s-4) 0; }
