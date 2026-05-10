@@ -97,8 +97,8 @@
           const dx = a.x - b.x, dy = a.y - b.y;
           const d = Math.sqrt(dx * dx + dy * dy);
           if (d < maxDist) {
-            const op = (1 - d / maxDist) * 0.34;
-            ctx.strokeStyle = `rgba(181, 128, 58, ${op})`;
+            const op = (1 - d / maxDist) * 0.32;
+            ctx.strokeStyle = `rgba(245, 158, 11, ${op})`;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -115,7 +115,7 @@
           const d = Math.sqrt(dx * dx + dy * dy);
           if (d < mr) {
             const op = (1 - d / mr) * 0.55;
-            ctx.strokeStyle = `rgba(229, 178, 100, ${op})`;
+            ctx.strokeStyle = `rgba(251, 191, 36, ${op})`;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(this.mouse.x, this.mouse.y);
@@ -124,8 +124,8 @@
         }
       }
 
-      // Particles (dots) — manuscript ochre
-      ctx.fillStyle = 'rgba(229, 200, 140, 0.62)';
+      // Particles (dots) — amber
+      ctx.fillStyle = 'rgba(252, 211, 77, 0.65)';
       for (const p of this.particles) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, this.config.size * this.dpr, 0, Math.PI * 2);

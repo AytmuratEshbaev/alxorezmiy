@@ -38,6 +38,7 @@
 
   function renderNavbar(activeKey) {
     return `
+    <a href="#main-content" class="skip-link">Asosiy mazmunga o'tish</a>
     <nav class="navbar" id="navbar">
       <div class="container flex-between">
         <a href="index.html" class="navbar-logo" aria-label="Al-Xorazmiy maktabi — bosh sahifa">
@@ -153,4 +154,18 @@
   mount('mobile-nav-mount', renderMobileNav(activeKey));
   mount('footer-mount', renderFooter());
   mount('back-to-top-mount', renderBackToTop());
+
+  // Skip-link target: tag the first hero/page-header so keyboard users land in content
+  document.addEventListener('DOMContentLoaded', () => {
+    const target = document.querySelector('.hero, .page-header, main, .content-area');
+    if (target && !document.getElementById('main-content')) {
+      target.id = target.id || 'main-content';
+      if (target.id !== 'main-content') {
+        const anchor = document.createElement('span');
+        anchor.id = 'main-content';
+        anchor.tabIndex = -1;
+        target.parentNode.insertBefore(anchor, target);
+      }
+    }
+  });
 })();
