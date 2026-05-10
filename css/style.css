@@ -606,8 +606,8 @@ em, i { font-style: italic; }
   max-height: 100vh;
   min-height: 600px;                /* safety floor for short viewports */
   display: flex;
-  align-items: flex-start;          /* content sits near top, just below navbar */
-  padding: calc(var(--navbar-total) + var(--s-12)) 0 var(--s-10);
+  align-items: center;              /* visually balanced — content sits at optical center */
+  padding: calc(var(--navbar-total) + var(--s-8)) 0 var(--s-12);
   background:
     linear-gradient(95deg, rgba(13,13,92,.80) 0%, rgba(13,13,92,.55) 38%, rgba(13,13,92,.15) 68%, rgba(13,13,92,0) 100%),
     url('/assets/images/hero.webp') center/cover no-repeat;
@@ -618,39 +618,38 @@ em, i { font-style: italic; }
 .hero .container { position: relative; z-index: 1; }
 .hero-content { max-width: 760px; }
 
-/* Eyebrow — simple uppercase text, no pill */
+/* Eyebrow — uppercase tag tightly bound to the heading */
 .hero-eyebrow {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
   font-family: var(--font-body);
-  font-size: .875rem;
+  font-size: .9375rem;
   letter-spacing: .18em;
-  font-weight: 500;
-  color: #FFFFFF;
-  margin-bottom: var(--s-6);
+  font-weight: 600;
+  color: var(--amber-3);
+  margin-bottom: var(--s-4);
   padding: 0;
   background: none;
   border: none;
   text-transform: uppercase;
-  opacity: .92;
 }
 .hero-eyebrow::before {
   content: "";
   display: inline-block;
-  width: 28px;
-  height: 1px;
+  width: 32px;
+  height: 2px;
   background: var(--amber);
-  vertical-align: middle;
-  margin-right: var(--s-3);
   animation: none;
 }
 
 /* Display heading — proportional, fits long titles fully */
 .hero h1 {
   color: #FFFFFF;
-  font-size: clamp(1.625rem, 3.4vw, 2.875rem);
+  font-size: clamp(1.75rem, 3.6vw, 3rem);
   font-weight: 700;
-  letter-spacing: -0.015em;
-  line-height: 1.18;
+  letter-spacing: -0.02em;
+  line-height: 1.14;
   text-transform: uppercase;
   margin-bottom: var(--s-6);
   text-wrap: balance;
