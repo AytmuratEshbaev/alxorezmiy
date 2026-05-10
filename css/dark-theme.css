@@ -97,7 +97,7 @@
 [data-theme="dark"] .hero {
   background:
     linear-gradient(95deg, rgba(4,4,15,.88) 0%, rgba(4,4,15,.68) 35%, rgba(4,4,15,.30) 65%, rgba(4,4,15,.12) 100%),
-    url('assets/images/hero.webp') center/cover no-repeat;
+    url('/assets/images/hero.webp') center/cover no-repeat;
 }
 [data-theme="dark"] .hero h1 { color: #FFFFFF; }
 [data-theme="dark"] .hero-eyebrow {
