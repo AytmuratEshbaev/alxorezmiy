@@ -836,7 +836,7 @@ em, i { font-style: italic; }
   justify-content: space-between;
   gap: var(--s-3);
   height: 100%;
-  padding: 0 8px 0 12px;
+  padding: 0 8px 0 22px;
 }
 
 /* Logo — bare image, no background ring (light mode) */
