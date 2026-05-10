@@ -932,18 +932,24 @@ em, i { font-style: italic; }
 .lang-dropdown a:hover { background: var(--bg-2); color: var(--ink); }
 .lang-dropdown a.active { background: var(--amber-soft); color: var(--amber-2); font-weight: 500; }
 
-.theme-toggle {
-  width: 36px; height: 36px;
+.theme-toggle,
+.search-trigger {
+  width: 38px; height: 38px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--navy-line);
-  border-radius: var(--r-md);
+  border-radius: 50%;
   color: var(--ink-2);
   background: var(--surface);
-  transition: border-color var(--t-base), color var(--t-base), transform var(--t-base);
+  cursor: pointer;
+  transition: border-color var(--t-base), color var(--t-base), background var(--t-base), transform var(--t-base);
+  padding: 0;
+  flex-shrink: 0;
 }
 .theme-toggle:hover { border-color: var(--navy-line-2); color: var(--amber-2); transform: rotate(-12deg); }
+.search-trigger:hover { border-color: var(--amber); color: var(--amber-2); background: var(--amber-soft); }
+.search-trigger svg { stroke-width: 2.2; }
 
 .hamburger {
   display: none;

@@ -181,11 +181,15 @@ function injectSearchButton() {
   const navActions = document.querySelector('.nav-actions');
   if (!navActions || navActions.querySelector('.search-trigger')) return;
   const btn = document.createElement('button');
+  btn.type = 'button';
   btn.className = 'search-trigger';
-  btn.setAttribute('aria-label', 'Qidirish');
+  btn.setAttribute('aria-label', 'Qidirish (Ctrl+K)');
+  btn.setAttribute('title', 'Qidirish · Ctrl+K');
   btn.innerHTML = `
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-    <kbd class="search-kbd-mini">⌘K</kbd>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="7.5"/>
+      <line x1="20.5" y1="20.5" x2="16.5" y2="16.5"/>
+    </svg>
   `;
   btn.addEventListener('click', open);
   navActions.insertBefore(btn, navActions.firstChild);

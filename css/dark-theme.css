@@ -201,8 +201,10 @@
 [data-theme="dark"] .lang-dropdown a { color: var(--ink-2); }
 [data-theme="dark"] .lang-dropdown a:hover { background: var(--bg-3); color: var(--ink); }
 [data-theme="dark"] .lang-dropdown a.active { background: var(--amber-soft); color: var(--amber); }
-[data-theme="dark"] .theme-toggle { background: var(--surface); color: var(--ink-2); border-color: var(--navy-line); }
+[data-theme="dark"] .theme-toggle,
+[data-theme="dark"] .search-trigger { background: var(--surface); color: var(--ink-2); border-color: var(--navy-line); }
 [data-theme="dark"] .theme-toggle:hover { color: var(--amber); border-color: var(--navy-line-2); }
+[data-theme="dark"] .search-trigger:hover { color: var(--amber); border-color: var(--amber); background: var(--amber-soft); }
 [data-theme="dark"] .hamburger { background: var(--surface); border-color: var(--navy-line); }
 [data-theme="dark"] .hamburger span { background: var(--ink); }
 

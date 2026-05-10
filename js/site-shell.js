@@ -15,7 +15,7 @@
     { key: 'directions', href: 'directions.html', i18n: 'nav.directions', label: "Yo'nalishlar" },
     { key: 'teachers', href: 'teachers.html', i18n: 'nav.teachers', label: "O'qituvchilar" },
     { key: 'news', href: 'news.html', i18n: 'nav.news', label: 'Yangiliklar' },
-    { key: 'contact', href: 'contact.html', i18n: 'nav.contact', label: 'Kontakt' }
+    { key: 'contact', href: 'contact.html', i18n: 'nav.contact', label: "Bog'lanish" }
   ];
 
   const MOBILE_EXTRA = [
@@ -77,7 +77,6 @@
           <button class="theme-toggle" aria-label="Tema almashtirish">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </button>
-          <a href="contact.html" class="btn-nav-cta" data-i18n="nav.contact">Aloqa</a>
           <button type="button" class="hamburger" id="hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="mobileNav">
             <span></span><span></span><span></span>
           </button>
