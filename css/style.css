@@ -616,7 +616,7 @@ em, i { font-style: italic; }
   isolation: isolate;
 }
 .hero .container { position: relative; z-index: 1; }
-.hero-content { max-width: 760px; }
+.hero-content { max-width: 880px; }
 
 /* Eyebrow — uppercase tag tightly bound to the heading */
 .hero-eyebrow {
