@@ -3,7 +3,7 @@
 // ============================================
 // Cache-first strategy for static assets, network-first for pages.
 
-const CACHE_VERSION = 'v3.17-scroll-icon';
+const CACHE_VERSION = 'v3.18-logo-bare';
 const STATIC_CACHE = `alxorezmiy-static-${CACHE_VERSION}`;
 const PAGE_CACHE = `alxorezmiy-pages-${CACHE_VERSION}`;
 

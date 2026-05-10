@@ -99,9 +99,9 @@
   .timeline-item::before { left: -29px; width: 10px; height: 10px; }
   .lightbox-prev, .lightbox-next { display: none; }
   /* Floating navbar shrinks on mobile */
-  :root { --navbar-h: 60px; --navbar-top: 12px; --navbar-total: 72px; }
-  .navbar-logo-icon { width: 48px; height: 48px; }
-  .navbar-logo-icon img { width: 38px; height: 38px; }
+  :root { --navbar-h: 64px; --navbar-top: 12px; --navbar-total: 76px; }
+  .navbar-logo-icon { width: 52px; height: 52px; }
+  .navbar-logo-icon img { width: 48px; height: 48px; }
   .navbar-inner { padding: 0 6px 0 6px; gap: var(--s-2); }
   .container { padding: 0 var(--s-5); }
 }
