@@ -94,13 +94,14 @@ const I18n = (function() {
   document.addEventListener('DOMContentLoaded', () => {
     loadLanguage(currentLang);
 
-    // Language dropdown toggle
+    // Language dropdown toggle (with aria-expanded sync)
     document.querySelectorAll('.lang-switcher').forEach(switcher => {
       const btn = switcher.querySelector('.lang-btn');
       if (btn) {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          switcher.classList.toggle('open');
+          const isOpen = switcher.classList.toggle('open');
+          btn.setAttribute('aria-expanded', String(isOpen));
         });
       }
     });
@@ -111,14 +112,24 @@ const I18n = (function() {
         e.preventDefault();
         const lang = a.getAttribute('data-lang');
         if (lang) setLanguage(lang);
-        document.querySelectorAll('.lang-switcher').forEach(s => s.classList.remove('open'));
+        document.querySelectorAll('.lang-switcher').forEach(s => {
+          s.classList.remove('open');
+          const btn = s.querySelector('.lang-btn');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
       });
     });
 
-    // Close dropdown on outside click
-    document.addEventListener('click', () => {
-      document.querySelectorAll('.lang-switcher').forEach(s => s.classList.remove('open'));
-    });
+    // Close dropdown on outside click + ESC key
+    const closeAll = () => {
+      document.querySelectorAll('.lang-switcher.open').forEach(s => {
+        s.classList.remove('open');
+        const btn = s.querySelector('.lang-btn');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    };
+    document.addEventListener('click', closeAll);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(); });
   });
 
   return { getCurrentLang, setLanguage, t, loadLanguage, LANG_NAMES, LANG_SHORT, SUPPORTED_LANGS };
