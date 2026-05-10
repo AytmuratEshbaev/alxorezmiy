@@ -3,7 +3,7 @@
 // ============================================
 // Cache-first strategy for static assets, network-first for pages.
 
-const CACHE_VERSION = 'v4.1-caret';
+const CACHE_VERSION = 'v4.2-caret-fix';
 const STATIC_CACHE = `alxorezmiy-static-${CACHE_VERSION}`;
 const PAGE_CACHE = `alxorezmiy-pages-${CACHE_VERSION}`;
 

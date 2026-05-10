@@ -61,8 +61,8 @@
     }).join('');
     return `
       <div class="nav-item-has-children">
-        <a href="${item.href}"${parentAttrs} data-i18n="${item.i18n}" aria-haspopup="true" aria-expanded="false">
-          ${item.label}
+        <a href="${item.href}"${parentAttrs} aria-haspopup="true" aria-expanded="false">
+          <span data-i18n="${item.i18n}">${item.label}</span>
           <svg class="nav-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="nav-dropdown" role="menu">${childrenHtml}</div>
