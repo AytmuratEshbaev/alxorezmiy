@@ -68,10 +68,10 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div class="lang-dropdown" role="menu">
-              <a href="#" data-lang="uz" class="active" role="menuitem">🇺🇿 O'zbekcha</a>
-              <a href="#" data-lang="ru" role="menuitem">🇷🇺 Русский</a>
-              <a href="#" data-lang="kk" role="menuitem">🏳️ Qaraqalpaqsha</a>
-              <a href="#" data-lang="en" role="menuitem">🇬🇧 English</a>
+              <a href="#" data-lang="uz" class="active" role="menuitem">O'zbekcha</a>
+              <a href="#" data-lang="ru" role="menuitem">Русский</a>
+              <a href="#" data-lang="kk" role="menuitem">Qaraqalpaqsha</a>
+              <a href="#" data-lang="en" role="menuitem">English</a>
             </div>
           </div>
           <button class="theme-toggle" aria-label="Tema almashtirish">
