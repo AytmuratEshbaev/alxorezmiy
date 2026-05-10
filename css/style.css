@@ -644,22 +644,17 @@ em, i { font-style: italic; }
   animation: none;
 }
 
-/* Display heading — proportional, fits any title length */
+/* Display heading — proportional, fits long titles fully */
 .hero h1 {
   color: #FFFFFF;
-  font-size: clamp(2rem, 4.5vw, 3.75rem);
+  font-size: clamp(1.625rem, 3.4vw, 2.875rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.04;
+  letter-spacing: -0.015em;
+  line-height: 1.06;
   text-transform: uppercase;
-  margin-bottom: var(--s-6);
+  margin-bottom: var(--s-5);
   text-wrap: balance;
   text-shadow: 0 2px 24px rgba(0,0,0,.22);
-  /* Cap to 4 lines so very long titles don't push hero past viewport */
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 .hero h1 .accent {
   color: var(--amber);
@@ -669,16 +664,16 @@ em, i { font-style: italic; }
 .hero h1::after { display: none; }
 
 .hero-content p {
-  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  font-size: clamp(.9375rem, 1.05vw, 1.0625rem);
   color: rgba(255,255,255,.86);
   max-width: 560px;
-  line-height: 1.55;
-  margin-bottom: var(--s-8);
+  line-height: 1.5;
+  margin-bottom: var(--s-6);
   font-weight: 400;
   text-shadow: 0 1px 12px rgba(0,0,0,.2);
-  /* Cap paragraph to 3 lines */
+  /* Cap paragraph to 2 lines so the long h1 has room */
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
