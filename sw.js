@@ -3,7 +3,7 @@
 // ============================================
 // Cache-first strategy for static assets, network-first for pages.
 
-const CACHE_VERSION = 'v3.11-hero-balance';
+const CACHE_VERSION = 'v3.12-h1-tune';
 const STATIC_CACHE = `alxorezmiy-static-${CACHE_VERSION}`;
 const PAGE_CACHE = `alxorezmiy-pages-${CACHE_VERSION}`;
 
