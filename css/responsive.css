@@ -9,12 +9,13 @@
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: repeat(2, 1fr); gap: var(--s-10); }
-  .hero { min-height: 80vh; }
+  .hero { min-height: 88vh; }
   .nav-links { display: none; }
   .hamburger { display: flex; }
+  .btn-nav-cta { display: none; }
   .stepper { flex-wrap: wrap; gap: var(--s-4); }
   .step:not(:last-child)::after { display: none; }
-  .page-header { padding: calc(var(--navbar-h) + var(--s-10)) 0 var(--s-10); }
+  .page-header { padding: calc(var(--navbar-total) + var(--s-8)) 0 var(--s-10); }
 }
 
 /* ── Mobile Nav ── */
@@ -67,14 +68,14 @@
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: var(--s-8); }
   .footer-bottom { flex-direction: column; gap: var(--s-2); text-align: center; }
-  .hero { min-height: 78vh; padding: calc(var(--navbar-h) + var(--s-8)) 0 var(--s-12); }
-  .hero h1 { font-size: clamp(2.25rem, 9vw, 3.5rem); }
+  .hero { min-height: 84vh; padding: calc(var(--navbar-total) + var(--s-8)) 0 var(--s-12); }
+  .hero h1 { font-size: clamp(2.5rem, 11vw, 4rem); }
   .hero-content p { font-size: 1.0625rem; }
   .hero-actions { flex-direction: column; align-items: stretch; }
   .hero-actions .btn { width: 100%; justify-content: center; }
   .stat-card { padding: var(--s-4) 0; }
   .stat-number { font-size: 2.5rem; }
-  .page-header { padding: calc(var(--navbar-h) + var(--s-8)) 0 var(--s-8); }
+  .page-header { padding: calc(var(--navbar-total) + var(--s-6)) 0 var(--s-8); }
   .carousel-track .card { min-width: 280px; }
   .map-container { height: 320px; }
   .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
@@ -97,8 +98,11 @@
   .timeline::before { left: 10px; }
   .timeline-item::before { left: -29px; width: 10px; height: 10px; }
   .lightbox-prev, .lightbox-next { display: none; }
-  .navbar { height: 64px; }
-  :root { --navbar-h: 64px; }
+  /* Floating navbar shrinks on mobile */
+  :root { --navbar-h: 60px; --navbar-top: 12px; --navbar-total: 72px; }
+  .navbar-logo-icon { width: 48px; height: 48px; }
+  .navbar-logo-icon img { width: 38px; height: 38px; }
+  .navbar-inner { padding: 0 6px 0 6px; gap: var(--s-2); }
   .container { padding: 0 var(--s-5); }
 }
 

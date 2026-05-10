@@ -52,12 +52,11 @@
     return `
     <a href="#main-content" class="skip-link">Asosiy mazmunga o'tish</a>
     <nav class="navbar" id="navbar">
-      <div class="container flex-between">
+      <div class="navbar-inner">
         <a href="index.html" class="navbar-logo" aria-label="Al-Xorazmiy maktabi — bosh sahifa">
           <span class="navbar-logo-icon">
-            <img src="assets/images/logo.webp" alt="" width="40" height="40" loading="eager" decoding="async">
+            <img src="assets/images/logo.webp" alt="" width="44" height="44" loading="eager" decoding="async">
           </span>
-          <span class="navbar-logo-text">Al-Xorazmiy<small data-i18n="nav.location">Nukus filiali</small></span>
         </a>
         <div class="nav-links">
           ${NAV_ITEMS.map(i => navLinkHtml(i, activeKey)).join('')}
@@ -78,6 +77,7 @@
           <button class="theme-toggle" aria-label="Tema almashtirish">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </button>
+          <a href="contact.html" class="btn-nav-cta" data-i18n="nav.contact">Aloqa</a>
           <button type="button" class="hamburger" id="hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="mobileNav">
             <span></span><span></span><span></span>
           </button>
