@@ -646,7 +646,7 @@ em, i { font-style: italic; }
 /* Display heading — proportional, fits long titles fully */
 .hero h1 {
   color: #FFFFFF;
-  font-size: clamp(2rem, 4.1vw, 3.5rem);
+  font-size: clamp(1.875rem, 4vw, 3.375rem);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.2;
