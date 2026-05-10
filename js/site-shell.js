@@ -9,19 +9,27 @@
 //   <script src="js/site-shell.js"></script>
 
 (function () {
+  // Nested navigation. Items with `children` render as a dropdown.
   const NAV_ITEMS = [
     { key: 'home', href: 'index.html', i18n: 'nav.home', label: 'Bosh sahifa' },
-    { key: 'about', href: 'about.html', i18n: 'nav.about', label: 'Maktab haqida' },
-    { key: 'directions', href: 'directions.html', i18n: 'nav.directions', label: "Yo'nalishlar" },
-    { key: 'teachers', href: 'teachers.html', i18n: 'nav.teachers', label: "O'qituvchilar" },
-    { key: 'news', href: 'news.html', i18n: 'nav.news', label: 'Yangiliklar' },
-    { key: 'contact', href: 'contact.html', i18n: 'nav.contact', label: "Bog'lanish" }
-  ];
-
-  const MOBILE_EXTRA = [
-    { key: 'faq', href: 'faq.html', i18n: 'nav.faq', label: 'FAQ' },
-    { key: 'admission', href: 'admission.html', i18n: 'nav.admission', label: 'Qabul' },
-    { key: 'gallery', href: 'gallery.html', i18n: 'nav.gallery', label: 'Galereya' }
+    {
+      key: 'about_group',
+      href: 'about.html',
+      i18n: 'nav.about',
+      label: 'Maktab haqida',
+      childKeys: ['about', 'directions', 'teachers', 'gallery'],
+      children: [
+        { key: 'about',      href: 'about.html',      i18n: 'nav.about_general', label: "Umumiy ma'lumot" },
+        { key: 'directions', href: 'directions.html', i18n: 'nav.directions',    label: "Ta'lim dasturi" },
+        { key: 'teachers',   href: 'teachers.html',   i18n: 'nav.teachers',      label: "O'qituvchilar" },
+        { key: 'gallery',    href: 'gallery.html',    i18n: 'nav.gallery',       label: 'Galereya' }
+      ]
+    },
+    { key: 'achievements', href: 'achievements.html', i18n: 'nav.achievements', label: 'Yutuqlar' },
+    { key: 'news',         href: 'news.html',         i18n: 'nav.news',         label: 'Yangiliklar' },
+    { key: 'admission',    href: 'admission.html',    i18n: 'nav.admission',    label: 'Qabul' },
+    { key: 'faq',          href: 'faq.html',          i18n: 'nav.faq',          label: 'FAQ' },
+    { key: 'contact',      href: 'contact.html',      i18n: 'nav.contact',      label: "Bog'lanish" }
   ];
 
   function getActiveKey() {
@@ -31,9 +39,47 @@
     return filename;
   }
 
+  function isItemActive(item, activeKey) {
+    if (item.key === activeKey) return true;
+    if (item.childKeys && item.childKeys.includes(activeKey)) return true;
+    return false;
+  }
+
   function navLinkHtml(item, activeKey) {
-    const isActive = item.key === activeKey ? ' class="active" aria-current="page"' : '';
-    return `<a href="${item.href}"${isActive} data-i18n="${item.i18n}">${item.label}</a>`;
+    const isActive = isItemActive(item, activeKey);
+    const attrs = isActive ? ' class="active" aria-current="page"' : '';
+    return `<a href="${item.href}"${attrs} data-i18n="${item.i18n}">${item.label}</a>`;
+  }
+
+  function navItemHtml(item, activeKey) {
+    if (!item.children) return navLinkHtml(item, activeKey);
+    const isActive = isItemActive(item, activeKey);
+    const parentAttrs = isActive ? ' class="active"' : '';
+    const childrenHtml = item.children.map(c => {
+      const ca = c.key === activeKey ? ' class="active" aria-current="page"' : '';
+      return `<a href="${c.href}"${ca} data-i18n="${c.i18n}" role="menuitem">${c.label}</a>`;
+    }).join('');
+    return `
+      <div class="nav-item-has-children">
+        <a href="${item.href}"${parentAttrs} data-i18n="${item.i18n}" aria-haspopup="true" aria-expanded="false">
+          ${item.label}
+          <svg class="nav-caret" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="nav-dropdown" role="menu">${childrenHtml}</div>
+      </div>`;
+  }
+
+  // Flat list of all items (including dropdown children) — used by the mobile menu.
+  function flattenItems() {
+    const flat = [];
+    for (const item of NAV_ITEMS) {
+      if (item.children) {
+        for (const c of item.children) flat.push(c);
+      } else {
+        flat.push(item);
+      }
+    }
+    return flat;
   }
 
   // Inline SVG icon set — single source of truth, matches design palette
@@ -59,7 +105,7 @@
           </span>
         </a>
         <div class="nav-links">
-          ${NAV_ITEMS.map(i => navLinkHtml(i, activeKey)).join('')}
+          ${NAV_ITEMS.map(i => navItemHtml(i, activeKey)).join('')}
         </div>
         <div class="nav-actions">
           <div class="lang-switcher">
@@ -86,7 +132,8 @@
   }
 
   function renderMobileNav(activeKey) {
-    const items = [...NAV_ITEMS, ...MOBILE_EXTRA];
+    // Show all leaf items flat — including dropdown children — for the fullscreen mobile menu
+    const items = flattenItems();
     return `
     <div class="mobile-nav" id="mobileNav">
       ${items.map(i => navLinkHtml(i, activeKey)).join('')}
@@ -112,8 +159,9 @@
             <h4 data-i18n="footer.quick_links">Tezkor havolalar</h4>
             <ul class="footer-links">
               <li><a href="about.html" data-i18n="nav.about">Maktab haqida</a></li>
-              <li><a href="directions.html" data-i18n="nav.directions">Yo'nalishlar</a></li>
+              <li><a href="directions.html" data-i18n="nav.directions">Ta'lim dasturi</a></li>
               <li><a href="teachers.html" data-i18n="nav.teachers">O'qituvchilar</a></li>
+              <li><a href="achievements.html" data-i18n="nav.achievements">Yutuqlar</a></li>
               <li><a href="admission.html" data-i18n="nav.admission">Qabul</a></li>
               <li><a href="gallery.html" data-i18n="nav.gallery">Galereya</a></li>
             </ul>

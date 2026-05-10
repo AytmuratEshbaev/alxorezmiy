@@ -8,6 +8,8 @@
     "teachers": "Teachers",
     "news": "News",
     "contact": "Get in touch",
+    "about_general": "Overview",
+    "achievements": "Achievements",
     "faq": "FAQ",
     "admission": "Admission",
     "gallery": "Gallery",
@@ -42,6 +44,7 @@
     "news_all": "All News",
     "achievements_title": "Our Achievements",
     "achievements_label": "Our Pride",
+    "achievements_all": "All Achievements →",
     "contact_title": "Get in Touch",
     "contact_label": "Contact"
   },
@@ -122,5 +125,30 @@
     "contact_info": "Contact",
     "social": "Social Media",
     "copyright": "© 2026 Al-Khwarizmi Specialized School. All rights reserved."
+  },
+  "achievements": {
+    "title": "Our Achievements",
+    "label": "our pride",
+    "intro_title": "Olympiad Champions",
+    "intro_text": "Our students conquer new peaks each year at national and international subject olympiads.",
+    "stat_total": "Total Achievements",
+    "stat_international": "International",
+    "stat_republic": "National",
+    "stat_gold": "Gold Medals",
+    "level_international": "International",
+    "level_republic": "National",
+    "level_city": "City",
+    "level_district": "District",
+    "col_student": "Student",
+    "col_subject": "Subject",
+    "col_olympiad": "Olympiad",
+    "col_level": "Level",
+    "col_place": "Place",
+    "empty": "No results yet"
+  },
+  "directions_page": {
+    "cta_title": "Results of this program",
+    "cta_text": "See our students' olympiad victories and international achievements.",
+    "cta_btn": "View Achievements →"
   }
 }

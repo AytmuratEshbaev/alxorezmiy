@@ -8,6 +8,8 @@
     "teachers": "O'qituvchilar",
     "news": "Yangiliklar",
     "contact": "Bog'lanish",
+    "about_general": "Umumiy ma'lumot",
+    "achievements": "Yutuqlar",
     "faq": "FAQ",
     "admission": "Qabul",
     "gallery": "Galereya",
@@ -42,6 +44,7 @@
     "news_all": "Barcha yangiliklar",
     "achievements_title": "Yutuqlarimiz",
     "achievements_label": "Faxrimiz",
+    "achievements_all": "Barcha yutuqlar →",
     "contact_title": "Bog'lanish",
     "contact_label": "Kontakt"
   },
@@ -122,5 +125,30 @@
     "contact_info": "Kontakt",
     "social": "Ijtimoiy tarmoqlar",
     "copyright": "© 2026 Al-Xorazmiy ixtisoslashtirilgan maktabi. Barcha huquqlar himoyalangan."
+  },
+  "achievements": {
+    "title": "Yutuqlarimiz",
+    "label": "faxrimiz",
+    "intro_title": "Olimpiada g'oliblari",
+    "intro_text": "O'quvchilarimiz respublika va xalqaro miqyosdagi fan olimpiadalarida har yili yangi cho'qqilarni egallaydi.",
+    "stat_total": "Jami yutuqlar",
+    "stat_international": "Xalqaro",
+    "stat_republic": "Respublika",
+    "stat_gold": "Oltin medal",
+    "level_international": "Xalqaro",
+    "level_republic": "Respublika",
+    "level_city": "Shahar",
+    "level_district": "Tuman",
+    "col_student": "O'quvchi",
+    "col_subject": "Fan",
+    "col_olympiad": "Olimpiada",
+    "col_level": "Daraja",
+    "col_place": "Natija",
+    "empty": "Hozircha natijalar yo'q"
+  },
+  "directions_page": {
+    "cta_title": "Bu dasturning natijalari",
+    "cta_text": "O'quvchilarimizning olimpiadalardagi g'alabalari va xalqaro miqyosdagi natijalarini ko'ring.",
+    "cta_btn": "Yutuqlarni ko'rish →"
   }
 }

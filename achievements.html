@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0D0D5C">
+  <meta name="i18n-title" content="site_short_name">
+  <title>Al-Xorazmiy maktabi</title>
+  <meta name="description" content="Al-Xorazmiy maktabi o'quvchilarining olimpiada g'alabalari, respublika va xalqaro miqyosdagi yutuqlari.">
+  <link rel="canonical" href="https://alxorezmiy.uz/achievements">
+  <link rel="icon" type="image/webp" sizes="512x512" href="assets/images/logo.webp">
+  <link rel="apple-touch-icon" href="assets/images/logo.webp">
+  <link rel="manifest" href="manifest.json">
+  <meta property="og:title" content="Yutuqlar — Al-Xorazmiy maktabi">
+  <meta property="og:description" content="O'quvchilarimizning olimpiada g'alabalari va xalqaro miqyosdagi natijalari.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://alxorezmiy.uz/achievements">
+  <meta property="og:site_name" content="Al-Xorazmiy maktabi">
+  <meta property="og:locale" content="uz_UZ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Yutuqlar — Al-Xorazmiy maktabi">
+  <meta name="twitter:description" content="O'quvchilarimizning olimpiada g'alabalari va xalqaro miqyosdagi natijalari.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ik.imagekit.io" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dark-theme.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</head>
+<body>
+
+  <div id="navbar-mount"></div>
+  <div id="mobile-nav-mount"></div>
+
+  <!-- ══════ PAGE HEADER ══════ -->
+  <div class="page-header">
+    <h1 data-i18n="achievements.title">Yutuqlarimiz</h1>
+    <div class="breadcrumb">
+      <a href="index.html" data-i18n="common.home">Bosh sahifa</a>
+      <span class="separator">/</span>
+      <span class="current" data-i18n="nav.achievements">Yutuqlar</span>
+    </div>
+  </div>
+
+  <!-- ══════ INTRO + STATS ══════ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header animate-on-scroll text-center">
+        <span class="section-label" data-i18n="achievements.label">faxrimiz</span>
+        <h2 data-i18n="achievements.intro_title">Olimpiada g'oliblari</h2>
+        <p data-i18n="achievements.intro_text">O'quvchilarimiz respublika va xalqaro miqyosdagi fan olimpiadalarida har yili yangi cho'qqilarni egallaydi.</p>
+      </div>
+
+      <div class="grid grid-4 stats-section" style="border:none;padding:0;background:transparent;margin-bottom:var(--s-12);">
+        <div class="stat-card animate-on-scroll">
+          <div class="stat-number" id="stat-total">0</div>
+          <div class="stat-label" data-i18n="achievements.stat_total">Jami yutuqlar</div>
+        </div>
+        <div class="stat-card animate-on-scroll animate-delay-1">
+          <div class="stat-number" id="stat-international">0</div>
+          <div class="stat-label" data-i18n="achievements.stat_international">Xalqaro</div>
+        </div>
+        <div class="stat-card animate-on-scroll animate-delay-2">
+          <div class="stat-number" id="stat-republic">0</div>
+          <div class="stat-label" data-i18n="achievements.stat_republic">Respublika</div>
+        </div>
+        <div class="stat-card animate-on-scroll animate-delay-3">
+          <div class="stat-number" id="stat-gold">0</div>
+          <div class="stat-label" data-i18n="achievements.stat_gold">Oltin medal</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ RESULTS TABLE ══════ -->
+  <section class="section" style="background:var(--bg-secondary);padding-top:var(--s-16);">
+    <div class="container">
+      <div class="filter-group animate-on-scroll" id="achievementsFilters">
+        <button class="filter-btn active" data-filter="all" data-i18n="common.all">Barchasi</button>
+        <button class="filter-btn" data-filter="xalqaro" data-i18n="achievements.level_international">Xalqaro</button>
+        <button class="filter-btn" data-filter="respublika" data-i18n="achievements.level_republic">Respublika</button>
+        <button class="filter-btn" data-filter="shahar" data-i18n="achievements.level_city">Shahar</button>
+        <button class="filter-btn" data-filter="tuman" data-i18n="achievements.level_district">Tuman</button>
+      </div>
+
+      <div class="card animate-on-scroll" style="padding:0;overflow:hidden;">
+        <div class="table-responsive">
+          <table id="achievementsTable">
+            <thead>
+              <tr>
+                <th data-i18n="achievements.col_student">O'quvchi</th>
+                <th data-i18n="achievements.col_subject">Fan</th>
+                <th data-i18n="achievements.col_olympiad">Olimpiada</th>
+                <th data-i18n="achievements.col_level">Daraja</th>
+                <th data-i18n="achievements.col_place">Natija</th>
+                <th data-i18n="common.year">Yil</th>
+              </tr>
+            </thead>
+            <tbody id="achievementsBody">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+        </div>
+        <div id="achievementsEmpty" class="search-empty" style="display:none;">
+          <p data-i18n="achievements.empty">Hozircha natijalar yo'q</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+  <div id="back-to-top-mount"></div>
+  <script src="js/site-shell.js"></script>
+
+  <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/stats.js"></script>
+  <script type="module" src="js/settings-loader.js"></script>
+  <script type="module" src="js/site-search.js"></script>
+
+  <script type="module">
+    import { subscribeCollection } from './js/firestore-helpers.js';
+
+    let allData = [];
+    let currentFilter = 'all';
+
+    const LEVEL_LABELS = {
+      xalqaro:    { uz: '🌍 Xalqaro',    ru: '🌍 Международная', kk: '🌍 Xalıqaralıq', en: '🌍 International' },
+      respublika: { uz: '🏛️ Respublika', ru: '🏛️ Республика',    kk: '🏛️ Respublika',  en: '🏛️ National' },
+      shahar:     { uz: '🏙️ Shahar',     ru: '🏙️ Городская',     kk: '🏙️ Qala',        en: '🏙️ City' },
+      tuman:      { uz: '🏘️ Tuman',      ru: '🏘️ Районная',      kk: '🏘️ Rayon',       en: '🏘️ District' }
+    };
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    function getLang() {
+      return (window.I18n && window.I18n.getCurrentLang && window.I18n.getCurrentLang()) || 'uz';
+    }
+
+    function getLevelLabel(level) {
+      const lang = getLang();
+      return (LEVEL_LABELS[level] && LEVEL_LABELS[level][lang]) || LEVEL_LABELS[level]?.uz || level;
+    }
+
+    function renderStats(data) {
+      const total = data.length;
+      const intl = data.filter(d => d.level === 'xalqaro').length;
+      const rep  = data.filter(d => d.level === 'respublika').length;
+      const gold = data.filter(d => d.place === 1 || d.place === '1').length;
+      const elT = document.getElementById('stat-total');
+      const elI = document.getElementById('stat-international');
+      const elR = document.getElementById('stat-republic');
+      const elG = document.getElementById('stat-gold');
+      if (elT) elT.textContent = total;
+      if (elI) elI.textContent = intl;
+      if (elR) elR.textContent = rep;
+      if (elG) elG.textContent = gold;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('achievementsBody');
+      const empty = document.getElementById('achievementsEmpty');
+      if (!tbody) return;
+
+      const filtered = currentFilter === 'all'
+        ? allData
+        : allData.filter(d => d.level === currentFilter);
+
+      if (!filtered.length) {
+        tbody.innerHTML = '';
+        if (empty) empty.style.display = 'block';
+        return;
+      }
+      if (empty) empty.style.display = 'none';
+
+      tbody.innerHTML = filtered.map(item => `
+        <tr>
+          <td style="font-weight:600;color:var(--text-primary);">${escapeHtml(item.student || '')}</td>
+          <td><span class="card-badge" style="position:static;display:inline-block;padding:4px 10px;background:var(--amber-soft);color:var(--amber-text);border:1px solid rgba(245,158,11,.20);">${escapeHtml(item.subject || '')}</span></td>
+          <td>${escapeHtml(item.olympiad_name || '')}</td>
+          <td><span class="text-mono" style="font-size:.8125rem;">${getLevelLabel(item.level)}</span></td>
+          <td>
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:${item.place == 1 ? 'rgba(245,158,11,.18)' : 'var(--bg-2)'};color:${item.place == 1 ? 'var(--amber-text)' : 'var(--ink-2)'};font-weight:700;margin-right:6px;font-variant-numeric:tabular-nums;">${escapeHtml(item.place || '')}</span>
+            <span style="font-size:.8125rem;color:var(--ink-3);">o'rin</span>
+          </td>
+          <td style="font-variant-numeric:tabular-nums;color:var(--ink-3);">${escapeHtml(item.year || '')}</td>
+        </tr>
+      `).join('');
+    }
+
+    function attachFilterEvents() {
+      document.querySelectorAll('#achievementsFilters .filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#achievementsFilters .filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.getAttribute('data-filter');
+          renderTable();
+        });
+      });
+    }
+
+    window.onLanguageChange = renderTable;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      attachFilterEvents();
+      subscribeCollection('olympiad', (items) => {
+        items.sort((a, b) => (b.year || 0) - (a.year || 0) || (Number(a.place) || 99) - (Number(b.place) || 99));
+        allData = items;
+        renderStats(items);
+        renderTable();
+      });
+    });
+  </script>
+</body>
+</html>

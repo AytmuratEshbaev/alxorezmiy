@@ -8,6 +8,8 @@
     "teachers": "Oqıtıwshılar",
     "news": "Jańalıqlar",
     "contact": "Baylanısıw",
+    "about_general": "Ulıwma maǵlıwmat",
+    "achievements": "Jetiskenliklerimiz",
     "faq": "FAQ",
     "admission": "Qabıl",
     "gallery": "Galereya",
@@ -42,6 +44,7 @@
     "news_all": "Barlıq jańalıqlar",
     "achievements_title": "Jetiskenliklerimiz",
     "achievements_label": "Paxrımız",
+    "achievements_all": "Barlıq jetiskenlikler →",
     "contact_title": "Baylanıs",
     "contact_label": "Kontakt"
   },
@@ -122,5 +125,30 @@
     "contact_info": "Kontakt",
     "social": "Sociallıq tarmaqllar",
     "copyright": "© 2026 Al-Xorezmiy arnawlı mektebi. Barlıq huqıqlar qorg'alg'an."
+  },
+  "achievements": {
+    "title": "Jetiskenliklerimiz",
+    "label": "máqtanıshımız",
+    "intro_title": "Olimpiada jeńimpazları",
+    "intro_text": "Oqıwshılarımız respublikalıq hám xalıqaralıq pánler olimpiadalarında har jılı jańa shoqılardı baǵındıradı.",
+    "stat_total": "Jámi jetiskenlikler",
+    "stat_international": "Xalıqaralıq",
+    "stat_republic": "Respublika",
+    "stat_gold": "Altın medal",
+    "level_international": "Xalıqaralıq",
+    "level_republic": "Respublika",
+    "level_city": "Qala",
+    "level_district": "Rayon",
+    "col_student": "Oqıwshı",
+    "col_subject": "Pán",
+    "col_olympiad": "Olimpiada",
+    "col_level": "Dárejesi",
+    "col_place": "Orın",
+    "empty": "Házirshe nátiyjeler joq"
+  },
+  "directions_page": {
+    "cta_title": "Bul baǵdarlamanıń nátiyjeleri",
+    "cta_text": "Oqıwshılarımızdıń olimpiadalardaǵı jeńisleri hám xalıqaralıq nátiyjelerin kóriń.",
+    "cta_btn": "Jetiskenliklerdi kóriw →"
   }
 }

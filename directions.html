@@ -107,38 +107,14 @@
     </div>
   </section>
 
-  <!-- ══════ OLYMPIAD RESULTS ══════ -->
+  <!-- ══════ CTA — link to achievements ══════ -->
   <section class="section">
     <div class="container">
-      <div class="section-header animate-on-scroll">
-        <h2>Olimpiada natijalari</h2>
-        <p>O'quvchilarimiz respublika va xalqaro miqyosdagi fan olimpiadalaridagi faxrli o'rinlari.</p>
-      </div>
-      
-      <div class="card animate-on-scroll">
-        <div class="filter-group">
-          <button class="filter-btn active" data-filter="all" data-i18n="common.all">Barchasi</button>
-          <button class="filter-btn" data-filter="Matematika" data-i18n="directions_list.math">Matematika</button>
-          <button class="filter-btn" data-filter="Fizika" data-i18n="directions_list.physics">Fizika</button>
-          <button class="filter-btn" data-filter="Informatika" data-i18n="directions_list.informatics">Informatika</button>
-        </div>
-
-        <div class="table-responsive">
-          <table id="olympiadTable">
-            <thead>
-              <tr>
-                <th>O'quvchi</th>
-                <th>Fan</th>
-                <th>Olimpiada darajasi</th>
-                <th>Natija</th>
-                <th data-i18n="common.year">Yil</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Filled by JS -->
-            </tbody>
-          </table>
-        </div>
+      <div class="card animate-on-scroll" style="text-align:center;padding:var(--s-12);">
+        <span class="section-label" data-i18n="achievements.label" style="margin-left:auto;margin-right:auto;">faxrimiz</span>
+        <h2 style="margin-bottom:var(--s-4);" data-i18n="directions_page.cta_title">Bu dasturning natijalari</h2>
+        <p style="max-width:580px;margin:0 auto var(--s-6);color:var(--ink-2);" data-i18n="directions_page.cta_text">O'quvchilarimizning olimpiadalardagi g'alabalari va xalqaro miqyosdagi natijalarini ko'ring.</p>
+        <a href="achievements.html" class="btn btn-primary" data-i18n="directions_page.cta_btn">Yutuqlarni ko'rish →</a>
       </div>
     </div>
   </section>
@@ -154,46 +130,5 @@
 
   <script type="module" src="js/settings-loader.js"></script>
   <script type="module" src="js/site-search.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const tbody = document.querySelector('#olympiadTable tbody');
-      let currentData = window.DemoData ? window.DemoData.olympiad : [];
-
-      function renderTable(data) {
-        if (!tbody) return;
-        tbody.innerHTML = data.map(item => `
-          <tr>
-            <td style="font-weight:600;color:var(--text-primary);">${item.student}</td>
-            <td><span class="card-badge" style="position:static;display:inline-block;padding:4px 10px;background:var(--primary-bg);color:var(--primary);">${item.subject}</span></td>
-            <td>${item.olympiad_name} <span style="font-size:0.8rem;color:var(--text-tertiary);">(${item.level === 'xalqaro' ? 'Xalqaro' : 'Respublika'})</span></td>
-            <td>
-              <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--warning-bg);color:var(--warning);font-weight:700;margin-right:6px;">${item.place}</span>
-              -o'rin
-            </td>
-            <td>${item.year}</td>
-          </tr>
-        `).join('');
-      }
-
-      renderTable(currentData);
-
-      // Filtering
-      const filterBtns = document.querySelectorAll('.filter-btn');
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const filterValue = btn.getAttribute('data-filter');
-          
-          if (filterValue === 'all') {
-            renderTable(currentData);
-          } else {
-            const filteredData = currentData.filter(item => item.subject === filterValue);
-            renderTable(filteredData);
-          }
-        });
-      });
-    });
-  </script>
 </body>
 </html>

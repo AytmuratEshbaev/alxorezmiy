@@ -865,13 +865,15 @@ em, i { font-style: italic; }
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
   flex: 1;
 }
-.nav-links a {
+.nav-links > a,
+.nav-item-has-children > a {
   display: inline-flex;
   align-items: center;
-  padding: 10px 16px;
+  gap: 4px;
+  padding: 10px 14px;
   font-size: .8125rem;
   font-weight: 600;
   letter-spacing: .06em;
@@ -880,9 +882,81 @@ em, i { font-style: italic; }
   border-radius: 100px;
   transition: color var(--t-base), background var(--t-base);
   position: relative;
+  white-space: nowrap;
 }
-.nav-links a:hover { color: var(--navy); }
-.nav-links a.active { color: var(--amber-text); }
+.nav-links > a:hover,
+.nav-item-has-children > a:hover { color: var(--navy); background: var(--navy-soft); }
+.nav-links > a.active,
+.nav-item-has-children > a.active { color: var(--amber-text); }
+
+/* Dropdown parent — caret indicator */
+.nav-item-has-children { position: relative; }
+.nav-caret {
+  transition: transform var(--t-base) var(--ease-out);
+  margin-top: 1px;
+  opacity: .7;
+}
+.nav-item-has-children:hover .nav-caret,
+.nav-item-has-children:focus-within .nav-caret {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* Dropdown panel */
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  min-width: 240px;
+  background: var(--surface);
+  border: 1px solid var(--navy-line);
+  border-radius: var(--r-md);
+  padding: 6px;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--t-base) var(--ease-out),
+              transform var(--t-base) var(--ease-out),
+              visibility var(--t-base);
+  z-index: 110;
+}
+/* Invisible hover bridge — prevents flicker when crossing the 12px gap */
+.nav-dropdown::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: -14px;
+  height: 14px;
+}
+.nav-item-has-children:hover .nav-dropdown,
+.nav-item-has-children:focus-within .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.nav-dropdown a {
+  display: block;
+  padding: 10px 14px;
+  font-size: .8125rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast), color var(--t-fast);
+  white-space: nowrap;
+}
+.nav-dropdown a:hover {
+  background: var(--amber-soft);
+  color: var(--amber-text);
+}
+.nav-dropdown a.active {
+  color: var(--amber-text);
+  background: var(--amber-soft);
+}
 
 /* Right side actions */
 .nav-actions {
