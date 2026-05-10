@@ -9,7 +9,7 @@
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: repeat(2, 1fr); gap: var(--s-10); }
-  .hero { height: 100vh; max-height: 100vh; min-height: 560px; }
+  .hero { min-height: 100vh; }
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .btn-nav-cta { display: none; }
@@ -68,7 +68,7 @@
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: var(--s-8); }
   .footer-bottom { flex-direction: column; gap: var(--s-2); text-align: center; }
-  .hero { height: 100vh; max-height: 100vh; min-height: 520px; padding: calc(var(--navbar-total) + var(--s-6)) 0 var(--s-8); }
+  .hero { min-height: 100vh; padding: calc(var(--navbar-total) + var(--s-6)) 0 var(--s-8); }
   .hero h1 { font-size: clamp(1.375rem, 5.5vw, 2rem); }
   .hero-content p { font-size: .9375rem; -webkit-line-clamp: 2; }
   .hero-actions { flex-direction: column; align-items: stretch; }
