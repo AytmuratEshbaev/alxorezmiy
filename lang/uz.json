@@ -144,7 +144,12 @@
     "col_olympiad": "Olimpiada",
     "col_level": "Daraja",
     "col_place": "Natija",
-    "empty": "Hozircha natijalar yo'q"
+    "empty": "Hozircha natijalar yo'q",
+    "cta_label": "qabul",
+    "cta_title": "Sizning bolangiz ham bu ro'yxatda bo'lishi mumkin",
+    "cta_text": "Maktabimiz olimpiada g'oliblarini yetishtirishga ixtisoslashgan. Qabul shartlari va dasturlar haqida ma'lumot oling.",
+    "cta_admission": "Qabul shartlari →",
+    "cta_programs": "Dasturlar"
   },
   "directions_page": {
     "cta_title": "Bu dasturning natijalari",

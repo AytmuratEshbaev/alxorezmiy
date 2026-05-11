@@ -144,7 +144,12 @@
     "col_olympiad": "Olympiad",
     "col_level": "Level",
     "col_place": "Place",
-    "empty": "No results yet"
+    "empty": "No results yet",
+    "cta_label": "admissions",
+    "cta_title": "Your child can be on this list too",
+    "cta_text": "Our school specializes in producing olympiad champions. Learn about admission requirements and programs.",
+    "cta_admission": "Admission →",
+    "cta_programs": "Programs"
   },
   "directions_page": {
     "cta_title": "Results of this program",

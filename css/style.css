@@ -773,10 +773,21 @@ em, i { font-style: italic; }
 .page-header {
   background: var(--navy);
   color: #FFFFFF;
-  padding: calc(var(--navbar-total) + var(--s-10)) 0 var(--s-12);
+  padding-top: calc(var(--navbar-total) + var(--s-10));
+  padding-bottom: var(--s-12);
+  padding-left: var(--s-8);
+  padding-right: var(--s-8);
   position: relative;
   overflow: hidden;
   isolation: isolate;
+}
+/* Constrain real children to container width while keeping ::before pattern full-bleed */
+.page-header > * {
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 1;
 }
 .page-header::before {
   content: "";
@@ -1427,7 +1438,7 @@ textarea.form-control { min-height: 140px; resize: vertical; }
 .filter-btn.active { background: var(--navy); color: #FFFFFF; border-color: var(--navy); }
 
 /* ─── Tables ─── */
-.table-responsive { overflow-x: auto; border: 1px solid var(--navy-line); border-radius: var(--r-lg); }
+.table-responsive { overflow-x: auto; border: none; border-radius: 0; }
 table {
   width: 100%;
   border-collapse: collapse;
@@ -1447,7 +1458,72 @@ th {
 }
 td { border-bottom: 1px solid var(--navy-line); color: var(--ink-2); }
 tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover { background: var(--bg-2); }
+tbody tr { transition: background var(--t-base); }
+tbody tr:hover { background: var(--amber-soft); }
+
+/* ─── Achievements page primitives ─── */
+.achievements-table .cell-student { font-weight: 600; color: var(--ink); }
+.achievements-table .cell-olympiad { color: var(--ink-2); }
+.achievements-table .cell-year {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+/* Subject tag — soft mono caps with leading amber dot */
+.subject-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: .6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.subject-tag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  flex-shrink: 0;
+}
+
+/* Level tag — icon + label, mono small caps */
+.level-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .875rem;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.level-tag svg { color: var(--amber-2); flex-shrink: 0; }
+
+/* Place medal — circle with rank number; gold = 1st */
+.place-medal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-2);
+  color: var(--ink-2);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: .9375rem;
+  border: 1px solid var(--navy-line);
+}
+.place-medal.is-gold {
+  background: linear-gradient(135deg, var(--amber-3) 0%, var(--amber) 100%);
+  color: var(--navy);
+  border-color: var(--amber);
+  box-shadow: 0 4px 12px rgba(245,158,11,.32);
+}
 
 /* ─── Stepper ─── */
 .stepper {

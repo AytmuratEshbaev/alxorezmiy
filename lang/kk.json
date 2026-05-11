@@ -144,7 +144,12 @@
     "col_olympiad": "Olimpiada",
     "col_level": "Dárejesi",
     "col_place": "Orın",
-    "empty": "Házirshe nátiyjeler joq"
+    "empty": "Házirshe nátiyjeler joq",
+    "cta_label": "qabıllaw",
+    "cta_title": "Sizdiń balańız da bul dizimde bola aladı",
+    "cta_text": "Mektebimiz olimpiada jeńimpazların tayarlawda ixtisaslasqan. Qabıllaw shártleri hám baǵdarlamalar haqqında maǵlıwmat alıń.",
+    "cta_admission": "Qabıllaw shártleri →",
+    "cta_programs": "Baǵdarlamalar"
   },
   "directions_page": {
     "cta_title": "Bul baǵdarlamanıń nátiyjeleri",

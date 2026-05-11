@@ -15,7 +15,7 @@
   .btn-nav-cta { display: none; }
   .stepper { flex-wrap: wrap; gap: var(--s-4); }
   .step:not(:last-child)::after { display: none; }
-  .page-header { padding: calc(var(--navbar-total) + var(--s-8)) 0 var(--s-10); }
+  .page-header { padding-top: calc(var(--navbar-total) + var(--s-8)); padding-bottom: var(--s-10); padding-left: var(--s-5); padding-right: var(--s-5); }
 }
 
 /* ── Mobile Nav ── */
@@ -75,12 +75,54 @@
   .hero-actions .btn { width: 100%; justify-content: center; }
   .stat-card { padding: var(--s-4) 0; }
   .stat-number { font-size: 2.5rem; }
-  .page-header { padding: calc(var(--navbar-total) + var(--s-6)) 0 var(--s-8); }
+  .page-header { padding-top: calc(var(--navbar-total) + var(--s-6)); padding-bottom: var(--s-8); padding-left: var(--s-4); padding-right: var(--s-4); }
   .carousel-track .card { min-width: 280px; }
   .map-container { height: 320px; }
   .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .modal { width: 95%; padding: var(--s-6); }
   th, td { padding: 10px 12px; font-size: 0.875rem; }
+
+  /* Achievements table — switch to card-list on mobile */
+  .achievements-table { display: block; }
+  .achievements-table thead { display: none; }
+  .achievements-table tbody { display: block; }
+  .achievements-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px var(--s-3);
+    padding: var(--s-4) var(--s-5);
+    border-bottom: 1px solid var(--navy-line);
+    background: transparent;
+  }
+  .achievements-table tbody tr:hover { background: var(--amber-soft); }
+  .achievements-table tbody tr:last-child { border-bottom: none; }
+  .achievements-table tbody td {
+    display: flex;
+    align-items: center;
+    border: none;
+    padding: 0;
+    font-size: .9375rem;
+  }
+  .achievements-table tbody td::before {
+    content: attr(data-label);
+    font-family: var(--font-mono);
+    font-size: .6875rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--ink-3);
+    margin-right: var(--s-3);
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+  /* Student name spans both columns at top of each card */
+  .achievements-table tbody td:first-child {
+    grid-column: 1 / -1;
+    border-bottom: 1px solid var(--navy-line);
+    padding-bottom: var(--s-2);
+    margin-bottom: var(--s-2);
+  }
+  .achievements-table tbody td:first-child::before { display: none; }
+  .achievements-table .cell-student { font-size: 1rem; }
   .filter-group {
     justify-content: flex-start;
     overflow-x: auto;
