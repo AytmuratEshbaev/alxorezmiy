@@ -271,16 +271,31 @@ Server function — barcha static route'lar + news ID'lari (Firebase Admin SDK).
 
 ## 15. Migration Strategy
 
-### Approach: Side-by-side branch
-- Yangi loyiha alohida papkada (`next-app/`) yaratiladi.
-- Mavjud kod butun saqlanadi — har faza commit qilinadi.
-- Tayyor bo'lganda repo root'da Next.js loyiha asosiyga aylanadi (eski `*.html`, `js/`, `css/`, `lang/`, `admin/` o'chiriladi).
+### Approach: In-place on migration branch
+- Next.js loyiha **repo root'da** yaratiladi (`src/`, `app/`, yangi `package.json`, `next.config.mjs`).
+- Eski fayllar (`js/`, `css/`, `lang/`, `*.html`, `admin/`, `api/`, `sw.js`, eski `vercel.json`) migratsiya davomida **joyida turaveradi** — Next.js build ularni ignore qiladi (chunki `public/`'dan tashqarida va `app/` routing'iga kirmaydi).
+- Har faza tugagach, o'sha fazaga oid eski fayllar **shu commitda o'chiriladi** (masalan, Faza 5 home page tayyor bo'lganda `index.html` o'chiriladi; Faza 7 da `api/*.js` o'chiriladi).
+- Migratsiya butunlay `claude/sad-cray-a2f0f3` (yoki `next-migration`) branch'da — rollback `git checkout main` orqali.
+
+### Cleanup commits per phase
+| Faza | O'chiriladigan eski fayllar |
+|------|----------------------------|
+| 3 | `lang/*.json` (messages'ga ko'chgan) |
+| 4 | `js/site-shell.js`, `js/main.js` qisman, `js/theme.js`, `js/i18n.js`, `js/site-search.js`, `js/stats.js`, `js/hero-particles.js` |
+| 5 | `index.html`, `about.html`, `admission.html`, `contact.html`, `directions.html`, `faq.html`, `gallery.html`, `404.html` |
+| 6 | `news.html`, `news-detail.html`, `teachers.html`, `achievements.html`, `js/firestore-helpers.js`, `js/settings-loader.js`, `js/firebase-config.js` |
+| 7 | `api/imagekit-auth.js`, `api/send-message.js`, `js/imagekit-upload.js` |
+| 8 | `admin/` to'liq |
+| 9 | `sw.js`, eski `manifest.json` (public'ga ko'chgan), `sitemap.xml`, `robots.txt`, eski `vercel.json` |
+
+Oxirgi cleanup commit'da `package.json` ham yangilanadi (eski `"type": "module"` Next config'i bilan almashtiriladi).
 
 ### Cutover
-1. Vercel preview deploy (`next-migration` branch) test qilinadi.
-2. Lighthouse audit + smoke test (har route).
-3. Production domain `main` branch'ga yangi loyiha merge qilinganda yangilanadi.
-4. Eski URL'lar (`/news/abc`) middleware'da `next-intl` orqali avtomatik locale prefix bilan redirect.
+1. Vercel preview deploy (migration branch) — har route test.
+2. Lighthouse audit (home + 3 random page) — Performance/SEO/A11y >=90.
+3. Smoke test: 4 locale × eng kamida 5 sahifa = 20 route check.
+4. `main` ga merge — Vercel automatic production deploy.
+5. Eski URL'lar (`/news/abc`) middleware'da `next-intl` orqali avtomatik locale prefix bilan redirect (`/uz/news/abc`).
 
 ## 16. Phases & Multi-Agent Plan
 
