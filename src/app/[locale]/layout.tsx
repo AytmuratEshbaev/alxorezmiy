@@ -4,6 +4,9 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { routing, type AppLocale } from '@/i18n/routing';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import SiteShell from '@/components/layout/SiteShell';
+import Footer from '@/components/layout/Footer';
+import type { Locale } from '@/types';
 import '@/styles/globals.css';
 import '@/styles/dark-theme.css';
 import '@/styles/responsive.css';
@@ -39,7 +42,11 @@ export default async function LocaleLayout({
       </head>
       <body>
         <NextIntlClientProvider messages={messages}>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <SiteShell footer={<Footer locale={locale as Locale} />}>
+              {children}
+            </SiteShell>
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>
