@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { getTeachers } from '@/lib/firebase/server-queries';
 import TeacherCard from '@/components/teachers/TeacherCard';
+import { buildPageMetadata } from '@/lib/seo';
 import type { Teacher, Locale } from '@/types';
 
 export const revalidate = 300;
@@ -9,7 +10,7 @@ export const revalidate = 300;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.teachers' });
-  return { title: t('title'), description: t('description') };
+  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/teachers' });
 }
 
 async function safeGetTeachers(): Promise<Teacher[]> {

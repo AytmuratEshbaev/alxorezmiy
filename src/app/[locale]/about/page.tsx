@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { getSettings } from '@/lib/firebase/server-queries';
 import { getLocalizedField } from '@/lib/utils';
+import { buildPageMetadata } from '@/lib/seo';
 import type { Locale, Settings } from '@/types';
 
 export const revalidate = 3600;
@@ -9,7 +10,7 @@ export const revalidate = 3600;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.about' });
-  return { title: t('title'), description: t('description') };
+  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/about' });
 }
 
 async function safeGetSettings(): Promise<Settings | null> {

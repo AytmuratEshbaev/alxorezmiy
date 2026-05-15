@@ -1,12 +1,13 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
+import { buildPageMetadata } from '@/lib/seo';
 
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.admission' });
-  return { title: t('title'), description: t('description') };
+  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/admission' });
 }
 
 export default async function AdmissionPage({ params }: { params: Promise<{ locale: string }> }) {

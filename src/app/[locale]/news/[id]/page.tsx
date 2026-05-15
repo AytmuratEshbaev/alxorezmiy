@@ -5,6 +5,7 @@ import { getNewsById, getNewsIds } from '@/lib/firebase/server-queries';
 import { getLocalizedField, formatDate } from '@/lib/utils';
 import { transformImage } from '@/lib/imagekit';
 import { routing } from '@/i18n/routing';
+import { buildPageMetadata } from '@/lib/seo';
 import type { Locale } from '@/types';
 
 export const revalidate = 60;
@@ -26,15 +27,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     if (!item) return {};
     const title = getLocalizedField(item, 'title', locale as Locale);
     const content = getLocalizedField(item, 'content', locale as Locale);
-    return {
+    const image = item.image ? transformImage(item.image, { width: 1200 }) : undefined;
+    return buildPageMetadata({
+      locale,
       title,
       description: content.substring(0, 160),
-      openGraph: {
-        title,
-        description: content.substring(0, 200),
-        images: item.image ? [transformImage(item.image, { width: 1200 })] : []
-      }
-    };
+      path: `/news/${id}`,
+      image
+    });
   } catch (err) {
     console.warn('[news/[id]] generateMetadata failed:', err);
     return {};

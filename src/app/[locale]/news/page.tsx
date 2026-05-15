@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { getNewsList } from '@/lib/firebase/server-queries';
 import NewsCard from '@/components/news/NewsCard';
+import { buildPageMetadata } from '@/lib/seo';
 import type { News, Locale } from '@/types';
 
 export const revalidate = 60;
@@ -9,7 +10,7 @@ export const revalidate = 60;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.news' });
-  return { title: t('title'), description: t('description') };
+  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/news' });
 }
 
 async function safeGetNews(): Promise<News[]> {

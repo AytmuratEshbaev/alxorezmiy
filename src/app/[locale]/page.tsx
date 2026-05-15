@@ -1,22 +1,23 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { getSettings, getNewsList, getOlympiad } from '@/lib/firebase/server-queries';
+import { getLocalizedField } from '@/lib/utils';
 import Hero from '@/components/home/Hero';
 import StatsCounter from '@/components/home/StatsCounter';
 import DirectionsGrid from '@/components/home/DirectionsGrid';
 import LatestNews from '@/components/home/LatestNews';
 import AchievementsCarousel from '@/components/home/AchievementsCarousel';
 import ContactShort from '@/components/home/ContactShort';
+import { buildPageMetadata } from '@/lib/seo';
 import type { Locale, News, OlympiadResult, Settings } from '@/types';
 
 export const revalidate = 300;
 
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz').replace(/\/$/, '');
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.home' });
-  return {
-    title: t('title'),
-    description: t('description')
-  };
+  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '' });
 }
 
 async function safe<T>(fn: () => Promise<T>, fallback: T, label: string): Promise<T> {
@@ -46,8 +47,35 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     { label: t('stats.olympiad'), count: settings?.olympiad_winners || 180, suffix: '+' }
   ];
 
+  const fullName = settings ? getLocalizedField(settings, 'fullName', locale as Locale) : '';
+  const shortName = settings ? getLocalizedField(settings, 'shortName', locale as Locale) : '';
+  const ld = {
+    '@context': 'https://schema.org',
+    '@type': 'EducationalOrganization',
+    name: fullName || 'Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi — Nukus filiali',
+    alternateName: shortName || 'Al-Xorazmiy maktabi',
+    url: `${SITE_URL}/${locale}`,
+    logo: `${SITE_URL}/assets/images/logo.webp`,
+    image: `${SITE_URL}/assets/images/hero.webp`,
+    sameAs: [] as string[],
+    address: settings?.address
+      ? {
+          '@type': 'PostalAddress',
+          streetAddress: settings.address,
+          addressLocality: 'Nukus',
+          addressCountry: 'UZ'
+        }
+      : undefined,
+    telephone: settings?.phone,
+    email: settings?.email
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+      />
       <Hero />
       <StatsCounter stats={stats} />
       <DirectionsGrid />

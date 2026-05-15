@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { getOlympiad } from '@/lib/firebase/server-queries';
 import AchievementCard from '@/components/achievements/AchievementCard';
+import { buildPageMetadata } from '@/lib/seo';
 import type { OlympiadResult } from '@/types';
 
 export const revalidate = 300;
@@ -9,7 +10,7 @@ export const revalidate = 300;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.achievements' });
-  return { title: t('title'), description: t('description') };
+  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/achievements' });
 }
 
 async function safeGetOlympiad(): Promise<OlympiadResult[]> {
