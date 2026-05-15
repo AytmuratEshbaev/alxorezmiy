@@ -270,6 +270,32 @@
     "gallery": {
       "title": "Galereya — Al-Xorezmiy mektebi",
       "description": "Mektep binası, sabaqlar hám mektep ómirinen súwretler galereyası."
+    },
+    "news": {
+      "title": "Jańalıqlar — Al-Xorezmiy mektebi",
+      "description": "Mektep ómirinen eń jańa jańalıqlar, ilájlar hám xabarlar."
+    },
+    "teachers": {
+      "title": "Muǵallimler — Al-Xorezmiy mektebi",
+      "description": "Joqarı toyparlı hám tájiriybeli pedagoglar jámáátimiz."
+    },
+    "achievements": {
+      "title": "Jetiskenlikler — Al-Xorezmiy mektebi",
+      "description": "Oqıwshılarımızdıń xalıqaralıq hám respublikalıq olimpiadalarındaǵı jetiskenlikleri."
     }
+  },
+  "news_page": {
+    "title": "Jańalıqlar hám Xabarlar",
+    "empty": "Áli jańalıqlar joq"
+  },
+  "teachers_page": {
+    "title": "Muǵallimler",
+    "subtitle": "Joqarı toyparlı tájiriybeli ustazlar jámááti",
+    "experience": "jıl tájiriybe",
+    "empty": "Áli muǵallimler joq"
+  },
+  "achievements_page": {
+    "title": "Jetiskenliklerimiz",
+    "empty": "Áli nátiyjeler joq"
   }
 }

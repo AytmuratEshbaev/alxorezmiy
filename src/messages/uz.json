@@ -270,6 +270,32 @@
     "gallery": {
       "title": "Galereya — Al-Xorazmiy maktabi",
       "description": "Maktab binosi, dars jarayoni va o'quv hayotidan rasmlar galereyasi."
+    },
+    "news": {
+      "title": "Yangiliklar — Al-Xorazmiy maktabi",
+      "description": "Maktab hayotidan eng so'nggi yangilik, tadbir va e'lonlar."
+    },
+    "teachers": {
+      "title": "O'qituvchilar — Al-Xorazmiy maktabi",
+      "description": "Maktabimizning oliy toifali va tajribali pedagoglari."
+    },
+    "achievements": {
+      "title": "Yutuqlar — Al-Xorazmiy maktabi",
+      "description": "O'quvchilarimizning xalqaro va respublika olimpiadalaridagi yutuqlari."
     }
+  },
+  "news_page": {
+    "title": "Yangiliklar va E'lonlar",
+    "empty": "Hozircha yangiliklar yo'q"
+  },
+  "teachers_page": {
+    "title": "O'qituvchilar",
+    "subtitle": "Oliy toifali va tajribali ustozlar jamoasi",
+    "experience": "yil tajriba",
+    "empty": "Hozircha o'qituvchilar yo'q"
+  },
+  "achievements_page": {
+    "title": "Yutuqlarimiz",
+    "empty": "Hozircha natijalar yo'q"
   }
 }

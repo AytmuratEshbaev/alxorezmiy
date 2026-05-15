@@ -270,6 +270,32 @@
     "gallery": {
       "title": "Gallery — Al-Khwarizmi School",
       "description": "Gallery of the school building, classes, and school life."
+    },
+    "news": {
+      "title": "News — Al-Khwarizmi School",
+      "description": "Latest news, events, and announcements from school life."
+    },
+    "teachers": {
+      "title": "Teachers — Al-Khwarizmi School",
+      "description": "Highly qualified and experienced teachers of our school."
+    },
+    "achievements": {
+      "title": "Achievements — Al-Khwarizmi School",
+      "description": "Our students' achievements in international and national olympiads."
     }
+  },
+  "news_page": {
+    "title": "News & Announcements",
+    "empty": "No news yet"
+  },
+  "teachers_page": {
+    "title": "Teachers",
+    "subtitle": "Team of highly qualified educators",
+    "experience": "years of experience",
+    "empty": "No teachers yet"
+  },
+  "achievements_page": {
+    "title": "Our Achievements",
+    "empty": "No results yet"
   }
 }
