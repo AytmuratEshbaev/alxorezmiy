@@ -11,11 +11,8 @@ export function getLocalizedField<T extends LocalizedFields>(
   prefix: string,
   locale: Locale
 ): string {
-  return (
-    (obj as Record<string, string | undefined>)[`${prefix}_${locale}`] ||
-    (obj as Record<string, string | undefined>)[`${prefix}_uz`] ||
-    ''
-  );
+  const rec = obj as unknown as Record<string, string | undefined>;
+  return rec[`${prefix}_${locale}`] || rec[`${prefix}_uz`] || '';
 }
 
 export function formatDate(ts: string | { toDate: () => Date } | undefined): string {
