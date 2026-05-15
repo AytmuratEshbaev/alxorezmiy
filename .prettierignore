@@ -1,0 +1,10 @@
+.next
+node_modules
+package-lock.json
+js
+admin
+css
+lang
+api
+*.html
+sw.js
