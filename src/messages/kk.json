@@ -124,7 +124,13 @@
     "quick_links": "Tez siltewler",
     "contact_info": "Kontakt",
     "social": "Sociallıq tarmaqllar",
+    "official_name": "Rásmiy atı",
     "copyright": "© 2026 Al-Xorezmiy arnawlı mektebi. Barlıq huqıqlar qorg'alg'an."
+  },
+  "a11y": {
+    "skip": "Tiykarǵı mazmunǵa ótiw",
+    "home_link": "Bas bet",
+    "menu": "Menyu"
   },
   "achievements": {
     "title": "Jetiskenliklerimiz",

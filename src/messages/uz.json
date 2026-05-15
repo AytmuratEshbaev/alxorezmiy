@@ -124,7 +124,13 @@
     "quick_links": "Tezkor havolalar",
     "contact_info": "Kontakt",
     "social": "Ijtimoiy tarmoqlar",
+    "official_name": "Rasmiy nomi",
     "copyright": "© 2026 Al-Xorazmiy ixtisoslashtirilgan maktabi. Barcha huquqlar himoyalangan."
+  },
+  "a11y": {
+    "skip": "Asosiy mazmunga o'tish",
+    "home_link": "Bosh sahifa",
+    "menu": "Menyu"
   },
   "achievements": {
     "title": "Yutuqlarimiz",

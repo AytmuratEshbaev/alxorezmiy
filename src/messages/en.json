@@ -124,7 +124,13 @@
     "quick_links": "Quick Links",
     "contact_info": "Contact",
     "social": "Social Media",
+    "official_name": "Official name",
     "copyright": "© 2026 Al-Khwarizmi Specialized School. All rights reserved."
+  },
+  "a11y": {
+    "skip": "Skip to main content",
+    "home_link": "Home",
+    "menu": "Menu"
   },
   "achievements": {
     "title": "Our Achievements",
