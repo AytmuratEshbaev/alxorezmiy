@@ -158,8 +158,118 @@
     "cta_programs": "Programs"
   },
   "directions_page": {
+    "title": "Programs",
+    "intro_title": "Programs specialized in exact sciences",
+    "intro_text": "Our school focuses on exact sciences such as mathematics, physics, and computer science. The curriculum is aligned with international standards and aims to prepare students for both local and international olympiads.",
+    "checklist_1": "Additional weekly hours",
+    "checklist_2": "Practical laboratory sessions",
+    "checklist_3": "Problem-solving clubs",
+    "checklist_4": "Intensive olympiad preparation",
+    "subjects_title": "Core Subjects",
+    "math_desc": "Advanced study of algebra, geometry, number theory, combinatorics, and logic problems.",
+    "physics_desc": "Classical mechanics, electrodynamics, thermodynamics, and modern quantum physics.",
+    "informatics_desc": "Programming languages such as C++ and Python, algorithms, and fundamentals of AI.",
+    "chemistry_desc": "Structure of substances, chemical reactions, and basics of modern biochemistry.",
+    "biology_desc": "Cell biology, genetics, and biodiversity through laboratory work.",
+    "languages_desc": "Students are guaranteed to reach international IELTS/TOEFL levels.",
     "cta_title": "Results of this program",
     "cta_text": "See our students' olympiad victories and international achievements.",
     "cta_btn": "View Achievements →"
+  },
+  "directions_short": {
+    "math": "Algebra, geometry, number theory, and combinatorics",
+    "physics": "Mechanics, electrodynamics, quantum physics",
+    "informatics": "Programming, algorithms, artificial intelligence",
+    "chemistry": "Organic, inorganic, analytical chemistry",
+    "biology": "Genetics, ecology, biotechnology",
+    "languages": "English, German, French"
+  },
+  "admission_page": {
+    "title": "Admission Process",
+    "section_label": "Step by step",
+    "section_title": "How to Apply to Our School",
+    "section_text": "Admission to our specialized school consists of three stages.",
+    "step1_title": "Document submission",
+    "step1_text": "After the open day is announced, parents must submit their child's documents through an online application to the school administration.",
+    "doc1": "Copy of passport or birth certificate",
+    "doc2": "6 photos size 3x4",
+    "doc3": "Student grade report",
+    "step2_title": "Selection Tests",
+    "step2_text": "Candidates with complete documents take tests in Mathematics, Logical Reasoning (IQ), and English.",
+    "step3_title": "Interview",
+    "step3_text": "Students with high test scores are invited to the final stage — an interview with school leadership and a psychologist.",
+    "download_title": "Required Documents",
+    "download_text": "Download the regulations (pdf) for detailed information on admission requirements and procedures.",
+    "download_btn": "Download Regulations"
+  },
+  "faq_page": {
+    "title": "Frequently Asked Questions",
+    "all_questions": "All questions",
+    "filter_admission": "Admission",
+    "filter_education": "Education",
+    "filter_general": "General",
+    "empty": "No questions yet"
+  },
+  "gallery_page": {
+    "title": "Photo and Video Gallery",
+    "filter_building": "🏛 Building",
+    "filter_lessons": "📚 Lessons",
+    "filter_sports": "⚽ Sports",
+    "filter_events": "🎉 Events",
+    "empty": "No images yet"
+  },
+  "about_history": {
+    "y2010": "School founded",
+    "y2010_text": "The specialized school named after Muhammad al-Khwarizmi was founded by a decree of the President of the Republic of Uzbekistan.",
+    "y2012": "Nukus branch opened",
+    "y2012_text": "The Nukus branch opened for gifted students of the Republic of Karakalpakstan.",
+    "y2015": "First international success",
+    "y2015_text": "Our students won their first medals at international olympiads.",
+    "y2018": "New laboratories",
+    "y2018_text": "Modern physics, chemistry, and biology laboratories were equipped.",
+    "y2020": "Transition to digital learning",
+    "y2020_text": "The online learning platform was successfully launched during the pandemic.",
+    "y2023": "Record results",
+    "y2023_text": "Over 50 olympiad medals in a single year — a record in the school's history.",
+    "y2026": "Today",
+    "y2026_text": "The school operates with 520+ students, 65 teachers, and 180+ olympiad winners."
+  },
+  "not_found": {
+    "eyebrow": "Page not found",
+    "title": "You got lost",
+    "message": "The page you are looking for does not exist, has been removed, or its address has changed.",
+    "back_home": "← Back to home",
+    "go_contact": "Contact us",
+    "or_visit": "Or visit these pages:"
+  },
+  "meta": {
+    "home": {
+      "title": "Al-Khwarizmi School — Nukus branch",
+      "description": "Muhammad al-Khwarizmi Specialized School (Nukus Branch) — advanced education in exact and natural sciences."
+    },
+    "about": {
+      "title": "About — Al-Khwarizmi School",
+      "description": "History, mission, values, and leadership of Muhammad al-Khwarizmi Specialized School."
+    },
+    "admission": {
+      "title": "Admission — Al-Khwarizmi School",
+      "description": "Admission process, required documents, entrance tests, and interview stages."
+    },
+    "contact": {
+      "title": "Contact — Al-Khwarizmi School",
+      "description": "Contact the school: address, phone, email, map, and online message form."
+    },
+    "directions": {
+      "title": "Programs — Al-Khwarizmi School",
+      "description": "Advanced programs in mathematics, physics, computer science, chemistry, and biology."
+    },
+    "faq": {
+      "title": "FAQ — Al-Khwarizmi School",
+      "description": "Answers to frequently asked questions about the school, admission, and studies."
+    },
+    "gallery": {
+      "title": "Gallery — Al-Khwarizmi School",
+      "description": "Gallery of the school building, classes, and school life."
+    }
   }
 }

@@ -158,8 +158,118 @@
     "cta_programs": "Dasturlar"
   },
   "directions_page": {
+    "title": "Yo'nalishlar",
+    "intro_title": "Aniq fanlarga ixtisoslashtirilgan dasturlar",
+    "intro_text": "Maktabimiz asosiy e'tiborni matematika, fizika, informatika kabi aniq fanlarga qaratadi. O'quv dasturi xalqaro standartlarga moslashtirilgan bo'lib, o'quvchilarni nafaqat mahalliy, balki xalqaro olimpiadalarga tayyorlashni maqsad qilgan.",
+    "checklist_1": "Haftasiga qo'shimcha soatlar",
+    "checklist_2": "Amaliy laboratoriya mashg'ulotlari",
+    "checklist_3": "Muammoli masalalarni yechishga doir to'garaklar",
+    "checklist_4": "Olimpiadalarga intesiv tayyorgarlik",
+    "subjects_title": "Asosiy Fanlar",
+    "math_desc": "Algebra, geometriya, sonlar nazariyasi, kombinatorika va mantiqiy fikrlash masalalari ustida chuqurlashtirilgan o'qitish.",
+    "physics_desc": "Klassik mexanika, elektrodinamika, termodinamika va zamonaviy kvant fizikasi masalalari.",
+    "informatics_desc": "C++, Python kabi dasturlash tillari, algoritmlar va sun'iy intellekt asoslari.",
+    "chemistry_desc": "Moddalar tuzilishi, kimyoviy reaksiyalar va zamonaviy bio-kimyo asoslari.",
+    "biology_desc": "Hujayra biologiyasi, genetika va bio-xilma-xillik kabi fanlarni laboratoriya ishlari orqali tushunish.",
+    "languages_desc": "O'quvchilar xalqaro IELTS/TOEFL darajalarini egallashi kafolatlanadi.",
     "cta_title": "Bu dasturning natijalari",
     "cta_text": "O'quvchilarimizning olimpiadalardagi g'alabalari va xalqaro miqyosdagi natijalarini ko'ring.",
     "cta_btn": "Yutuqlarni ko'rish →"
+  },
+  "directions_short": {
+    "math": "Algebra, geometriya, sonlar nazariyasi va kombinatorika",
+    "physics": "Mexanika, elektrodinamika, kvant fizikasi",
+    "informatics": "Dasturlash, algoritmlar, sun'iy intellekt",
+    "chemistry": "Organik, noorganik, analitik kimyo",
+    "biology": "Genetika, ekologiya, biotexnologiya",
+    "languages": "Ingliz, nemis, fransuz tillari"
+  },
+  "admission_page": {
+    "title": "Qabul Jarayoni",
+    "section_label": "Qadam-ba-qadam",
+    "section_title": "Maktabga Qabul Qilinish Tartibi",
+    "section_text": "Ixtisoslashtirilgan maktabimizga kirish uch bosqichdan iborat.",
+    "step1_title": "Hujjat topshirish",
+    "step1_text": "Ochiq eshiklar kuni e'lon qilingandan so'ng, ota-onalar farzandining hujjatlarini onlayn ariza shaklida maktab ma'muriyatiga taqdim etishi kerak.",
+    "doc1": "Pasport yoka Tug'ilganlik haqida guvohnoma nusxasi",
+    "doc2": "3x4 o'lchamdagi 6 ta rasm",
+    "doc3": "O'quvchining baholar tabeli",
+    "step2_title": "Saralash Test Imtihonlari",
+    "step2_text": "Hujjatlari to'liq bo'lgan nomzodlar uchun Matematika, Mantiqiy fikrlash (IQ) va Ingliz tilidan test imtihonlari o'tkaziladi.",
+    "step3_title": "Suhbat jarayoni",
+    "step3_text": "Testda yuqori ball to'plagan o'quvchilar yakuniy bosqich — maktab rahbariyati va psixolog ishtirokidagi suhbatga chaqiriladi.",
+    "download_title": "Zarur Hujjatlar",
+    "download_text": "Qabul talablari va tartib-qoidalari bilan batafsil tanishish uchun nizamnoma (pdf) ni yuklab oling.",
+    "download_btn": "Nizamnomani yuklab olish"
+  },
+  "faq_page": {
+    "title": "Ko'p beriladigan savollar",
+    "all_questions": "Barcha savollar",
+    "filter_admission": "Qabul",
+    "filter_education": "O'quv tizimi",
+    "filter_general": "Umumiy",
+    "empty": "Hozircha savollar yo'q"
+  },
+  "gallery_page": {
+    "title": "Foto va Video Galereya",
+    "filter_building": "🏛 Bino",
+    "filter_lessons": "📚 Darslar",
+    "filter_sports": "⚽ Sport",
+    "filter_events": "🎉 Tadbirlar",
+    "empty": "Hozircha rasmlar yo'q"
+  },
+  "about_history": {
+    "y2010": "Maktab tashkil etildi",
+    "y2010_text": "Muhammad al-Xorazmiy nomidagi ixtisoslashtirilgan maktab O'zbekiston Respublikasi Prezidenti qarori bilan tashkil etildi.",
+    "y2012": "Nukus filiali ochildi",
+    "y2012_text": "Qoraqalpog'iston Respublikasidagi iste'dodli o'quvchilar uchun Nukus filiali ochildi.",
+    "y2015": "Birinchi xalqaro muvaffaqiyat",
+    "y2015_text": "O'quvchilarimiz birinchi marta xalqaro olimpiadalarda medal qo'lga kiritdi.",
+    "y2018": "Yangi laboratoriyalar",
+    "y2018_text": "Zamonaviy fizika, kimyo va biologiya laboratoriyalari jihozlandi.",
+    "y2020": "Raqamli ta'limga o'tish",
+    "y2020_text": "Pandemiya davrida onlayn ta'lim platformasi muvaffaqiyatli ishga tushirildi.",
+    "y2023": "Rekord natijalar",
+    "y2023_text": "Bir yilda 50 dan ortiq olimpiada medali — maktab tarixidagi rekord.",
+    "y2026": "Bugungi kun",
+    "y2026_text": "520+ o'quvchi, 65 o'qituvchi, 180+ olimpiada g'olibi bilan faoliyat yuritmoqda."
+  },
+  "not_found": {
+    "eyebrow": "Sahifa topilmadi",
+    "title": "Yo'qolib qoldingiz",
+    "message": "Siz qidirgan sahifa mavjud emas, o'chirilgan, yoki manzili o'zgartirilgan bo'lishi mumkin.",
+    "back_home": "← Bosh sahifaga",
+    "go_contact": "Bog'lanish",
+    "or_visit": "Yoki bu sahifalarga o'ting:"
+  },
+  "meta": {
+    "home": {
+      "title": "Al-Xorazmiy maktabi — Nukus filiali",
+      "description": "Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi (Nukus filiali) — aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim."
+    },
+    "about": {
+      "title": "Maktab haqida — Al-Xorazmiy maktabi",
+      "description": "Muhammad al-Xorazmiy ixtisoslashtirilgan maktabining tarixi, missiyasi, qadriyatlari va rahbariyati."
+    },
+    "admission": {
+      "title": "Qabul — Al-Xorazmiy maktabi",
+      "description": "Maktabga qabul qilish tartibi, hujjatlar, test imtihonlari va suhbat bosqichlari."
+    },
+    "contact": {
+      "title": "Bog'lanish — Al-Xorazmiy maktabi",
+      "description": "Maktab bilan bog'lanish: manzil, telefon, email, xarita va onlayn xabar yuborish."
+    },
+    "directions": {
+      "title": "Yo'nalishlar — Al-Xorazmiy maktabi",
+      "description": "Matematika, fizika, informatika, kimyo, biologiya bo'yicha chuqurlashtirilgan dasturlar."
+    },
+    "faq": {
+      "title": "FAQ — Al-Xorazmiy maktabi",
+      "description": "Maktab faoliyati, qabul, o'qish bo'yicha tez-tez beriladigan savollarga javoblar."
+    },
+    "gallery": {
+      "title": "Galereya — Al-Xorazmiy maktabi",
+      "description": "Maktab binosi, dars jarayoni va o'quv hayotidan rasmlar galereyasi."
+    }
   }
 }

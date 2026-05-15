@@ -158,8 +158,118 @@
     "cta_programs": "Baǵdarlamalar"
   },
   "directions_page": {
+    "title": "Bag'darlar",
+    "intro_title": "Anıq pánlerge qániygelestirgen bag'darlamalar",
+    "intro_text": "Mektebimiz tiykarǵı diqqattı matematika, fizika, informatika sıyaqlı anıq pánlerge qaratadı. Oqıw bag'darlaması xalıqaralıq standartlarǵa muwapıqlastırılǵan bolıp, oqıwshılardı jergilikli ǵana emes, al xalıqaralıq olimpiadalarǵa tayarlawdı maqset etken.",
+    "checklist_1": "Aptasına qosımsha saatlar",
+    "checklist_2": "Ámeliy laboratoriya shınıǵıwları",
+    "checklist_3": "Mashqalalı máselelerdi sheshiwge qaratılǵan tóǵerekler",
+    "checklist_4": "Olimpiadalarǵa intensiv tayarlıq",
+    "subjects_title": "Tiykarǵı pánler",
+    "math_desc": "Algebra, geometriya, sanlar teoriyası, kombinatorika hám logikalıq oylaw máseleleri boyınsha terénlestirgen oqıtıw.",
+    "physics_desc": "Klassikalıq mexanika, elektrodinamika, termodinamika hám zamanagóy kvant fizikası máseleleri.",
+    "informatics_desc": "C++, Python sıyaqlı baǵdarlamalaw tilleri, algoritmler hám jasalma intellekt tiykarları.",
+    "chemistry_desc": "Zatlardıń dúzilisi, ximiyalıq reaksiyalar hám zamanagóy bio-ximiya tiykarları.",
+    "biology_desc": "Kletka biologiyası, genetika hám bio túrli-túrlilik laboratoriya jumısları arqalı túsiniw.",
+    "languages_desc": "Oqıwshılar xalıqaralıq IELTS/TOEFL dárejelerine erisiwi kepilliklesedi.",
     "cta_title": "Bul baǵdarlamanıń nátiyjeleri",
     "cta_text": "Oqıwshılarımızdıń olimpiadalardaǵı jeńisleri hám xalıqaralıq nátiyjelerin kóriń.",
     "cta_btn": "Jetiskenliklerdi kóriw →"
+  },
+  "directions_short": {
+    "math": "Algebra, geometriya, sanlar teoriyası hám kombinatorika",
+    "physics": "Mexanika, elektrodinamika, kvant fizikası",
+    "informatics": "Baǵdarlamalaw, algoritmler, jasalma intellekt",
+    "chemistry": "Organikalıq, organikalıq emes, analitik ximiya",
+    "biology": "Genetika, ekologiya, biotexnologiya",
+    "languages": "Inglis, nemis, fransuz tilleri"
+  },
+  "admission_page": {
+    "title": "Qabıllaw jarayanı",
+    "section_label": "Adım-adım",
+    "section_title": "Mektepke qabıllaw tártibi",
+    "section_text": "Bizdiń arnawlı mektepke kiriw úsh basqıshtan ibarat.",
+    "step1_title": "Hújjet tapsırıw",
+    "step1_text": "Ashıq esikler kúni daǵazalanǵannan keyin, ata-analar perzentiniń hújjetlerin onlayn arza túrinde mektep ma'múriyatına tapsırıwı kerek.",
+    "doc1": "Pasport yamasa tuwılǵanlıq haqqında gúwalıq nusqası",
+    "doc2": "3x4 ólshemli 6 súwret",
+    "doc3": "Oqıwshınıń bahalar tabeli",
+    "step2_title": "Saralaw test imtihanları",
+    "step2_text": "Hújjetleri tolıq bolǵan kandidatlar ushın matematika, logikalıq oylaw (IQ) hám inglis tilinen testler ótkeriledi.",
+    "step3_title": "Sáwbet jarayanı",
+    "step3_text": "Testten joqarı ball jıynaǵan oqıwshılar sońǵı basqıshqa — mektep basshılıǵı hám psixolog qatnasındaǵı sáwbetke shaqırıladı.",
+    "download_title": "Zárúrli hújjetler",
+    "download_text": "Qabıllaw talapları hám tártibi menen tolıq tanısıw ushın nizam-qaǵıydanı (pdf) júklep alıń.",
+    "download_btn": "Nizam-qaǵıydanı júklep alıw"
+  },
+  "faq_page": {
+    "title": "Kóp beriletuǵın sorawlar",
+    "all_questions": "Barlıq sorawlar",
+    "filter_admission": "Qabıl",
+    "filter_education": "Oqıw sistemasi",
+    "filter_general": "Ulıwma",
+    "empty": "Házirshe sorawlar joq"
+  },
+  "gallery_page": {
+    "title": "Foto hám Video Galereya",
+    "filter_building": "🏛 Bina",
+    "filter_lessons": "📚 Sabaqlar",
+    "filter_sports": "⚽ Sport",
+    "filter_events": "🎉 Ilájlar",
+    "empty": "Házirshe súwretler joq"
+  },
+  "about_history": {
+    "y2010": "Mektep dúzildi",
+    "y2010_text": "Muhammad al-Xorezmiy atındaǵı arnawlı mektep Ózbekstan Respublikası Prezidenti qararı menen dúzildi.",
+    "y2012": "Nókis filialı ashıldı",
+    "y2012_text": "Qaraqalpaqstan Respublikasındaǵı talantlı oqıwshılar ushın Nókis filialı ashıldı.",
+    "y2015": "Birinshi xalıqaralıq tabıs",
+    "y2015_text": "Oqıwshılarımız birinshi márte xalıqaralıq olimpiadalarda medal qolǵa kirgizdi.",
+    "y2018": "Jańa laboratoriyalar",
+    "y2018_text": "Zamanagóy fizika, ximiya hám biologiya laboratoriyaları jabdıqlandı.",
+    "y2020": "Sanlı bilimlendiriwge ótiw",
+    "y2020_text": "Pandemiya dáwirinde onlayn oqıw platforması ámeldegi iske túsirildi.",
+    "y2023": "Rekord nátiyjeler",
+    "y2023_text": "Bir jılda 50 den artıq olimpiada medali — mektep tariyxındaǵı rekord.",
+    "y2026": "Búgingi kún",
+    "y2026_text": "520+ oqıwshı, 65 oqıtıwshı, 180+ olimpiada jeńimpazı menen jumıs alıp barılmaqta."
+  },
+  "not_found": {
+    "eyebrow": "Bet tabılmadı",
+    "title": "Joǵalıp qaldıńız",
+    "message": "Siz izlegen bet joq, óshirilgen yamasa mánzili ózgertilgen bolıwı múmkin.",
+    "back_home": "← Bas betke",
+    "go_contact": "Baylanısıw",
+    "or_visit": "Yamasa bul betlerge ótiń:"
+  },
+  "meta": {
+    "home": {
+      "title": "Al-Xorezmiy mektebi — Nókis filialı",
+      "description": "Muhammad al-Xorezmiy arnawlı mektebi (Nókis filialı) — anıq hám tábiyiy pánler boyınsha terénlestirgen bilim."
+    },
+    "about": {
+      "title": "Mektep haqqında — Al-Xorezmiy mektebi",
+      "description": "Muhammad al-Xorezmiy arnawlı mektebiniń tariyxı, missiyası, qádriyatları hám basshılıǵı."
+    },
+    "admission": {
+      "title": "Qabıl — Al-Xorezmiy mektebi",
+      "description": "Mektepke qabıllaw tártibi, hújjetler, test hám sáwbet basqıshları."
+    },
+    "contact": {
+      "title": "Baylanısıw — Al-Xorezmiy mektebi",
+      "description": "Mektep menen baylanısıw: mánzil, telefon, email, xarita hám onlayn xabar formı."
+    },
+    "directions": {
+      "title": "Bag'darlar — Al-Xorezmiy mektebi",
+      "description": "Matematika, fizika, informatika, ximiya, biologiya boyınsha terénlestirgen bag'darlamalar."
+    },
+    "faq": {
+      "title": "FAQ — Al-Xorezmiy mektebi",
+      "description": "Mektep jumısı, qabıllaw, oqıw boyınsha kóp beriletuǵın sorawlarǵa juwaplar."
+    },
+    "gallery": {
+      "title": "Galereya — Al-Xorezmiy mektebi",
+      "description": "Mektep binası, sabaqlar hám mektep ómirinen súwretler galereyası."
+    }
   }
 }
