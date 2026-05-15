@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
@@ -15,8 +16,17 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz')
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz'),
+  manifest: '/manifest.json',
+  icons: {
+    icon: '/assets/icons/favicon.svg',
+    apple: '/assets/images/logo.webp'
+  }
+};
+
+export const viewport: Viewport = {
+  themeColor: '#0D0D5C'
 };
 
 export default async function LocaleLayout({

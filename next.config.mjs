@@ -1,6 +1,38 @@
 import createNextIntlPlugin from 'next-intl/plugin';
+import withPWAInit from '@ducanh2912/next-pwa';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+
+const pwa = withPWAInit({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  workboxOptions: {
+    skipWaiting: true,
+    runtimeCaching: [
+      {
+        urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'google-fonts',
+          expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 }
+        }
+      },
+      {
+        urlPattern: /^https:\/\/ik\.imagekit\.io\/.*/i,
+        handler: 'StaleWhileRevalidate',
+        options: {
+          cacheName: 'imagekit-assets',
+          expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 }
+        }
+      },
+      {
+        urlPattern: /\/api\/.*/i,
+        handler: 'NetworkOnly'
+      }
+    ]
+  }
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -32,4 +64,4 @@ const nextConfig = {
   }
 };
 
-export default withNextIntl(nextConfig);
+export default pwa(withNextIntl(nextConfig));
