@@ -286,16 +286,48 @@
   },
   "news_page": {
     "title": "Jańalıqlar hám Xabarlar",
-    "empty": "Áli jańalıqlar joq"
+    "empty": "Áli jańalıqlar joq",
+    "empty_title": "Áli jańalıqlar joq",
+    "empty_text": "Jaqında bul jerde mektep ómirinen eń jańa jańalıqlar hám xabarlar payda boladı.",
+    "category": {
+      "events": "Ilájlar",
+      "announcements": "Xabarlar"
+    },
+    "read_time": "{minutes} min oqıw",
+    "back_to_list": "← Barlıq jańalıqlarǵa qaytıw",
+    "share_title": "Bólisiw",
+    "share_telegram": "Telegram",
+    "share_facebook": "Facebook",
+    "share_copy": "Siltemeni kóshiriw",
+    "share_copied": "Sılteme kóshirildi",
+    "related_title": "Uqsas jańalıqlar"
   },
   "teachers_page": {
     "title": "Muǵallimler",
     "subtitle": "Joqarı toyparlı tájiriybeli ustazlar jámááti",
     "experience": "jıl tájiriybe",
-    "empty": "Áli muǵallimler joq"
+    "empty": "Áli muǵallimler joq",
+    "empty_title": "Muǵallimler dizimi tayarlanbaqta",
+    "empty_text": "Tezde bul jerde mektepiymizdiń joqarı toyparlı pedagoglar jámáátın kóresiz."
   },
   "achievements_page": {
     "title": "Jetiskenliklerimiz",
-    "empty": "Áli nátiyjeler joq"
+    "empty": "Áli nátiyjeler joq",
+    "empty_title": "Jetiskenlikler tezde",
+    "empty_text": "Oqıwshılarımızdıń olimpiadalardaǵı jeńisleri tezde usı jerde járiyalanadı."
+  },
+  "gallery_page_extra": {
+    "empty_title": "Galereya tayarlanbaqta",
+    "empty_text": "Jaqında bul jerde mektep ómirinen súwretler payda boladı.",
+    "open_image": "Súwretti úlkeytiw"
+  },
+  "faq_page_extra": {
+    "empty_title": "Sorawlar tezde",
+    "empty_text": "Áli sorawlar joq. Óz sorawıńızdı bizge tikkeley jiberiwińiz múmkin."
+  },
+  "a11y_extra": {
+    "scroll_down": "Tómen aylandırıw",
+    "expand": "Keńeytiw",
+    "collapse": "Jabıw"
   }
 }

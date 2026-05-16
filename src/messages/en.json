@@ -286,16 +286,48 @@
   },
   "news_page": {
     "title": "News & Announcements",
-    "empty": "No news yet"
+    "empty": "No news yet",
+    "empty_title": "No news yet",
+    "empty_text": "The latest news and announcements from school life will appear here soon.",
+    "category": {
+      "events": "Events",
+      "announcements": "Announcements"
+    },
+    "read_time": "{minutes} min read",
+    "back_to_list": "← Back to all news",
+    "share_title": "Share",
+    "share_telegram": "Telegram",
+    "share_facebook": "Facebook",
+    "share_copy": "Copy link",
+    "share_copied": "Link copied",
+    "related_title": "Related news"
   },
   "teachers_page": {
     "title": "Teachers",
     "subtitle": "Team of highly qualified educators",
     "experience": "years of experience",
-    "empty": "No teachers yet"
+    "empty": "No teachers yet",
+    "empty_title": "Teacher list is being prepared",
+    "empty_text": "The school's team of highly qualified educators will appear here soon."
   },
   "achievements_page": {
     "title": "Our Achievements",
-    "empty": "No results yet"
+    "empty": "No results yet",
+    "empty_title": "Achievements coming soon",
+    "empty_text": "Our students' olympiad wins will be published here shortly."
+  },
+  "gallery_page_extra": {
+    "empty_title": "Gallery is being prepared",
+    "empty_text": "Photos from school life will appear here soon.",
+    "open_image": "Enlarge image"
+  },
+  "faq_page_extra": {
+    "empty_title": "Questions coming soon",
+    "empty_text": "No questions yet. You can send your question to us directly."
+  },
+  "a11y_extra": {
+    "scroll_down": "Scroll down",
+    "expand": "Expand",
+    "collapse": "Collapse"
   }
 }

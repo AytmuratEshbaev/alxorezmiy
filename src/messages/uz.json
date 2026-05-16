@@ -286,16 +286,48 @@
   },
   "news_page": {
     "title": "Yangiliklar va E'lonlar",
-    "empty": "Hozircha yangiliklar yo'q"
+    "empty": "Hozircha yangiliklar yo'q",
+    "empty_title": "Hozircha yangilik yo'q",
+    "empty_text": "Yaqin orada bu yerda maktab hayotidan eng so'nggi yangilik va e'lonlar paydo bo'ladi.",
+    "category": {
+      "events": "Tadbirlar",
+      "announcements": "E'lonlar"
+    },
+    "read_time": "{minutes} daq. o'qish",
+    "back_to_list": "← Barcha yangiliklarga qaytish",
+    "share_title": "Ulashish",
+    "share_telegram": "Telegram",
+    "share_facebook": "Facebook",
+    "share_copy": "Havolani nusxalash",
+    "share_copied": "Havola nusxalandi",
+    "related_title": "Tegishli yangiliklar"
   },
   "teachers_page": {
     "title": "O'qituvchilar",
     "subtitle": "Oliy toifali va tajribali ustozlar jamoasi",
     "experience": "yil tajriba",
-    "empty": "Hozircha o'qituvchilar yo'q"
+    "empty": "Hozircha o'qituvchilar yo'q",
+    "empty_title": "O'qituvchilar ro'yxati tayyorlanmoqda",
+    "empty_text": "Tez orada bu yerda maktabning oliy toifali pedagoglari jamoasini ko'rishingiz mumkin."
   },
   "achievements_page": {
     "title": "Yutuqlarimiz",
-    "empty": "Hozircha natijalar yo'q"
+    "empty": "Hozircha natijalar yo'q",
+    "empty_title": "Yutuqlar yaqin orada",
+    "empty_text": "O'quvchilarimizning olimpiadalardagi g'alabalari tez orada shu yerda e'lon qilinadi."
+  },
+  "gallery_page_extra": {
+    "empty_title": "Galereya tayyorlanmoqda",
+    "empty_text": "Yaqin orada bu yerda maktab hayotidan rasmlar paydo bo'ladi.",
+    "open_image": "Rasmni kattalashtirish"
+  },
+  "faq_page_extra": {
+    "empty_title": "Savollar yaqin orada",
+    "empty_text": "Hozircha savollar yo'q. Savollaringizni bizga to'g'ridan-to'g'ri yuborishingiz mumkin."
+  },
+  "a11y_extra": {
+    "scroll_down": "Quyiroq aylantirish",
+    "expand": "Kengaytirish",
+    "collapse": "Yopish"
   }
 }
