@@ -345,3 +345,14 @@
 
 /* Toast */
 [data-theme="dark"] .toast { background: var(--bg-3); border: 1px solid var(--navy-line); border-left-width: 3px; }
+
+/* Accordion (faq) — dark variants */
+[data-theme="dark"] .accordion-item { border-bottom-color: var(--navy-line); }
+[data-theme="dark"] .accordion-header { color: var(--ink); }
+[data-theme="dark"] .accordion-icon { color: var(--amber); border-color: var(--navy-line); }
+[data-theme="dark"] .accordion-item.active .accordion-icon { background: var(--amber); color: var(--bg); border-color: var(--amber); }
+[data-theme="dark"] .accordion-body-content { color: var(--ink-2); }
+
+/* Breadcrumb in dark */
+[data-theme="dark"] .breadcrumb a { color: rgba(255,255,255,.78); }
+[data-theme="dark"] .breadcrumb .current { color: var(--amber); }

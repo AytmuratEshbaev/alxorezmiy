@@ -1862,3 +1862,131 @@ tbody tr:hover { background: var(--amber-soft); }
 .text-mono { font-family: var(--font-mono); }
 .text-display { font-family: var(--font-display); }
 .muted { color: var(--ink-3); }
+
+/* ─── Accordion (generic — used by FaqAccordion) ───
+   FaqAccordion uses `.accordion-item / .accordion-header / .accordion-body /
+   .accordion-icon` instead of the legacy `.faq-*` set. Style both so the
+   markup keeps working without a component rewrite. */
+.accordion { display: flex; flex-direction: column; }
+.accordion-item {
+  border-bottom: 1px solid var(--navy-line);
+  padding: var(--s-5) 0;
+}
+.accordion-item:first-child { padding-top: 0; }
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: var(--s-2) 0;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+  -webkit-tap-highlight-color: transparent;
+}
+.accordion-header:hover .accordion-icon {
+  border-color: var(--amber);
+  color: var(--amber-2);
+}
+.accordion-icon {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--navy-line);
+  border-radius: 50%;
+  color: var(--navy);
+  transition: transform var(--t-base) var(--ease-out),
+              background var(--t-base),
+              color var(--t-base),
+              border-color var(--t-base);
+}
+.accordion-item.active .accordion-icon {
+  transform: rotate(180deg);
+  background: var(--amber);
+  color: var(--navy);
+  border-color: var(--amber);
+}
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--t-slow) var(--ease-out);
+}
+.accordion-body-content { padding: var(--s-3) 0 var(--s-1); color: var(--ink-2); line-height: 1.65; }
+
+/* ─── Global polish ─── */
+
+/* Smoother taps on touch devices */
+html { -webkit-tap-highlight-color: transparent; }
+
+/* Stronger focus-visible across all interactive elements, even those that
+   override the default outline. Buttons/links with custom focus already win
+   on specificity, so this is a safety net. */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* Skip-link contrast + visibility on focus — ensure it sits above the
+   floating navbar (z-index: 100) and the scroll-progress bar (z-index: 200). */
+.skip-link { z-index: 1200; }
+
+/* Mobile nav uses transform-based reveal — keep transitions on transform,
+   not display, which it already does. Ensure list is keyboard-navigable
+   by allowing focus when active only (otherwise focus would land on
+   visually-hidden links). */
+.mobile-nav:not(.active) a { pointer-events: none; }
+
+/* ─── @media print — flatten layout, hide chrome ─── */
+@media print {
+  /* Backgrounds — fall back to white */
+  html, body { background: #FFFFFF !important; color: #000 !important; }
+  body { background-image: none !important; }
+
+  /* Hide all chrome */
+  .navbar, .mobile-nav, .skip-link, .back-to-top,
+  .scroll-progress, .search-modal, .modal-overlay,
+  .hamburger, .footer-social, .footer { display: none !important; }
+
+  /* Full-width container, no shadows */
+  .container, .container-narrow { max-width: 100% !important; padding: 0 !important; }
+  .section { padding: var(--s-8) 0 !important; }
+  .card, .modal, .confirm-dialog,
+  .navbar, .stats-section, .page-header {
+    box-shadow: none !important;
+    border-color: #BBB !important;
+  }
+  /* Hero — replace dark photo with simple text block */
+  .hero {
+    min-height: 0 !important;
+    padding: var(--s-6) 0 !important;
+    background: none !important;
+    color: #000 !important;
+  }
+  .hero h1, .hero-content p { color: #000 !important; text-shadow: none !important; }
+  .hero-actions, .hero-scroll-cue { display: none !important; }
+
+  /* Page-header — strip gradient */
+  .page-header { background: #FFFFFF !important; color: #000 !important; padding-top: var(--s-6) !important; }
+  .page-header h1 { color: #000 !important; }
+
+  /* Make links visible on paper */
+  a { color: #000 !important; text-decoration: underline; }
+
+  /* Avoid page-breaks inside cards / images */
+  .card, .news-card, .team-card, .stat-card, .timeline-item,
+  table, figure, img { page-break-inside: avoid; break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+}
+

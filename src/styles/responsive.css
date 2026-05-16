@@ -136,6 +136,11 @@
   }
   .filter-btn { white-space: nowrap; flex-shrink: 0; }
   .back-to-top { bottom: 18px; right: 18px; width: 44px; height: 44px; }
+  /* Touch targets — WCAG 2.5.5 minimum 44x44 on mobile */
+  .hamburger { width: 44px; height: 44px; padding: 0 12px; }
+  .theme-toggle, .search-trigger { width: 44px; height: 44px; }
+  .lang-btn { min-height: 44px; padding: 10px 14px; }
+  .filter-btn { min-height: 44px; }
   .timeline { padding-left: var(--s-8); }
   .timeline::before { left: 10px; }
   .timeline-item::before { left: -29px; width: 10px; height: 10px; }
