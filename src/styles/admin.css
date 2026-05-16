@@ -50,6 +50,27 @@
    ul { list-style: none; }
    ::selection { background: var(--primary); color: white; }
 
+   /* Focus rings — a11y safety net for admin panel */
+   a:focus-visible,
+   button:focus-visible,
+   input:focus-visible,
+   select:focus-visible,
+   textarea:focus-visible,
+   [role="button"]:focus-visible {
+     outline: 2px solid var(--primary);
+     outline-offset: 2px;
+     border-radius: 6px;
+   }
+   html { -webkit-tap-highlight-color: transparent; }
+
+   @media (prefers-reduced-motion: reduce) {
+     *, *::before, *::after {
+       animation-duration: .01ms !important;
+       animation-iteration-count: 1 !important;
+       transition-duration: .01ms !important;
+     }
+   }
+
    /* ── Layout ── */
    .admin-layout { display: flex; min-height: 100vh; }
 
