@@ -2,6 +2,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
+import { toast } from '@/components/admin/Toast';
+import { useEscapeKey } from '@/components/admin/useEscapeKey';
 import {
   subscribeCollection,
   addDocument,
@@ -102,10 +104,12 @@ export default function FaqAdminPage() {
     setEditingId(null);
   };
 
+  useEscapeKey(modalOpen, closeModal);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!form.questions.uz.trim() || !form.answers.uz.trim()) {
-      alert('UZ savol va javob majburiy');
+      toast.error('UZ savol va javob majburiy');
       return;
     }
     setSubmitting(true);
@@ -124,12 +128,14 @@ export default function FaqAdminPage() {
     try {
       if (editingId) {
         await updateDocument('faq', editingId, data);
+        toast.success('Savol yangilandi');
       } else {
         await addDocument('faq', data);
+        toast.success("Savol qo'shildi");
       }
       closeModal();
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     } finally {
       setSubmitting(false);
     }
@@ -145,8 +151,9 @@ export default function FaqAdminPage() {
     if (!ok) return;
     try {
       await deleteDocument('faq', item.id);
+      toast.success("Savol o'chirildi");
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     }
   };
 

@@ -361,6 +361,10 @@
    .btn-outline { border: 1px solid var(--border-color); color: var(--text-primary); background: transparent; }
    .btn-outline:hover { background: #F8FAFC; border-color: #CBD5E1; }
    .btn-icon { padding: 8px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; }
+   .btn-sm { padding: 7px 14px; font-size: 0.825rem; }
+   .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+   .modal-close { background: transparent; color: var(--text-secondary); width: 36px; height: 36px; border-radius: 8px; font-size: 1.4rem; line-height: 1; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+   .modal-close:hover { background: var(--border-subtle); color: var(--text-primary); }
    
    /* ── Forms ── */
    .form-group { margin-bottom: 16px; }

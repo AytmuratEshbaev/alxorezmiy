@@ -2,6 +2,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { AdminHeader } from '@/components/admin/AdminHeader';
+import { toast } from '@/components/admin/Toast';
 import { db } from '@/lib/firebase/client';
 
 type Lang = 'uz' | 'ru' | 'kk' | 'en';
@@ -156,8 +157,11 @@ export default function SettingsAdminPage() {
         { merge: true }
       );
       setMsg({ text: 'Sozlamalar saqlandi', ok: true });
+      toast.success('Sozlamalar saqlandi');
     } catch (err) {
-      setMsg({ text: 'Xatolik: ' + (err as Error).message, ok: false });
+      const text = 'Xatolik: ' + (err as Error).message;
+      setMsg({ text, ok: false });
+      toast.error(text);
     } finally {
       setSaving(false);
     }

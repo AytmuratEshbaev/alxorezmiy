@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
+import { toast } from '@/components/admin/Toast';
 import {
   subscribeCollection,
   updateDocument,
@@ -47,7 +48,18 @@ export default function MessagesAdminPage() {
     try {
       await updateDocument('messages', id, { read });
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
+    }
+  };
+
+  const markAllRead = async () => {
+    const unreadItems = items.filter((m) => !m.read);
+    if (unreadItems.length === 0) return;
+    try {
+      await Promise.all(unreadItems.map((m) => updateDocument('messages', m.id, { read: true })));
+      toast.success(`${unreadItems.length} ta xabar o'qildi deb belgilandi`);
+    } catch (err) {
+      toast.error('Xatolik: ' + (err as Error).message);
     }
   };
 
@@ -61,8 +73,9 @@ export default function MessagesAdminPage() {
     if (!ok) return;
     try {
       await deleteDocument('messages', id);
+      toast.success("Xabar o'chirildi");
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     }
   };
 
@@ -73,6 +86,11 @@ export default function MessagesAdminPage() {
         <div className="admin-card">
           <div className="card-header">
             <h2 className="card-title">Foydalanuvchilardan kelgan xabarlar</h2>
+            {unread > 0 && (
+              <button className="btn btn-outline" onClick={markAllRead}>
+                ✓ Hammasini o&apos;qildi deb belgilash
+              </button>
+            )}
           </div>
           <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
             <button

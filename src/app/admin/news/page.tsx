@@ -2,6 +2,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
+import { toast } from '@/components/admin/Toast';
+import { useEscapeKey } from '@/components/admin/useEscapeKey';
 import {
   subscribeCollection,
   addDocument,
@@ -128,6 +130,8 @@ export default function NewsAdminPage() {
     setUploadPct(null);
   };
 
+  useEscapeKey(modalOpen, closeModal);
+
   const handleFile = async (file?: File) => {
     if (!file) return;
     setUploadPct(0);
@@ -137,7 +141,7 @@ export default function NewsAdminPage() {
       setUploadPct(100);
       setTimeout(() => setUploadPct(null), 1200);
     } catch (err) {
-      alert('Rasm yuklashda xato: ' + (err as Error).message);
+      toast.error('Rasm yuklashda xato: ' + (err as Error).message);
       setUploadPct(null);
     }
   };
@@ -145,7 +149,7 @@ export default function NewsAdminPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!form.titles.uz.trim()) {
-      alert("O'zbek tilida sarlavha majburiy");
+      toast.error("O'zbek tilida sarlavha majburiy");
       return;
     }
     setSubmitting(true);
@@ -166,12 +170,14 @@ export default function NewsAdminPage() {
     try {
       if (editingId) {
         await updateDocument('news', editingId, data);
+        toast.success('Yangilik yangilandi');
       } else {
         await addDocument('news', data);
+        toast.success("Yangilik qo'shildi");
       }
       closeModal();
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     } finally {
       setSubmitting(false);
     }
@@ -187,8 +193,9 @@ export default function NewsAdminPage() {
     if (!ok) return;
     try {
       await deleteDocument('news', item.id);
+      toast.success("Yangilik o'chirildi");
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     }
   };
 

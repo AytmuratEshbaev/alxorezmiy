@@ -2,6 +2,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
+import { toast } from '@/components/admin/Toast';
+import { useEscapeKey } from '@/components/admin/useEscapeKey';
 import {
   subscribeCollection,
   addDocument,
@@ -85,10 +87,12 @@ export default function OlympiadAdminPage() {
     setEditingId(null);
   };
 
+  useEscapeKey(modalOpen, closeModal);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!form.student.trim()) {
-      alert("O'quvchi ismi majburiy");
+      toast.error("O'quvchi ismi majburiy");
       return;
     }
     setSubmitting(true);
@@ -103,12 +107,14 @@ export default function OlympiadAdminPage() {
     try {
       if (editingId) {
         await updateDocument('olympiad', editingId, data);
+        toast.success('Natija yangilandi');
       } else {
         await addDocument('olympiad', data);
+        toast.success("Natija qo'shildi");
       }
       closeModal();
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     } finally {
       setSubmitting(false);
     }
@@ -124,8 +130,9 @@ export default function OlympiadAdminPage() {
     if (!ok) return;
     try {
       await deleteDocument('olympiad', item.id);
+      toast.success("Natija o'chirildi");
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     }
   };
 

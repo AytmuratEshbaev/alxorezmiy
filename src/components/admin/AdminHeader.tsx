@@ -1,6 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { confirmDialog } from '@/components/admin/ConfirmDialog';
 
 export function AdminHeader({ title }: { title: string }) {
   const { user, logout } = useAuth();
@@ -10,6 +11,14 @@ export function AdminHeader({ title }: { title: string }) {
   const initial = (user?.displayName || user?.email || 'A')[0].toUpperCase();
 
   const handleLogout = async () => {
+    const ok = await confirmDialog({
+      title: 'Chiqishni tasdiqlang',
+      message: 'Admin paneldan chiqmoqchimisiz?',
+      confirmText: 'Ha, chiqish',
+      cancelText: 'Bekor qilish',
+      icon: '🚪'
+    });
+    if (!ok) return;
     await logout();
     router.replace('/admin/login');
   };

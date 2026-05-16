@@ -6,6 +6,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { AuthGuard } from '@/components/admin/AuthGuard';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { ConfirmDialogHost } from '@/components/admin/ConfirmDialog';
+import { ToastHost } from '@/components/admin/Toast';
 import type { ReactNode } from 'react';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -24,6 +25,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </div>
         )}
         <ConfirmDialogHost />
+        <ToastHost />
       </AuthGuard>
     </AuthProvider>
   );

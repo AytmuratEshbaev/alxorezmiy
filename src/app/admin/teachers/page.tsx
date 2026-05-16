@@ -2,6 +2,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
+import { toast } from '@/components/admin/Toast';
+import { useEscapeKey } from '@/components/admin/useEscapeKey';
 import {
   subscribeCollection,
   addDocument,
@@ -128,6 +130,8 @@ export default function TeachersAdminPage() {
     setUploadPct(null);
   };
 
+  useEscapeKey(modalOpen, closeModal);
+
   const handleFile = async (file?: File) => {
     if (!file) return;
     setUploadPct(0);
@@ -137,7 +141,7 @@ export default function TeachersAdminPage() {
       setUploadPct(100);
       setTimeout(() => setUploadPct(null), 1200);
     } catch (err) {
-      alert('Rasm yuklashda xato: ' + (err as Error).message);
+      toast.error('Rasm yuklashda xato: ' + (err as Error).message);
       setUploadPct(null);
     }
   };
@@ -160,11 +164,11 @@ export default function TeachersAdminPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!form.names.uz.trim()) {
-      alert("O'zbek tilida ism majburiy");
+      toast.error("O'zbek tilida ism majburiy");
       return;
     }
     if (!form.subject.trim()) {
-      alert('Fan majburiy');
+      toast.error('Fan majburiy');
       return;
     }
     setSubmitting(true);
@@ -183,12 +187,14 @@ export default function TeachersAdminPage() {
     try {
       if (editingId) {
         await updateDocument('teachers', editingId, data);
+        toast.success("O'qituvchi yangilandi");
       } else {
         await addDocument('teachers', data);
+        toast.success("O'qituvchi qo'shildi");
       }
       closeModal();
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     } finally {
       setSubmitting(false);
     }
@@ -204,8 +210,9 @@ export default function TeachersAdminPage() {
     if (!ok) return;
     try {
       await deleteDocument('teachers', t.id);
+      toast.success("O'qituvchi o'chirildi");
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     }
   };
 

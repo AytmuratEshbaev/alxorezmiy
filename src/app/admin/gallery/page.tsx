@@ -2,6 +2,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
+import { toast } from '@/components/admin/Toast';
+import { useEscapeKey } from '@/components/admin/useEscapeKey';
 import {
   subscribeCollection,
   addDocument,
@@ -98,6 +100,8 @@ export default function GalleryAdminPage() {
     setUploadPct(null);
   };
 
+  useEscapeKey(modalOpen, closeModal);
+
   const handleFile = async (file?: File) => {
     if (!file) return;
     setUploadPct(0);
@@ -107,7 +111,7 @@ export default function GalleryAdminPage() {
       setUploadPct(100);
       setTimeout(() => setUploadPct(null), 1200);
     } catch (err) {
-      alert('Rasm yuklashda xato: ' + (err as Error).message);
+      toast.error('Rasm yuklashda xato: ' + (err as Error).message);
       setUploadPct(null);
     }
   };
@@ -115,7 +119,7 @@ export default function GalleryAdminPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!form.url) {
-      alert('Rasm yuklang');
+      toast.error('Rasm yuklang');
       return;
     }
     setSubmitting(true);
@@ -131,12 +135,14 @@ export default function GalleryAdminPage() {
     try {
       if (editingId) {
         await updateDocument('gallery', editingId, data);
+        toast.success('Rasm yangilandi');
       } else {
         await addDocument('gallery', data);
+        toast.success("Rasm qo'shildi");
       }
       closeModal();
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     } finally {
       setSubmitting(false);
     }
@@ -152,8 +158,9 @@ export default function GalleryAdminPage() {
     if (!ok) return;
     try {
       await deleteDocument('gallery', item.id);
+      toast.success("Rasm o'chirildi");
     } catch (err) {
-      alert('Xatolik: ' + (err as Error).message);
+      toast.error('Xatolik: ' + (err as Error).message);
     }
   };
 
