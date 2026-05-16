@@ -42,9 +42,22 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
       <section className="section">
         <div className="container">
           {items.length === 0 ? (
-            <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: 60 }}>
-              {t('news_page.empty')}
-            </p>
+            <div
+              role="status"
+              style={{
+                textAlign: 'center',
+                color: 'var(--ink-3)',
+                padding: 'var(--s-16) var(--s-4)',
+                maxWidth: 480,
+                margin: '0 auto'
+              }}
+            >
+              <div aria-hidden="true" style={{ fontSize: '3rem', marginBottom: 'var(--s-4)', opacity: 0.5 }}>📰</div>
+              <h2 style={{ fontSize: '1.25rem', marginBottom: 'var(--s-2)', color: 'var(--ink-2)' }}>
+                {t('news_page.empty_title')}
+              </h2>
+              <p style={{ margin: 0, fontSize: '0.9375rem' }}>{t('news_page.empty_text')}</p>
+            </div>
           ) : (
             <div className="grid grid-3">
               {items.map((item) => (

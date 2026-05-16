@@ -46,19 +46,42 @@ export default function GalleryGrid({ items, locale }: Props) {
 
       <div className="grid grid-3">
         {filtered.length === 0 ? (
-          <p style={{ gridColumn: '1/-1', textAlign: 'center', color: 'var(--text-tertiary)', padding: 60 }}>
-            {t('gallery_page.empty')}
-          </p>
+          <div
+            role="status"
+            style={{
+              gridColumn: '1/-1',
+              textAlign: 'center',
+              color: 'var(--ink-3)',
+              padding: 'var(--s-12) var(--s-4)'
+            }}
+          >
+            <div aria-hidden="true" style={{ fontSize: '2.5rem', marginBottom: 'var(--s-3)', opacity: 0.5 }}>🖼️</div>
+            <p style={{ margin: 0, fontWeight: 500, color: 'var(--ink-2)' }}>
+              {t('gallery_page_extra.empty_title')}
+            </p>
+            <p style={{ margin: 'var(--s-2) 0 0', fontSize: '0.9375rem' }}>
+              {t('gallery_page_extra.empty_text')}
+            </p>
+          </div>
         ) : (
           filtered.map((item) => {
             const caption = getLocalizedField(item, 'caption', locale);
             const optimized = transformImage(item.url, { width: 600 });
+            const fullSize = transformImage(item.url, { width: 1600 });
+            const altText = caption || t('gallery_page.title');
             return (
-              <div className="gallery-item" key={item.id} style={{ cursor: 'pointer' }}>
+              <a
+                key={item.id}
+                href={fullSize}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gallery-item"
+                aria-label={`${t('gallery_page_extra.open_image')}: ${altText}`}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={optimized} alt={caption} loading="lazy" />
+                <img src={optimized} alt={altText} loading="lazy" />
                 {caption && <div className="gallery-caption">{caption}</div>}
-              </div>
+              </a>
             );
           })
         )}

@@ -19,18 +19,18 @@ export default function TeacherCard({ item, locale }: { item: Teacher; locale: L
           />
         </div>
       )}
-      <div style={{ padding: 'var(--space-lg)' }}>
-        <h3 style={{ marginBottom: 'var(--space-xs)' }}>{name}</h3>
-        <p style={{ color: 'var(--primary)', fontWeight: 600, marginBottom: 'var(--space-sm)' }}>
+      <div style={{ padding: 'var(--s-6)' }}>
+        <h3 style={{ marginBottom: 'var(--s-1)' }}>{name}</h3>
+        <p style={{ color: 'var(--primary)', fontWeight: 600, marginBottom: 'var(--s-2)' }}>
           {item.subject}
         </p>
         {item.category && (
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', marginBottom: 4 }}>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', marginBottom: 'var(--s-1)' }}>
             {item.category}
           </p>
         )}
         {item.experience > 0 && (
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)' }}>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', margin: 0 }}>
             {item.experience} {t('experience')}
           </p>
         )}

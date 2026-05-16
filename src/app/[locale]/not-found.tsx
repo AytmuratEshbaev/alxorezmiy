@@ -23,8 +23,8 @@ export default async function NotFound() {
           inset: 0,
           zIndex: -1,
           background:
-            'radial-gradient(ellipse at top,rgba(167,139,250,.18) 0%,transparent 50%),radial-gradient(ellipse at bottom,rgba(129,140,248,.16) 0%,transparent 50%)',
-          opacity: 0.6
+            'radial-gradient(ellipse at top, var(--amber-soft) 0%, transparent 55%),radial-gradient(ellipse at bottom, var(--navy-soft) 0%, transparent 55%)',
+          opacity: 0.9
         }}
       />
 

@@ -59,9 +59,22 @@ export default async function AchievementsPage({ params }: { params: Promise<{ l
           </div>
 
           {grouped.length === 0 ? (
-            <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: 60 }}>
-              {t('achievements_page.empty')}
-            </p>
+            <div
+              role="status"
+              style={{
+                textAlign: 'center',
+                color: 'var(--ink-3)',
+                padding: 'var(--s-16) var(--s-4)',
+                maxWidth: 480,
+                margin: '0 auto'
+              }}
+            >
+              <div aria-hidden="true" style={{ fontSize: '3rem', marginBottom: 'var(--s-4)', opacity: 0.5 }}>🏆</div>
+              <h2 style={{ fontSize: '1.25rem', marginBottom: 'var(--s-2)', color: 'var(--ink-2)' }}>
+                {t('achievements_page.empty_title')}
+              </h2>
+              <p style={{ margin: 0, fontSize: '0.9375rem' }}>{t('achievements_page.empty_text')}</p>
+            </div>
           ) : (
             grouped.map(([year, list]) => (
               <div key={year} style={{ marginBottom: 'var(--space-2xl)' }}>

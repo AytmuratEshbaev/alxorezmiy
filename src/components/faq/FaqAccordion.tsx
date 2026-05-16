@@ -46,34 +46,50 @@ export default function FaqAccordion({ items, locale }: Props) {
 
       <div className="accordion">
         {filtered.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: 60 }}>{t('faq_page.empty')}</p>
+          <div
+            role="status"
+            style={{ textAlign: 'center', color: 'var(--ink-3)', padding: 'var(--s-12) var(--s-4)' }}
+          >
+            <div aria-hidden="true" style={{ fontSize: '2.5rem', marginBottom: 'var(--s-3)', opacity: 0.5 }}>❓</div>
+            <p style={{ margin: 0, fontWeight: 500, color: 'var(--ink-2)' }}>
+              {t('faq_page_extra.empty_title')}
+            </p>
+            <p style={{ margin: 'var(--s-2) 0 0', fontSize: '0.9375rem' }}>
+              {t('faq_page_extra.empty_text')}
+            </p>
+          </div>
         ) : (
           filtered.map((item) => {
             const open = openId === item.id;
+            const panelId = `faq-panel-${item.id}`;
+            const buttonId = `faq-button-${item.id}`;
             return (
               <div className={`accordion-item${open ? ' active' : ''}`} key={item.id}>
-                <div
+                <button
+                  type="button"
+                  id={buttonId}
                   className="accordion-header"
                   onClick={() => setOpenId(open ? null : item.id)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setOpenId(open ? null : item.id);
-                    }
-                  }}
+                  aria-expanded={open}
+                  aria-controls={panelId}
+                  style={{ width: '100%', textAlign: 'left' }}
                 >
                   <h3 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>
                     {getLocalizedField(item, 'question', locale)}
                   </h3>
-                  <span className="accordion-icon">
+                  <span className="accordion-icon" aria-hidden="true">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M6 9l6 6 6-6" />
                     </svg>
                   </span>
-                </div>
-                <div className="accordion-body" style={{ maxHeight: open ? 1000 : 0 }}>
+                </button>
+                <div
+                  id={panelId}
+                  role="region"
+                  aria-labelledby={buttonId}
+                  className="accordion-body"
+                  style={{ maxHeight: open ? 1000 : 0 }}
+                >
                   <div className="accordion-body-content">
                     <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
                       {getLocalizedField(item, 'answer', locale)}

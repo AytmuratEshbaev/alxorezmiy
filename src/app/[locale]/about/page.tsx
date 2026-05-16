@@ -115,11 +115,11 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               <div className={`card team-card animate-on-scroll${i > 0 ? ` animate-delay-${i}` : ''}`} key={m.name}>
                 <div className="card-avatar">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={m.img} alt={m.role} loading="lazy" />
+                  <img src={m.img} alt={m.name} loading="lazy" />
                 </div>
                 <h3>{m.name}</h3>
                 <p className="role">{m.role}</p>
-                <p style={{ fontSize: '0.85rem', marginTop: 8 }}>{m.deg}</p>
+                <p style={{ fontSize: '0.85rem', marginTop: 'var(--s-2)' }}>{m.deg}</p>
               </div>
             ))}
           </div>
