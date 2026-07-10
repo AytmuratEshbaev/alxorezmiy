@@ -1,5 +1,5 @@
+import Image from 'next/image';
 import { getLocalizedField } from '@/lib/utils';
-import { transformImage } from '@/lib/imagekit';
 import { useTranslations } from 'next-intl';
 import type { Teacher, Locale } from '@/types';
 
@@ -9,13 +9,13 @@ export default function TeacherCard({ item, locale }: { item: Teacher; locale: L
   return (
     <div className="card card-hover teacher-card" style={{ padding: 0, overflow: 'hidden' }}>
       {item.photo && (
-        <div className="card-img" style={{ aspectRatio: '3 / 4' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={transformImage(item.photo, { width: 500 })}
+        <div className="card-img" style={{ position: 'relative', aspectRatio: '3 / 4' }}>
+          <Image
+            src={item.photo}
             alt={name}
-            loading="lazy"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            style={{ objectFit: 'cover' }}
           />
         </div>
       )}
@@ -25,7 +25,13 @@ export default function TeacherCard({ item, locale }: { item: Teacher; locale: L
           {item.subject}
         </p>
         {item.category && (
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', marginBottom: 'var(--s-1)' }}>
+          <p
+            style={{
+              fontSize: '0.9rem',
+              color: 'var(--text-tertiary)',
+              marginBottom: 'var(--s-1)',
+            }}
+          >
             {item.category}
           </p>
         )}

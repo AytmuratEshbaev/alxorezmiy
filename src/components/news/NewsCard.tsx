@@ -1,17 +1,19 @@
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { getLocalizedField, formatDate, formatDateISO } from '@/lib/utils';
-import { transformImage } from '@/lib/imagekit';
 import type { News, Locale } from '@/types';
 
 export default function NewsCard({
   item,
   locale,
   className = '',
+  priority = false,
 }: {
   item: News;
   locale: Locale;
   className?: string;
+  priority?: boolean;
 }) {
   const t = useTranslations('news_page.category');
   const tCommon = useTranslations('common');
@@ -28,8 +30,13 @@ export default function NewsCard({
     >
       {item.image && (
         <div className="card-img">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={transformImage(item.image, { width: 600 })} alt={title} loading="lazy" />
+          <Image
+            src={item.image}
+            alt={title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={priority}
+          />
         </div>
       )}
       <div className="news-card-body">

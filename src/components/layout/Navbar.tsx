@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import { useEffect, useState, type RefObject } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
@@ -44,8 +45,7 @@ export default function Navbar({
         <div className="navbar-inner">
           <Link href="/" className="navbar-logo" aria-label={t('a11y.home_link')}>
             <span className="navbar-logo-icon">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/images/logo.webp" alt="" width={44} height={44} />
+              <Image src="/assets/images/logo.webp" alt="" width={44} height={44} priority />
             </span>
           </Link>
           <div className="nav-links">

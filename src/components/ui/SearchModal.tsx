@@ -15,6 +15,17 @@ interface SearchResult {
   icon: IconName;
 }
 
+// Cache the fetched collections in sessionStorage so reopening the modal within the same
+// tab doesn't re-read ~100 Firestore docs. Short TTL keeps results reasonably fresh.
+const SEARCH_CACHE_KEY = 'search-data-v1';
+const SEARCH_CACHE_TTL = 5 * 60 * 1000;
+
+interface SearchCache {
+  ts: number;
+  news: News[];
+  teachers: Teacher[];
+}
+
 export default function SearchModal({ onClose }: { onClose: () => void }) {
   const locale = useLocale() as Locale;
   const t = useTranslations('search');
@@ -34,7 +45,26 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     let cancelled = false;
+
+    function readCache(): SearchCache | null {
+      try {
+        const raw = sessionStorage.getItem(SEARCH_CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw) as SearchCache;
+        if (!parsed || Date.now() - parsed.ts > SEARCH_CACHE_TTL) return null;
+        return parsed;
+      } catch {
+        return null;
+      }
+    }
+
     async function load() {
+      const cached = readCache();
+      if (cached) {
+        setNews(cached.news);
+        setTeachers(cached.teachers);
+        return;
+      }
       let n: News[] = [];
       let tc: Teacher[] = [];
       try {
@@ -52,8 +82,21 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
         console.warn('[SearchModal] teachers fetch failed:', err);
       }
       if (cancelled) return;
-      setNews(n.filter((x) => x.status === 'published'));
+      const publishedNews = n.filter((x) => x.status === 'published');
+      setNews(publishedNews);
       setTeachers(tc);
+      try {
+        sessionStorage.setItem(
+          SEARCH_CACHE_KEY,
+          JSON.stringify({
+            ts: Date.now(),
+            news: publishedNews,
+            teachers: tc,
+          } satisfies SearchCache)
+        );
+      } catch {
+        // Storage unavailable (private mode / quota) — non-fatal.
+      }
     }
     load();
     return () => {

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
@@ -69,12 +70,16 @@ export default async function NewsDetailPage({
   setRequestLocale(locale);
   const t = await getTranslations();
 
-  let item: News | null = null;
-  try {
-    item = await getNewsById(id);
-  } catch (err) {
-    console.warn('[news/[id]] getNewsById failed:', err);
+  // Fetch the article and the news pool for "related" in parallel; allSettled keeps each
+  // failure independent (a related-fetch error must not block the article).
+  const [itemResult, allNewsResult] = await Promise.allSettled([getNewsById(id), getNewsList(20)]);
+  if (itemResult.status === 'rejected') {
+    console.warn('[news/[id]] getNewsById failed:', itemResult.reason);
   }
+  if (allNewsResult.status === 'rejected') {
+    console.warn('[news/[id]] related fetch failed:', allNewsResult.reason);
+  }
+  const item: News | null = itemResult.status === 'fulfilled' ? itemResult.value : null;
   if (!item || item.status !== 'published') notFound();
 
   const title = getLocalizedField(item, 'title', locale as Locale);
@@ -86,15 +91,10 @@ export default async function NewsDetailPage({
       : item.category;
 
   // Related news — same category, exclude self, up to 3
-  let related: News[] = [];
-  try {
-    const all = await getNewsList(20);
-    related = all
-      .filter((n) => n.id !== item!.id && n.status === 'published' && n.category === item!.category)
-      .slice(0, 3);
-  } catch (err) {
-    console.warn('[news/[id]] related fetch failed:', err);
-  }
+  const allNews: News[] = allNewsResult.status === 'fulfilled' ? allNewsResult.value : [];
+  const related: News[] = allNews
+    .filter((n) => n.id !== item.id && n.status === 'published' && n.category === item.category)
+    .slice(0, 3);
 
   const articleUrl = `${SITE_URL}/${locale}/news/${id}`;
   const publishedISO = toISO(item.createdAt);
@@ -177,12 +177,24 @@ export default async function NewsDetailPage({
             </span>
           </header>
           {item.image && (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              src={transformImage(item.image, { width: 1200 })}
-              alt={title}
-              style={{ width: '100%', borderRadius: 'var(--r-lg)' }}
-            />
+            <div
+              style={{
+                position: 'relative',
+                width: '100%',
+                aspectRatio: '16 / 9',
+                borderRadius: 'var(--r-lg)',
+                overflow: 'hidden',
+              }}
+            >
+              <Image
+                src={item.image}
+                alt={title}
+                fill
+                priority
+                sizes="(max-width: 800px) 100vw, 800px"
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
           )}
           <div
             style={{

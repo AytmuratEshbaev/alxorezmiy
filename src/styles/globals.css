@@ -634,6 +634,7 @@ time,
   color: inherit;
 }
 .news-card .card-img {
+  position: relative;
   width: 100%;
   aspect-ratio: 16/10;
   overflow: hidden;

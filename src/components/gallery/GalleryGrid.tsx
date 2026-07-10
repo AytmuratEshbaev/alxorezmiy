@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { getLocalizedField } from '@/lib/utils';
@@ -74,7 +75,6 @@ export default function GalleryGrid({ items, locale }: Props) {
         ) : (
           filtered.map((item) => {
             const caption = getLocalizedField(item, 'caption', locale);
-            const optimized = transformImage(item.url, { width: 600 });
             const fullSize = transformImage(item.url, { width: 1600 });
             const altText = caption || t('gallery_page.title');
             return (
@@ -86,8 +86,12 @@ export default function GalleryGrid({ items, locale }: Props) {
                 className="gallery-item"
                 aria-label={`${t('gallery_page_extra.open_image')}: ${altText}`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={optimized} alt={altText} loading="lazy" />
+                <Image
+                  src={item.url}
+                  alt={altText}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
                 {caption && <div className="gallery-caption">{caption}</div>}
               </a>
             );
