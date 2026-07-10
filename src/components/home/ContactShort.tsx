@@ -17,7 +17,7 @@ export default async function ContactShort({ settings }: { settings: Settings | 
               <Icon name="map-pin" />
             </div>
             <div>
-              <h4>{t('contact_page.address_label')}</h4>
+              <h3>{t('contact_page.address_label')}</h3>
               <p>{settings?.address || t('contact_page.address')}</p>
             </div>
           </div>
@@ -26,7 +26,7 @@ export default async function ContactShort({ settings }: { settings: Settings | 
               <Icon name="phone" />
             </div>
             <div>
-              <h4>{t('contact_page.phone_label')}</h4>
+              <h3>{t('contact_page.phone_label')}</h3>
               <p>{settings?.phone || t('contact_page.phone')}</p>
             </div>
           </div>
@@ -35,7 +35,7 @@ export default async function ContactShort({ settings }: { settings: Settings | 
               <Icon name="mail" />
             </div>
             <div>
-              <h4>{t('contact_page.email_label')}</h4>
+              <h3>{t('contact_page.email_label')}</h3>
               <p>{settings?.email || t('contact_page.email')}</p>
             </div>
           </div>

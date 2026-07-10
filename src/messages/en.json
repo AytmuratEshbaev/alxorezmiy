@@ -106,7 +106,13 @@
     "form_success": "Your message has been sent successfully!",
     "form_error": "An error occurred. Please try again.",
     "social_title": "Social Media",
-    "map_title": "On the Map"
+    "map_title": "On the Map",
+    "error_name": "Please enter your name",
+    "error_email": "Please enter your email",
+    "error_email_invalid": "Please enter a valid email address",
+    "error_subject": "Please enter a subject",
+    "error_message": "Please enter your message",
+    "info_title": "Contact information"
   },
   "common": {
     "read_more": "Read More",
@@ -138,7 +144,22 @@
   "a11y": {
     "skip": "Skip to main content",
     "home_link": "Home",
-    "menu": "Menu"
+    "menu": "Menu",
+    "mobile_menu": "Main menu",
+    "search": "Search (Ctrl+K)",
+    "lang_select": "Select language",
+    "theme_toggle": "Toggle theme",
+    "back_to_top": "Back to top"
+  },
+  "search": {
+    "placeholder": "Search: news, teacher...",
+    "dialog_label": "Site search",
+    "input_label": "Search query",
+    "min_chars": "Type at least 2 characters",
+    "keyboard": "Keyboard",
+    "no_results": "No results found for \"{query}\"",
+    "type_news": "News",
+    "type_teacher": "Teacher"
   },
   "achievements": {
     "title": "Our Achievements",

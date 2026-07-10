@@ -106,7 +106,13 @@
     "form_success": "Xabarıńız tabıslı jiberildi!",
     "form_error": "Qátelik júz berdi. Qayta urınıp kóriń.",
     "social_title": "Sociallıq tarmaqllar",
-    "map_title": "Xaritada"
+    "map_title": "Kartada",
+    "error_name": "Atıńızdı kiritiń",
+    "error_email": "Email mánzilińizdi kiritiń",
+    "error_email_invalid": "Durıs email mánzilin kiritiń",
+    "error_subject": "Tema kiritiń",
+    "error_message": "Xabarıńızdı kiritiń",
+    "info_title": "Baylanıs maǵlıwmatları"
   },
   "common": {
     "read_more": "Tolıq",
@@ -138,7 +144,22 @@
   "a11y": {
     "skip": "Tiykarǵı mazmunǵa ótiw",
     "home_link": "Bas bet",
-    "menu": "Menyu"
+    "menu": "Menyu",
+    "mobile_menu": "Tiykarǵı menyu",
+    "search": "Izlew (Ctrl+K)",
+    "lang_select": "Tildi tańlaw",
+    "theme_toggle": "Temanı almastırıw",
+    "back_to_top": "Joqarıǵa"
+  },
+  "search": {
+    "placeholder": "Izlew: jańalıq, muǵallim...",
+    "dialog_label": "Sayt boyınsha izlew",
+    "input_label": "Izlew soraw",
+    "min_chars": "Keminde 2 háribi jazıń",
+    "keyboard": "Klaviatura",
+    "no_results": "\"{query}\" boyınsha esh nárse tabılmadı",
+    "type_news": "Jańalıq",
+    "type_teacher": "Muǵallim"
   },
   "achievements": {
     "title": "Jetiskenliklerimiz",

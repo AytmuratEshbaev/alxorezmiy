@@ -106,7 +106,13 @@
     "form_success": "Xabaringiz muvaffaqiyatli yuborildi!",
     "form_error": "Xatolik yuz berdi. Qaytadan urinib ko'ring.",
     "social_title": "Ijtimoiy tarmoqlar",
-    "map_title": "Xaritada"
+    "map_title": "Xaritada",
+    "error_name": "Ismingizni kiriting",
+    "error_email": "Email manzilingizni kiriting",
+    "error_email_invalid": "To'g'ri email manzil kiriting",
+    "error_subject": "Mavzuni kiriting",
+    "error_message": "Xabaringizni kiriting",
+    "info_title": "Bogʼlanish maʻlumotlari"
   },
   "common": {
     "read_more": "Batafsil",
@@ -138,7 +144,22 @@
   "a11y": {
     "skip": "Asosiy mazmunga o'tish",
     "home_link": "Bosh sahifa",
-    "menu": "Menyu"
+    "menu": "Menyu",
+    "mobile_menu": "Asosiy menyu",
+    "search": "Qidirish (Ctrl+K)",
+    "lang_select": "Tilni tanlash",
+    "theme_toggle": "Tema almashtirish",
+    "back_to_top": "Yuqoriga"
+  },
+  "search": {
+    "placeholder": "Qidirish: yangilik, o'qituvchi...",
+    "dialog_label": "Sayt bo'yicha qidiruv",
+    "input_label": "Qidiruv so'rovi",
+    "min_chars": "Kamida 2 ta harf yozing",
+    "keyboard": "Klaviatura",
+    "no_results": "\"{query}\" bo'yicha hech narsa topilmadi",
+    "type_news": "Yangilik",
+    "type_teacher": "O'qituvchi"
   },
   "achievements": {
     "title": "Yutuqlarimiz",

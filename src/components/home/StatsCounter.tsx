@@ -11,6 +11,9 @@ export default function StatsCounter({ stats }: { stats: StatItem[] }) {
   const refs = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -18,6 +21,11 @@ export default function StatsCounter({ stats }: { stats: StatItem[] }) {
           const el = entry.target as HTMLDivElement;
           const target = Number(el.dataset.count);
           const suffix = el.dataset.suffix || '';
+          if (prefersReducedMotion) {
+            el.textContent = target.toLocaleString() + suffix;
+            observer.unobserve(el);
+            return;
+          }
           const duration = 2000;
           const startTime = performance.now();
           const update = (now: number) => {
@@ -41,7 +49,10 @@ export default function StatsCounter({ stats }: { stats: StatItem[] }) {
       <div className="container">
         <div className="grid grid-4">
           {stats.map((s, i) => (
-            <div key={i} className={`stat-card animate-on-scroll${i > 0 ? ` animate-delay-${i}` : ''}`}>
+            <div
+              key={i}
+              className={`stat-card animate-on-scroll${i > 0 ? ` animate-delay-${i}` : ''}`}
+            >
               <div
                 ref={(el) => {
                   refs.current[i] = el;

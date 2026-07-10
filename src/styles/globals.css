@@ -259,6 +259,14 @@ select {
   top: var(--s-4);
 }
 
+/* Programmatic focus target for the skip link — no visible ring. */
+#main-content:focus {
+  outline: none;
+}
+#main-content:focus-visible {
+  outline: none;
+}
+
 /* Scrollbar — subtle */
 ::-webkit-scrollbar {
   width: 12px;
@@ -952,7 +960,7 @@ time,
   width: 22px;
   height: 22px;
 }
-.contact-card h4 {
+.contact-card h3 {
   margin-bottom: var(--s-1);
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -1381,7 +1389,8 @@ time,
   flex-shrink: 0;
 }
 .nav-item-has-children:hover .nav-caret,
-.nav-item-has-children:focus-within .nav-caret {
+.nav-item-has-children:focus-within .nav-caret,
+.nav-item-has-children.open .nav-caret {
   transform: rotate(180deg);
   opacity: 1;
   color: var(--amber-2);
@@ -1418,7 +1427,8 @@ time,
   height: 14px;
 }
 .nav-item-has-children:hover .nav-dropdown,
-.nav-item-has-children:focus-within .nav-dropdown {
+.nav-item-has-children:focus-within .nav-dropdown,
+.nav-item-has-children.open .nav-dropdown {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -1539,21 +1549,30 @@ time,
   visibility: visible;
   transform: translateY(0);
 }
-.lang-dropdown a {
+.lang-dropdown a,
+.lang-dropdown button {
   display: block;
+  width: 100%;
+  text-align: left;
   padding: 8px 12px;
   font-size: 0.875rem;
+  font-family: inherit;
   color: var(--ink-2);
+  background: transparent;
+  border: 0;
   border-radius: var(--r-sm);
+  cursor: pointer;
   transition:
     background var(--t-fast),
     color var(--t-fast);
 }
-.lang-dropdown a:hover {
+.lang-dropdown a:hover,
+.lang-dropdown button:hover {
   background: var(--bg-2);
   color: var(--ink);
 }
-.lang-dropdown a.active {
+.lang-dropdown a.active,
+.lang-dropdown button.active {
   background: var(--amber-soft);
   color: var(--amber-2);
   font-weight: 500;
@@ -2672,6 +2691,11 @@ tbody tr:hover {
   max-height: 60vh;
   overflow-y: auto;
   padding: var(--s-2) var(--s-2) var(--s-3);
+}
+.search-result-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 .search-result {
   display: flex;

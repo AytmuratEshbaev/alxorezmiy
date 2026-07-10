@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { SocialIcons } from '@/components/layout/social-icons';
+import Icon from '@/components/ui/Icon';
 
 interface Props {
   title: string;
@@ -41,7 +43,7 @@ export default function NewsShareButtons({ title, path }: Props) {
         gap: 'var(--s-2)',
         marginTop: 'var(--s-8)',
         paddingTop: 'var(--s-6)',
-        borderTop: '1px solid var(--border-subtle)'
+        borderTop: '1px solid var(--border-subtle)',
       }}
     >
       <span style={{ fontSize: '.9375rem', color: 'var(--ink-3)', marginRight: 'var(--s-2)' }}>
@@ -55,7 +57,7 @@ export default function NewsShareButtons({ title, path }: Props) {
         aria-label={`${t('share_title')} — ${t('share_telegram')}`}
         style={{ gap: 'var(--s-2)' }}
       >
-        <span aria-hidden="true">✈️</span> {t('share_telegram')}
+        {SocialIcons.telegram} {t('share_telegram')}
       </a>
       <a
         href={fb}
@@ -65,7 +67,7 @@ export default function NewsShareButtons({ title, path }: Props) {
         aria-label={`${t('share_title')} — ${t('share_facebook')}`}
         style={{ gap: 'var(--s-2)' }}
       >
-        <span aria-hidden="true">📘</span> {t('share_facebook')}
+        {SocialIcons.facebook} {t('share_facebook')}
       </a>
       <button
         type="button"
@@ -74,8 +76,11 @@ export default function NewsShareButtons({ title, path }: Props) {
         aria-label={t('share_copy')}
         style={{ gap: 'var(--s-2)' }}
       >
-        <span aria-hidden="true">🔗</span> {copied ? t('share_copied') : t('share_copy')}
+        <Icon name="link" size={18} /> {copied ? t('share_copied') : t('share_copy')}
       </button>
+      <span aria-live="polite" className="visually-hidden">
+        {copied ? t('share_copied') : ''}
+      </span>
     </div>
   );
 }

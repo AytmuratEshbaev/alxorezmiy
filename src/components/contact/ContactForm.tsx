@@ -2,19 +2,55 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
+type FieldErrors = Partial<Record<'name' | 'email' | 'subject' | 'message', string>>;
+
+const errorTextStyle: React.CSSProperties = {
+  margin: 'var(--s-1) 0 0',
+  color: 'var(--danger)',
+  fontSize: '0.8125rem',
+};
+
 export default function ContactForm() {
   const t = useTranslations('contact_page');
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [errors, setErrors] = useState<FieldErrors>({});
+
+  function validate(): FieldErrors {
+    const next: FieldErrors = {};
+    if (!form.name.trim()) next.name = t('error_name');
+    if (!form.email.trim()) next.email = t('error_email');
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
+      next.email = t('error_email_invalid');
+    if (!form.subject.trim()) next.subject = t('error_subject');
+    if (!form.message.trim()) next.message = t('error_message');
+    return next;
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const found = validate();
+    if (Object.keys(found).length > 0) {
+      setErrors(found);
+      const firstKey = (['name', 'email', 'subject', 'message'] as const).find((k) => found[k]);
+      if (firstKey) {
+        const map = {
+          name: 'contactName',
+          email: 'contactEmail',
+          subject: 'contactSubject',
+          message: 'contactMessage',
+        } as const;
+        document.getElementById(map[firstKey])?.focus();
+      }
+      return;
+    }
+    setErrors({});
     setStatus('sending');
     try {
       const res = await fetch('/api/send-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify(form),
       });
       if (!res.ok) throw new Error('failed');
       setStatus('success');
@@ -27,7 +63,7 @@ export default function ContactForm() {
 
   const sending = status === 'sending';
   return (
-    <form onSubmit={onSubmit} aria-busy={sending}>
+    <form onSubmit={onSubmit} aria-busy={sending} noValidate>
       <fieldset disabled={sending} style={{ border: 0, padding: 0, margin: 0 }}>
         <div className="form-group">
           <label htmlFor="contactName">{t('form_name')}</label>
@@ -40,7 +76,14 @@ export default function ContactForm() {
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             autoComplete="name"
             required
+            aria-invalid={errors.name ? true : undefined}
+            aria-describedby={errors.name ? 'contactName-error' : undefined}
           />
+          {errors.name && (
+            <p id="contactName-error" role="alert" style={errorTextStyle}>
+              {errors.name}
+            </p>
+          )}
         </div>
         <div className="form-group">
           <label htmlFor="contactEmail">{t('form_email')}</label>
@@ -53,7 +96,14 @@ export default function ContactForm() {
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             autoComplete="email"
             required
+            aria-invalid={errors.email ? true : undefined}
+            aria-describedby={errors.email ? 'contactEmail-error' : undefined}
           />
+          {errors.email && (
+            <p id="contactEmail-error" role="alert" style={errorTextStyle}>
+              {errors.email}
+            </p>
+          )}
         </div>
         <div className="form-group">
           <label htmlFor="contactSubject">{t('form_subject')}</label>
@@ -65,7 +115,14 @@ export default function ContactForm() {
             value={form.subject}
             onChange={(e) => setForm({ ...form, subject: e.target.value })}
             required
+            aria-invalid={errors.subject ? true : undefined}
+            aria-describedby={errors.subject ? 'contactSubject-error' : undefined}
           />
+          {errors.subject && (
+            <p id="contactSubject-error" role="alert" style={errorTextStyle}>
+              {errors.subject}
+            </p>
+          )}
         </div>
         <div className="form-group">
           <label htmlFor="contactMessage">{t('form_message')}</label>
@@ -77,7 +134,14 @@ export default function ContactForm() {
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
             required
+            aria-invalid={errors.message ? true : undefined}
+            aria-describedby={errors.message ? 'contactMessage-error' : undefined}
           />
+          {errors.message && (
+            <p id="contactMessage-error" role="alert" style={errorTextStyle}>
+              {errors.message}
+            </p>
+          )}
         </div>
         <button type="submit" className="btn btn-primary btn-lg w-full" disabled={sending}>
           <span>{sending ? t('form_sending') : t('form_send')}</span>
@@ -95,7 +159,15 @@ export default function ContactForm() {
               <path d="M21 12a9 9 0 1 1-6.219-8.56" />
             </svg>
           ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+            >
               <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
             </svg>
           )}
@@ -110,7 +182,7 @@ export default function ContactForm() {
               color: 'var(--success)',
               borderRadius: 'var(--r-md)',
               borderLeft: '3px solid var(--success)',
-              margin: 'var(--s-4) 0 0'
+              margin: 'var(--s-4) 0 0',
             }}
           >
             {t('form_success')}
@@ -124,7 +196,7 @@ export default function ContactForm() {
               color: 'var(--danger)',
               borderRadius: 'var(--r-md)',
               borderLeft: '3px solid var(--danger)',
-              margin: 'var(--s-4) 0 0'
+              margin: 'var(--s-4) 0 0',
             }}
           >
             {t('form_error')}
@@ -132,13 +204,21 @@ export default function ContactForm() {
         )}
       </div>
       <style jsx>{`
-        .contact-spin { animation: contact-spin 1s linear infinite; }
+        .contact-spin {
+          animation: contact-spin 1s linear infinite;
+        }
         @keyframes contact-spin {
-          from { transform: rotate(0); }
-          to { transform: rotate(360deg); }
+          from {
+            transform: rotate(0);
+          }
+          to {
+            transform: rotate(360deg);
+          }
         }
         @media (prefers-reduced-motion: reduce) {
-          .contact-spin { animation: none; }
+          .contact-spin {
+            animation: none;
+          }
         }
       `}</style>
     </form>

@@ -106,7 +106,13 @@
     "form_success": "Сообщение успешно отправлено!",
     "form_error": "Произошла ошибка. Попробуйте снова.",
     "social_title": "Социальные сети",
-    "map_title": "На карте"
+    "map_title": "На карте",
+    "error_name": "Введите ваше имя",
+    "error_email": "Введите ваш email",
+    "error_email_invalid": "Введите корректный email",
+    "error_subject": "Введите тему",
+    "error_message": "Введите ваше сообщение",
+    "info_title": "Контактная информация"
   },
   "common": {
     "read_more": "Подробнее",
@@ -138,7 +144,22 @@
   "a11y": {
     "skip": "Перейти к основному содержанию",
     "home_link": "Главная",
-    "menu": "Меню"
+    "menu": "Меню",
+    "mobile_menu": "Главное меню",
+    "search": "Поиск (Ctrl+K)",
+    "lang_select": "Выбрать язык",
+    "theme_toggle": "Сменить тему",
+    "back_to_top": "Наверх"
+  },
+  "search": {
+    "placeholder": "Поиск: новость, учитель...",
+    "dialog_label": "Поиск по сайту",
+    "input_label": "Поисковый запрос",
+    "min_chars": "Введите минимум 2 символа",
+    "keyboard": "Клавиатура",
+    "no_results": "По запросу \"{query}\" ничего не найдено",
+    "type_news": "Новость",
+    "type_teacher": "Учитель"
   },
   "achievements": {
     "title": "Наши достижения",
