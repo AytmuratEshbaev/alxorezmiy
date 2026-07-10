@@ -12,6 +12,7 @@ import {
   limit,
   getDocs,
   getDoc,
+  getCountFromServer,
   serverTimestamp,
   type QueryConstraint,
   type WhereFilterOp
@@ -50,6 +51,17 @@ export async function getDocuments<T>(name: string, options: QueryOptions = {}):
   const q = query(collection(db, name), ...buildConstraints(options));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as T);
+}
+
+export async function getCollectionCount(
+  name: string,
+  filter?: { field: string; op: WhereFilterOp; value: unknown }
+): Promise<number> {
+  const q = filter
+    ? query(collection(db, name), where(filter.field, filter.op, filter.value))
+    : query(collection(db, name));
+  const snap = await getCountFromServer(q);
+  return snap.data().count;
 }
 
 export async function getDocument<T>(name: string, id: string): Promise<T | null> {

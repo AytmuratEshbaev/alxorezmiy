@@ -93,7 +93,8 @@ export default function TeachersAdminPage() {
       const q = search.toLowerCase();
       if (!(t.name_uz || '').toLowerCase().includes(q) && !(t.subject || '').toLowerCase().includes(q)) return false;
     }
-    if (filterCat !== 'all' && t.category !== filterCat) return false;
+    if (filterCat !== 'all' && !(t.category || '').toLowerCase().includes(filterCat.toLowerCase()))
+      return false;
     return true;
   });
 
