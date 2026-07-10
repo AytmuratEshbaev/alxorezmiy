@@ -6,21 +6,36 @@ import Icon from '@/components/ui/Icon';
 
 interface Props {
   title: string;
-  path: string; // e.g. /uz/news/abc — without origin
+  /** Absolute share URL, built server-side from NEXT_PUBLIC_SITE_URL (no hydration race). */
+  url?: string;
+  /** Fallback path (e.g. /uz/news/abc) — used to build a URL if `url` is missing. */
+  path?: string;
 }
 
-export default function NewsShareButtons({ title, path }: Props) {
+export default function NewsShareButtons({ title, url: urlProp, path }: Props) {
   const t = useTranslations('news_page');
-  const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [canShare, setCanShare] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setUrl(window.location.origin + path);
+    setMounted(true);
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      setCanShare(true);
     }
-  }, [path]);
+  }, []);
+
+  // Prefer the server-provided absolute URL; fall back to the live location at click time.
+  function resolveUrl(): string {
+    if (urlProp) return urlProp;
+    if (typeof window !== 'undefined') {
+      return path ? window.location.origin + path : window.location.href;
+    }
+    return '';
+  }
 
   async function onCopy() {
+    const url = resolveUrl();
     if (!url) return;
     try {
       await navigator.clipboard.writeText(url);
@@ -31,8 +46,20 @@ export default function NewsShareButtons({ title, path }: Props) {
     }
   }
 
-  const tg = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
-  const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+  async function onNativeShare() {
+    const url = resolveUrl();
+    if (!url) return;
+    try {
+      await navigator.share({ title, url });
+    } catch {
+      // user cancelled or unsupported — ignore
+    }
+  }
+
+  const shareUrl = urlProp || '';
+  const tg = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`;
+  const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+  const wa = `https://wa.me/?text=${encodeURIComponent(`${title} ${shareUrl}`)}`;
 
   return (
     <div
@@ -60,6 +87,16 @@ export default function NewsShareButtons({ title, path }: Props) {
         {SocialIcons.telegram} {t('share_telegram')}
       </a>
       <a
+        href={wa}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn btn-secondary btn-sm"
+        aria-label={`${t('share_title')} — ${t('share_whatsapp')}`}
+        style={{ gap: 'var(--s-2)' }}
+      >
+        {SocialIcons.whatsapp} {t('share_whatsapp')}
+      </a>
+      <a
         href={fb}
         target="_blank"
         rel="noopener noreferrer"
@@ -69,6 +106,17 @@ export default function NewsShareButtons({ title, path }: Props) {
       >
         {SocialIcons.facebook} {t('share_facebook')}
       </a>
+      {mounted && canShare && (
+        <button
+          type="button"
+          onClick={onNativeShare}
+          className="btn btn-secondary btn-sm"
+          aria-label={t('share_native')}
+          style={{ gap: 'var(--s-2)' }}
+        >
+          <Icon name="share" size={18} /> {t('share_native')}
+        </button>
+      )}
       <button
         type="button"
         onClick={onCopy}

@@ -107,7 +107,6 @@ export default function FaqAccordion({ items, locale }: Props) {
                   role="region"
                   aria-labelledby={buttonId}
                   className="accordion-body"
-                  style={{ maxHeight: open ? 1000 : 0 }}
                 >
                   <div className="accordion-body-content">
                     <p

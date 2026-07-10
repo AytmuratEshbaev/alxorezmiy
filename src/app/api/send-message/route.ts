@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
+import { FieldValue } from 'firebase-admin/firestore';
 import { escapeHtml } from '@/lib/utils';
+import { rateLimit, clientIp } from '@/lib/rate-limit';
+import { adminDb } from '@/lib/firebase/admin';
 
 const ALLOWED_ORIGINS = [
   process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz',
@@ -24,11 +27,31 @@ export async function POST(req: Request) {
   const origin = req.headers.get('origin');
   const headers = corsHeaders(origin);
 
-  let body: { name?: string; email?: string; subject?: string; message?: string };
+  let body: {
+    name?: string;
+    email?: string;
+    subject?: string;
+    message?: string;
+    website?: string;
+  };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400, headers });
+  }
+
+  // Honeypot: real users never fill the hidden "website" field. Bots do.
+  // Return a fake success so we don't tip them off that they were rejected.
+  if (body.website && body.website.trim() !== '') {
+    return NextResponse.json({ ok: true }, { headers });
+  }
+
+  // Rate-limit by IP: 5 requests / 10 minutes.
+  if (!rateLimit(`send-message:${clientIp(req)}`, { limit: 5, windowMs: 10 * 60 * 1000 })) {
+    return NextResponse.json(
+      { error: "Juda ko'p so'rov. Iltimos, birozdan keyin urinib ko'ring." },
+      { status: 429, headers }
+    );
   }
 
   const { name, email, subject, message } = body;
@@ -42,10 +65,29 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Maydonlar uzunligi cheklovdan oshib ketdi' }, { status: 400, headers });
   }
 
+  // Best-effort persistence to the `messages` collection (admin panel reads this).
+  // Wrapped in try/catch so email still sends if Firestore is unavailable.
+  try {
+    await adminDb.collection('messages').add({
+      name,
+      email,
+      subject,
+      message,
+      read: false,
+      createdAt: FieldValue.serverTimestamp()
+    });
+  } catch (err) {
+    console.warn('[send-message] Firestore persist failed:', (err as Error).message);
+  }
+
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.ADMIN_EMAIL;
   if (!apiKey || !to) {
-    return NextResponse.json({ ok: true, emailSent: false, note: 'Email service not configured' }, { headers });
+    // Be honest instead of faking success — the form shows its error state.
+    return NextResponse.json(
+      { error: 'Email service not configured' },
+      { status: 503, headers }
+    );
   }
 
   const html = `

@@ -208,7 +208,7 @@ export default async function NewsDetailPage({
             {content}
           </div>
 
-          <NewsShareButtons title={title} path={`/${locale}/news/${id}`} />
+          <NewsShareButtons title={title} url={articleUrl} path={`/${locale}/news/${id}`} />
 
           <div style={{ marginTop: 'var(--s-8)' }}>
             <Link href={'/news' as never} className="btn btn-outline">

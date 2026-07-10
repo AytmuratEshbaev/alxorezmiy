@@ -159,7 +159,8 @@
     "keyboard": "Klaviatura",
     "no_results": "\"{query}\" boyınsha esh nárse tabılmadı",
     "type_news": "Jańalıq",
-    "type_teacher": "Muǵallim"
+    "type_teacher": "Muǵallim",
+    "type_faq": "Soraw-juwap"
   },
   "achievements": {
     "title": "Jetiskenliklerimiz",
@@ -329,7 +330,12 @@
     "share_facebook": "Facebook",
     "share_copy": "Siltemeni kóshiriw",
     "share_copied": "Sılteme kóshirildi",
-    "related_title": "Uqsas jańalıqlar"
+    "related_title": "Uqsas jańalıqlar",
+    "share_whatsapp": "WhatsApp",
+    "share_native": "Bólisiw",
+    "load_more": "Kóbirek júklew",
+    "load_more_loading": "Júklenbekte...",
+    "load_more_end": "Barlıq jańalıqlar kórsetildi"
   },
   "teachers_page": {
     "title": "Muǵallimler",
@@ -348,7 +354,11 @@
   "gallery_page_extra": {
     "empty_title": "Galereya tayarlanbaqta",
     "empty_text": "Jaqında bul jerde mektep ómirinen súwretler payda boladı.",
-    "open_image": "Súwretti úlkeytiw"
+    "open_image": "Súwretti úlkeytiw",
+    "lightbox_label": "Súwret kórinisi",
+    "close": "Jabıw",
+    "prev": "Aldıńǵı súwret",
+    "next": "Keyingi súwret"
   },
   "faq_page_extra": {
     "empty_title": "Sorawlar tezde",
@@ -358,5 +368,24 @@
     "scroll_down": "Tómen aylandırıw",
     "expand": "Keńeytiw",
     "collapse": "Jabıw"
+  },
+  "admission_form": {
+    "section_label": "Onlayn arza",
+    "title": "Onlayn qabıllaw arzası",
+    "subtitle": "Balańızdı mektebimizge jazdırıw ushın tómendegi formanı toltırıń. Basqarma siz benen baylanısadı.",
+    "student_name": "Oqıwshınıń tolıq atı",
+    "phone": "Telefon nomeri",
+    "grade": "Qabıllanatuǵın klass",
+    "grade_placeholder": "Klasstı saylań",
+    "grade_option": "{grade}-klass",
+    "message": "Qosımsha xabar (erkin)",
+    "submit": "Arzanı jiberiw",
+    "sending": "Jiberilmekte...",
+    "success": "Arzańız qabıl etildi. Tez arada siz benen baylanısamız.",
+    "error": "Arza jiberiwde qátelik júz berdi. Iltimas, keyinirek urınıp kóriń.",
+    "error_student_name": "Oqıwshınıń atın kiritiń",
+    "error_phone": "Telefon nomerin kiritiń",
+    "error_phone_invalid": "Telefon nomeri qáte",
+    "error_grade": "Klasstı saylań"
   }
 }

@@ -3,35 +3,41 @@ import { useState, useEffect, useMemo, useRef, useId } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { getDocuments } from '@/lib/firebase/client-queries';
 import { getLocalizedField } from '@/lib/utils';
+import { useRouter } from '@/i18n/routing';
 import Icon, { type IconName } from '@/components/ui/Icon';
-import type { News, Teacher, Locale } from '@/types';
+import type { News, Teacher, FaqItem, Locale } from '@/types';
 
 interface SearchResult {
-  type: 'news' | 'teacher';
+  type: 'news' | 'teacher' | 'faq';
   id: string;
   title: string;
   subtitle: string;
-  href: string;
+  href: string; // locale-prefixed, for the <a> fallback
+  path: string; // locale-relative, for next-intl router.push
   icon: IconName;
 }
 
 // Cache the fetched collections in sessionStorage so reopening the modal within the same
 // tab doesn't re-read ~100 Firestore docs. Short TTL keeps results reasonably fresh.
-const SEARCH_CACHE_KEY = 'search-data-v1';
+// v2: FAQ collection added to the index.
+const SEARCH_CACHE_KEY = 'search-data-v2';
 const SEARCH_CACHE_TTL = 5 * 60 * 1000;
 
 interface SearchCache {
   ts: number;
   news: News[];
   teachers: Teacher[];
+  faq: FaqItem[];
 }
 
 export default function SearchModal({ onClose }: { onClose: () => void }) {
   const locale = useLocale() as Locale;
   const t = useTranslations('search');
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [news, setNews] = useState<News[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [faq, setFaq] = useState<FaqItem[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
 
   const baseId = useId();
@@ -42,6 +48,13 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
   const previouslyFocused = useRef<HTMLElement | null>(null);
 
   const optionId = (r: SearchResult) => `${baseId}-opt-${r.type}-${r.id}`;
+
+  // Navigate via the next-intl router (SPA transition). `href` is locale-prefixed for the
+  // anchor fallback; `path` is locale-relative for router.push (which re-adds the prefix).
+  function navigate(r: SearchResult) {
+    onClose();
+    router.push(r.path as never);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -63,10 +76,12 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
       if (cached) {
         setNews(cached.news);
         setTeachers(cached.teachers);
+        setFaq(cached.faq || []);
         return;
       }
       let n: News[] = [];
       let tc: Teacher[] = [];
+      let fq: FaqItem[] = [];
       try {
         n = await getDocuments<News>('news', {
           orderBy: 'createdAt',
@@ -81,10 +96,16 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
       } catch (err) {
         console.warn('[SearchModal] teachers fetch failed:', err);
       }
+      try {
+        fq = await getDocuments<FaqItem>('faq', { limit: 100 });
+      } catch (err) {
+        console.warn('[SearchModal] faq fetch failed:', err);
+      }
       if (cancelled) return;
       const publishedNews = n.filter((x) => x.status === 'published');
       setNews(publishedNews);
       setTeachers(tc);
+      setFaq(fq);
       try {
         sessionStorage.setItem(
           SEARCH_CACHE_KEY,
@@ -92,6 +113,7 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
             ts: Date.now(),
             news: publishedNews,
             teachers: tc,
+            faq: fq,
           } satisfies SearchCache)
         );
       } catch {
@@ -118,6 +140,7 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
           title: getLocalizedField(item, 'title', locale),
           subtitle: getLocalizedField(item, 'content', locale).substring(0, 100),
           href: `/${locale}/news/${item.id}`,
+          path: `/news/${item.id}`,
           icon: 'newspaper',
         });
       }
@@ -132,12 +155,28 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
           title: getLocalizedField(item, 'name', locale),
           subtitle: `${item.subject || ''} · ${item.category || ''}`,
           href: `/${locale}/teachers#${item.id}`,
+          path: `/teachers#${item.id}`,
           icon: 'user',
         });
       }
     }
+    for (const item of faq) {
+      const question = getLocalizedField(item, 'question', locale).toLowerCase();
+      const answer = getLocalizedField(item, 'answer', locale).toLowerCase();
+      if (question.includes(q) || answer.includes(q)) {
+        out.push({
+          type: 'faq',
+          id: item.id,
+          title: getLocalizedField(item, 'question', locale),
+          subtitle: getLocalizedField(item, 'answer', locale).substring(0, 100),
+          href: `/${locale}/faq`,
+          path: `/faq`,
+          icon: 'question',
+        });
+      }
+    }
     return out.slice(0, 10);
-  }, [query, news, teachers, locale]);
+  }, [query, news, teachers, faq, locale]);
 
   // Focus the input on open; restore focus to the trigger on close.
   useEffect(() => {
@@ -163,7 +202,11 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
         setActiveIdx((i) => Math.max(0, i - 1));
       } else if (e.key === 'Enter') {
         const r = results[activeIdx];
-        if (r) window.location.href = r.href;
+        if (r) {
+          e.preventDefault();
+          onClose();
+          router.push(r.path as never);
+        }
       } else if (e.key === 'Tab') {
         // Only the input is tabbable — keep focus inside the dialog.
         e.preventDefault();
@@ -172,7 +215,7 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [activeIdx, onClose, results]);
+  }, [activeIdx, onClose, results, router]);
 
   // Keep the active option scrolled into view.
   useEffect(() => {
@@ -254,6 +297,10 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
                     tabIndex={-1}
                     className={`search-result${i === activeIdx ? ' active' : ''}`}
                     onMouseEnter={() => setActiveIdx(i)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(r);
+                    }}
                   >
                     <span className="search-result-icon">
                       <Icon name={r.icon} size={18} />
@@ -263,7 +310,11 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
                       <div className="search-result-subtitle">{r.subtitle}</div>
                     </div>
                     <span className="search-result-type">
-                      {r.type === 'news' ? t('type_news') : t('type_teacher')}
+                      {r.type === 'news'
+                        ? t('type_news')
+                        : r.type === 'teacher'
+                          ? t('type_teacher')
+                          : t('type_faq')}
                     </span>
                   </a>
                 </li>

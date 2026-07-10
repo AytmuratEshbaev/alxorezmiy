@@ -1,6 +1,7 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import Icon from '@/components/ui/Icon';
+import ApplicationForm from '@/components/admission/ApplicationForm';
 import { buildPageMetadata } from '@/lib/seo';
 
 export const revalidate = 3600;
@@ -66,6 +67,22 @@ export default async function AdmissionPage({ params }: { params: Promise<{ loca
       </section>
 
       <section className="section" style={{ background: 'var(--bg-secondary)' }}>
+        <div className="container">
+          <div className="section-header animate-on-scroll">
+            <span className="section-label">{t('admission_form.section_label')}</span>
+            <h2>{t('admission_form.title')}</h2>
+            <p>{t('admission_form.subtitle')}</p>
+          </div>
+          <div
+            className="feature-panel animate-on-scroll"
+            style={{ maxWidth: 600, margin: '0 auto' }}
+          >
+            <ApplicationForm />
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
         <div className="container">
           <div className="feature-panel feature-panel-center animate-on-scroll">
             <div className="feature-panel-icon">

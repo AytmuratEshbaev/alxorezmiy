@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-type FieldErrors = Partial<Record<'name' | 'email' | 'subject' | 'message', string>>;
+type FieldErrors = Partial<Record<'studentName' | 'phone' | 'grade', string>>;
 
 const errorTextStyle: React.CSSProperties = {
   margin: 'var(--s-1) 0 0',
@@ -10,21 +10,22 @@ const errorTextStyle: React.CSSProperties = {
   fontSize: '0.8125rem',
 };
 
-export default function ContactForm() {
-  const t = useTranslations('contact_page');
+const GRADES = ['5', '6', '7', '8', '9', '10', '11'];
+
+export default function ApplicationForm() {
+  const t = useTranslations('admission_form');
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
-  const [website, setWebsite] = useState(''); // honeypot — always empty for humans
+  const [form, setForm] = useState({ studentName: '', phone: '', grade: '', message: '' });
+  const [website, setWebsite] = useState(''); // honeypot
   const [errors, setErrors] = useState<FieldErrors>({});
 
   function validate(): FieldErrors {
     const next: FieldErrors = {};
-    if (!form.name.trim()) next.name = t('error_name');
-    if (!form.email.trim()) next.email = t('error_email');
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
-      next.email = t('error_email_invalid');
-    if (!form.subject.trim()) next.subject = t('error_subject');
-    if (!form.message.trim()) next.message = t('error_message');
+    if (!form.studentName.trim()) next.studentName = t('error_student_name');
+    if (!form.phone.trim()) next.phone = t('error_phone');
+    else if (!/^[+\d][\d\s()-]{6,19}$/.test(form.phone.trim()))
+      next.phone = t('error_phone_invalid');
+    if (!form.grade.trim()) next.grade = t('error_grade');
     return next;
   }
 
@@ -33,13 +34,12 @@ export default function ContactForm() {
     const found = validate();
     if (Object.keys(found).length > 0) {
       setErrors(found);
-      const firstKey = (['name', 'email', 'subject', 'message'] as const).find((k) => found[k]);
+      const firstKey = (['studentName', 'phone', 'grade'] as const).find((k) => found[k]);
       if (firstKey) {
         const map = {
-          name: 'contactName',
-          email: 'contactEmail',
-          subject: 'contactSubject',
-          message: 'contactMessage',
+          studentName: 'applyStudentName',
+          phone: 'applyPhone',
+          grade: 'applyGrade',
         } as const;
         document.getElementById(map[firstKey])?.focus();
       }
@@ -48,16 +48,16 @@ export default function ContactForm() {
     setErrors({});
     setStatus('sending');
     try {
-      const res = await fetch('/api/send-message', {
+      const res = await fetch('/api/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, website }),
       });
       if (!res.ok) throw new Error('failed');
       setStatus('success');
-      setForm({ name: '', email: '', subject: '', message: '' });
+      setForm({ studentName: '', phone: '', grade: '', message: '' });
     } catch (err) {
-      console.error('Send error:', err);
+      console.error('Apply error:', err);
       setStatus('error');
     }
   }
@@ -66,12 +66,12 @@ export default function ContactForm() {
   return (
     <form onSubmit={onSubmit} aria-busy={sending} noValidate>
       <fieldset disabled={sending} style={{ border: 0, padding: 0, margin: 0 }}>
-        {/* Honeypot: hidden from humans, catches bots. Not submitted by real users. */}
+        {/* Honeypot */}
         <div className="visually-hidden" aria-hidden="true">
-          <label htmlFor="contactWebsite">Website</label>
+          <label htmlFor="applyWebsite">Website</label>
           <input
             type="text"
-            id="contactWebsite"
+            id="applyWebsite"
             name="website"
             tabIndex={-1}
             autoComplete="off"
@@ -79,86 +79,88 @@ export default function ContactForm() {
             onChange={(e) => setWebsite(e.target.value)}
           />
         </div>
+
         <div className="form-group">
-          <label htmlFor="contactName">{t('form_name')}</label>
+          <label htmlFor="applyStudentName">{t('student_name')}</label>
           <input
             type="text"
-            id="contactName"
+            id="applyStudentName"
             className="form-control"
-            placeholder={t('form_name')}
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            placeholder={t('student_name')}
+            value={form.studentName}
+            onChange={(e) => setForm({ ...form, studentName: e.target.value })}
             autoComplete="name"
             required
-            aria-invalid={errors.name ? true : undefined}
-            aria-describedby={errors.name ? 'contactName-error' : undefined}
+            aria-invalid={errors.studentName ? true : undefined}
+            aria-describedby={errors.studentName ? 'applyStudentName-error' : undefined}
           />
-          {errors.name && (
-            <p id="contactName-error" role="alert" style={errorTextStyle}>
-              {errors.name}
+          {errors.studentName && (
+            <p id="applyStudentName-error" role="alert" style={errorTextStyle}>
+              {errors.studentName}
             </p>
           )}
         </div>
+
         <div className="form-group">
-          <label htmlFor="contactEmail">{t('form_email')}</label>
+          <label htmlFor="applyPhone">{t('phone')}</label>
           <input
-            type="email"
-            id="contactEmail"
+            type="tel"
+            id="applyPhone"
             className="form-control"
-            placeholder="email@example.com"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            autoComplete="email"
+            placeholder="+998 90 123 45 67"
+            value={form.phone}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            autoComplete="tel"
             required
-            aria-invalid={errors.email ? true : undefined}
-            aria-describedby={errors.email ? 'contactEmail-error' : undefined}
+            aria-invalid={errors.phone ? true : undefined}
+            aria-describedby={errors.phone ? 'applyPhone-error' : undefined}
           />
-          {errors.email && (
-            <p id="contactEmail-error" role="alert" style={errorTextStyle}>
-              {errors.email}
+          {errors.phone && (
+            <p id="applyPhone-error" role="alert" style={errorTextStyle}>
+              {errors.phone}
             </p>
           )}
         </div>
+
         <div className="form-group">
-          <label htmlFor="contactSubject">{t('form_subject')}</label>
-          <input
-            type="text"
-            id="contactSubject"
+          <label htmlFor="applyGrade">{t('grade')}</label>
+          <select
+            id="applyGrade"
             className="form-control"
-            placeholder={t('form_subject')}
-            value={form.subject}
-            onChange={(e) => setForm({ ...form, subject: e.target.value })}
+            value={form.grade}
+            onChange={(e) => setForm({ ...form, grade: e.target.value })}
             required
-            aria-invalid={errors.subject ? true : undefined}
-            aria-describedby={errors.subject ? 'contactSubject-error' : undefined}
-          />
-          {errors.subject && (
-            <p id="contactSubject-error" role="alert" style={errorTextStyle}>
-              {errors.subject}
+            aria-invalid={errors.grade ? true : undefined}
+            aria-describedby={errors.grade ? 'applyGrade-error' : undefined}
+          >
+            <option value="">{t('grade_placeholder')}</option>
+            {GRADES.map((g) => (
+              <option key={g} value={g}>
+                {t('grade_option', { grade: g })}
+              </option>
+            ))}
+          </select>
+          {errors.grade && (
+            <p id="applyGrade-error" role="alert" style={errorTextStyle}>
+              {errors.grade}
             </p>
           )}
         </div>
+
         <div className="form-group">
-          <label htmlFor="contactMessage">{t('form_message')}</label>
+          <label htmlFor="applyMessage">{t('message')}</label>
           <textarea
-            id="contactMessage"
+            id="applyMessage"
             className="form-control"
-            placeholder={t('form_message')}
-            rows={5}
+            placeholder={t('message')}
+            rows={4}
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
-            required
-            aria-invalid={errors.message ? true : undefined}
-            aria-describedby={errors.message ? 'contactMessage-error' : undefined}
           />
-          {errors.message && (
-            <p id="contactMessage-error" role="alert" style={errorTextStyle}>
-              {errors.message}
-            </p>
-          )}
         </div>
+
         <button type="submit" className="btn btn-primary btn-lg w-full" disabled={sending}>
-          <span>{sending ? t('form_sending') : t('form_send')}</span>
+          <span>{sending ? t('sending') : t('submit')}</span>
           {sending ? (
             <svg
               width="20"
@@ -168,7 +170,7 @@ export default function ContactForm() {
               stroke="currentColor"
               strokeWidth="2"
               aria-hidden="true"
-              className="contact-spin"
+              className="apply-spin"
             >
               <path d="M21 12a9 9 0 1 1-6.219-8.56" />
             </svg>
@@ -187,6 +189,7 @@ export default function ContactForm() {
           )}
         </button>
       </fieldset>
+
       <div role="status" aria-live="polite" style={{ minHeight: 'var(--s-6)' }}>
         {status === 'success' && (
           <p
@@ -199,7 +202,7 @@ export default function ContactForm() {
               margin: 'var(--s-4) 0 0',
             }}
           >
-            {t('form_success')}
+            {t('success')}
           </p>
         )}
         {status === 'error' && (
@@ -213,15 +216,16 @@ export default function ContactForm() {
               margin: 'var(--s-4) 0 0',
             }}
           >
-            {t('form_error')}
+            {t('error')}
           </p>
         )}
       </div>
+
       <style jsx>{`
-        .contact-spin {
-          animation: contact-spin 1s linear infinite;
+        .apply-spin {
+          animation: apply-spin 1s linear infinite;
         }
-        @keyframes contact-spin {
+        @keyframes apply-spin {
           from {
             transform: rotate(0);
           }
@@ -230,7 +234,7 @@ export default function ContactForm() {
           }
         }
         @media (prefers-reduced-motion: reduce) {
-          .contact-spin {
+          .apply-spin {
             animation: none;
           }
         }
