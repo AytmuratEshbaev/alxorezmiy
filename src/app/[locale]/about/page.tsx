@@ -3,6 +3,7 @@ import { Link } from '@/i18n/routing';
 import { getSettings } from '@/lib/firebase/server-queries';
 import { getLocalizedField } from '@/lib/utils';
 import { buildPageMetadata } from '@/lib/seo';
+import Icon, { type IconName } from '@/components/ui/Icon';
 import type { Locale, Settings } from '@/types';
 
 export const revalidate = 3600;
@@ -10,7 +11,12 @@ export const revalidate = 3600;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.about' });
-  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/about' });
+  return buildPageMetadata({
+    locale,
+    title: t('title'),
+    description: t('description'),
+    path: '/about',
+  });
 }
 
 async function safeGetSettings(): Promise<Settings | null> {
@@ -41,14 +47,34 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       </div>
 
       {fullName && (
-        <section className="section" style={{ padding: 'var(--s-12) 0 var(--s-8)' }} id="officialName">
+        <section
+          className="section"
+          style={{ padding: 'var(--s-12) 0 var(--s-8)' }}
+          id="officialName"
+        >
           <div className="container" style={{ maxWidth: 860 }}>
             <div
               className="card animate-on-scroll"
-              style={{ textAlign: 'center', background: 'var(--brand-gradient-soft)', border: '1px solid var(--navy-line)' }}
+              style={{
+                textAlign: 'center',
+                background: 'var(--brand-gradient-soft)',
+                border: '1px solid var(--navy-line)',
+              }}
             >
-              <span className="section-label" style={{ marginBottom: 'var(--s-4)' }}>📜 {t('footer.official_name')}</span>
-              <p style={{ fontSize: '1.0625rem', lineHeight: 1.7, color: 'var(--text-hi)', fontWeight: 500, margin: 0 }}>{fullName}</p>
+              <span className="section-label" style={{ marginBottom: 'var(--s-4)' }}>
+                {t('footer.official_name')}
+              </span>
+              <p
+                style={{
+                  fontSize: '1.0625rem',
+                  lineHeight: 1.7,
+                  color: 'var(--text-hi)',
+                  fontWeight: 500,
+                  margin: 0,
+                }}
+              >
+                {fullName}
+              </p>
             </div>
           </div>
         </section>
@@ -80,18 +106,22 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <p>{t('about_page.mission_text')}</p>
           </div>
           <div className="grid grid-2" style={{ maxWidth: 900, margin: '0 auto' }}>
-            {[
-              { key: 'excellence', icon: '🏆' },
-              { key: 'innovation', icon: '💡' },
-              { key: 'integrity', icon: '⚖️' },
-              { key: 'community', icon: '🤝' }
-            ].map((v, i) => (
+            {(
+              [
+                { key: 'excellence', icon: 'trophy' },
+                { key: 'innovation', icon: 'lightbulb' },
+                { key: 'integrity', icon: 'scale' },
+                { key: 'community', icon: 'users' },
+              ] as { key: string; icon: IconName }[]
+            ).map((v, i) => (
               <div
                 key={v.key}
                 className={`card card-hover animate-on-scroll${i > 0 ? ` animate-delay-${i}` : ''}`}
                 style={{ textAlign: 'center' }}
               >
-                <div className="direction-icon" style={{ fontSize: '2rem' }}>{v.icon}</div>
+                <div className="direction-icon" style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                  <Icon name={v.icon} />
+                </div>
                 <h3>{t(`about_page.values.${v.key}` as never)}</h3>
                 <p>{t(`about_page.values.${v.key}_desc` as never)}</p>
               </div>
@@ -100,51 +130,28 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         </div>
       </section>
 
-      <section className="section" id="leadership">
-        <div className="container">
-          <div className="section-header animate-on-scroll">
-            <span className="section-label">{t('about_page.leadership_label')}</span>
-            <h2>{t('about_page.leadership_title')}</h2>
-          </div>
-          <div className="grid grid-3" style={{ maxWidth: 900, margin: '0 auto' }}>
-            {[
-              { name: 'Abdullayev Baxtiyor', role: 'Maktab direktori', deg: 'Pedagogika fanlari doktori', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop' },
-              { name: 'Rahimova Gulnora', role: "O'quv ishlari bo'yicha o'rinbosar", deg: 'Pedagogika fanlari nomzodi', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop' },
-              { name: 'Toshmatov Sardor', role: "Ilmiy ishlar bo'yicha o'rinbosar", deg: 'Fizika-matematika fanlari nomzodi', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop' }
-            ].map((m, i) => (
-              <div className={`card team-card animate-on-scroll${i > 0 ? ` animate-delay-${i}` : ''}`} key={m.name}>
-                <div className="card-avatar">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={m.img} alt={m.name} loading="lazy" />
-                </div>
-                <h3>{m.name}</h3>
-                <p className="role">{m.role}</p>
-                <p style={{ fontSize: '0.85rem', marginTop: 'var(--s-2)' }}>{m.deg}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section" style={{ background: 'var(--bg-secondary)' }} id="virtualTour">
+      <section className="section" id="virtualTour">
         <div className="container">
           <div className="section-header animate-on-scroll">
             <span className="section-label">{t('about_page.virtual_tour_label')}</span>
             <h2>{t('about_page.virtual_tour')}</h2>
           </div>
           <div className="grid grid-3 animate-on-scroll">
-            {[
-              { src: 'https://images.unsplash.com/photo-1562774053-701939374585?w=500&h=375&fit=crop', cap: 'Maktab binosi' },
-              { src: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=500&h=375&fit=crop', cap: 'Sinf xonasi' },
-              { src: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=500&h=375&fit=crop', cap: 'Laboratoriya' },
-              { src: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&h=375&fit=crop', cap: 'Kutubxona' },
-              { src: 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=500&h=375&fit=crop', cap: 'Sport zali' },
-              { src: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=500&h=375&fit=crop', cap: "Yig'ilishlar zali" }
-            ].map((g) => (
-              <div className="gallery-item" key={g.src}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={g.src} alt={g.cap} loading="lazy" />
-                <div className="gallery-caption">{g.cap}</div>
+            {(
+              [
+                { key: 'building', icon: 'building' },
+                { key: 'classroom', icon: 'user' },
+                { key: 'lab', icon: 'lightbulb' },
+                { key: 'library', icon: 'scroll' },
+                { key: 'gym', icon: 'medal' },
+                { key: 'hall', icon: 'users' },
+              ] as { key: string; icon: IconName }[]
+            ).map((tile) => (
+              <div className="tour-tile" key={tile.key}>
+                <Icon name={tile.icon} size={40} />
+                <span className="tour-tile-caption">
+                  {t(`about_page.virtual_tour_items.${tile.key}` as never)}
+                </span>
               </div>
             ))}
           </div>

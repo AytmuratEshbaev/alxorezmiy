@@ -76,7 +76,15 @@
     "leadership_title": "Rahbariyat",
     "leadership_label": "Bizning jamoa",
     "virtual_tour": "Virtual tur",
-    "virtual_tour_label": "Maktab binosi"
+    "virtual_tour_label": "Maktab binosi",
+    "virtual_tour_items": {
+      "building": "Maktab binosi",
+      "classroom": "Sinf xonasi",
+      "lab": "Laboratoriya",
+      "library": "Kutubxona",
+      "gym": "Sport zali",
+      "hall": "Yig'ilishlar zali"
+    }
   },
   "contact_page": {
     "title": "Bog'lanish",
@@ -212,10 +220,10 @@
   },
   "gallery_page": {
     "title": "Foto va Video Galereya",
-    "filter_building": "🏛 Bino",
-    "filter_lessons": "📚 Darslar",
-    "filter_sports": "⚽ Sport",
-    "filter_events": "🎉 Tadbirlar",
+    "filter_building": "Bino",
+    "filter_lessons": "Darslar",
+    "filter_sports": "Sport",
+    "filter_events": "Tadbirlar",
     "empty": "Hozircha rasmlar yo'q"
   },
   "about_history": {

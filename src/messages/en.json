@@ -76,7 +76,15 @@
     "leadership_title": "Leadership",
     "leadership_label": "Our Team",
     "virtual_tour": "Virtual Tour",
-    "virtual_tour_label": "School Building"
+    "virtual_tour_label": "School Building",
+    "virtual_tour_items": {
+      "building": "School Building",
+      "classroom": "Classroom",
+      "lab": "Laboratory",
+      "library": "Library",
+      "gym": "Sports Hall",
+      "hall": "Assembly Hall"
+    }
   },
   "contact_page": {
     "title": "Contact Us",
@@ -212,10 +220,10 @@
   },
   "gallery_page": {
     "title": "Photo and Video Gallery",
-    "filter_building": "🏛 Building",
-    "filter_lessons": "📚 Lessons",
-    "filter_sports": "⚽ Sports",
-    "filter_events": "🎉 Events",
+    "filter_building": "Building",
+    "filter_lessons": "Lessons",
+    "filter_sports": "Sports",
+    "filter_events": "Events",
     "empty": "No images yet"
   },
   "about_history": {

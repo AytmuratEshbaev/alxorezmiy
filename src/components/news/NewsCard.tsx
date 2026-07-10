@@ -4,8 +4,17 @@ import { getLocalizedField, formatDate, formatDateISO } from '@/lib/utils';
 import { transformImage } from '@/lib/imagekit';
 import type { News, Locale } from '@/types';
 
-export default function NewsCard({ item, locale }: { item: News; locale: Locale }) {
+export default function NewsCard({
+  item,
+  locale,
+  className = '',
+}: {
+  item: News;
+  locale: Locale;
+  className?: string;
+}) {
   const t = useTranslations('news_page.category');
+  const tCommon = useTranslations('common');
   const title = getLocalizedField(item, 'title', locale);
   const content = getLocalizedField(item, 'content', locale);
   const categoryLabel =
@@ -15,8 +24,7 @@ export default function NewsCard({ item, locale }: { item: News; locale: Locale 
   return (
     <Link
       href={`/news/${item.id}` as never}
-      className="card card-hover news-card"
-      style={{ textDecoration: 'none', color: 'inherit', display: 'block', padding: 0, overflow: 'hidden' }}
+      className={`card card-hover news-card${className ? ` ${className}` : ''}`}
     >
       {item.image && (
         <div className="card-img">
@@ -24,7 +32,7 @@ export default function NewsCard({ item, locale }: { item: News; locale: Locale 
           <img src={transformImage(item.image, { width: 600 })} alt={title} loading="lazy" />
         </div>
       )}
-      <div className="news-card-body" style={{ padding: 'var(--s-6)' }}>
+      <div className="news-card-body">
         <div className="card-meta">
           <span className="card-category">{categoryLabel}</span>
           <time className="card-date" dateTime={formatDateISO(item.createdAt)}>
@@ -32,7 +40,11 @@ export default function NewsCard({ item, locale }: { item: News; locale: Locale 
           </time>
         </div>
         <h3>{title}</h3>
-        <p>{content.substring(0, 120)}{content.length > 120 ? '…' : ''}</p>
+        <p>
+          {content.substring(0, 120)}
+          {content.length > 120 ? '…' : ''}
+        </p>
+        <span className="read-more">{tCommon('read_more')}</span>
       </div>
     </Link>
   );

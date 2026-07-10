@@ -76,7 +76,15 @@
     "leadership_title": "Руководство",
     "leadership_label": "Наша команда",
     "virtual_tour": "Виртуальный тур",
-    "virtual_tour_label": "Здание школы"
+    "virtual_tour_label": "Здание школы",
+    "virtual_tour_items": {
+      "building": "Здание школы",
+      "classroom": "Классная комната",
+      "lab": "Лаборатория",
+      "library": "Библиотека",
+      "gym": "Спортивный зал",
+      "hall": "Актовый зал"
+    }
   },
   "contact_page": {
     "title": "Связаться с нами",
@@ -212,10 +220,10 @@
   },
   "gallery_page": {
     "title": "Фото- и Видеогалерея",
-    "filter_building": "🏛 Здание",
-    "filter_lessons": "📚 Уроки",
-    "filter_sports": "⚽ Спорт",
-    "filter_events": "🎉 События",
+    "filter_building": "Здание",
+    "filter_lessons": "Уроки",
+    "filter_sports": "Спорт",
+    "filter_events": "События",
     "empty": "Пока нет изображений"
   },
   "about_history": {

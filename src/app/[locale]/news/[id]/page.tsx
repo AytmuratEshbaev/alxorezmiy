@@ -22,7 +22,11 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
   const { locale, id } = await params;
   try {
     const item = await getNewsById(id);
@@ -35,7 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title,
       description: content.substring(0, 160),
       path: `/news/${id}`,
-      image
+      image,
     });
   } catch (err) {
     console.warn('[news/[id]] generateMetadata failed:', err);
@@ -43,7 +47,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   }
 }
 
-export default async function NewsDetailPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
+export default async function NewsDetailPage({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
   const { locale, id } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
@@ -94,7 +102,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
               display: 'flex',
               flexWrap: 'wrap',
               alignItems: 'center',
-              gap: 'var(--s-3)'
+              gap: 'var(--s-3)',
             }}
           >
             <span className="card-category">{catLabel}</span>
@@ -104,7 +112,9 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
             >
               {formatDate(item.createdAt, locale as Locale)}
             </time>
-            <span aria-hidden="true" style={{ color: 'var(--ink-4)' }}>·</span>
+            <span aria-hidden="true" style={{ color: 'var(--ink-4)' }}>
+              ·
+            </span>
             <span style={{ color: 'var(--text-tertiary)', fontSize: '.9375rem' }}>
               {t('news_page.read_time', { minutes })}
             </span>
@@ -123,7 +133,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
               lineHeight: 1.7,
               marginTop: 'var(--s-6)',
               color: 'var(--text-secondary)',
-              fontSize: '1.05rem'
+              fontSize: '1.05rem',
             }}
           >
             {content}
@@ -132,11 +142,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
           <NewsShareButtons title={title} path={`/${locale}/news/${id}`} />
 
           <div style={{ marginTop: 'var(--s-8)' }}>
-            <Link
-              href={'/news' as never}
-              className="btn btn-ghost"
-              style={{ color: 'var(--primary)' }}
-            >
+            <Link href={'/news' as never} className="btn btn-outline">
               {t('news_page.back_to_list')}
             </Link>
           </div>
@@ -144,7 +150,10 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
       </article>
 
       {related.length > 0 && (
-        <section className="section" style={{ background: 'var(--bg-secondary)', paddingTop: 'var(--s-12)' }}>
+        <section
+          className="section"
+          style={{ background: 'var(--bg-secondary)', paddingTop: 'var(--s-12)' }}
+        >
           <div className="container">
             <div className="section-header" style={{ marginBottom: 'var(--s-8)' }}>
               <h2 style={{ fontSize: '1.75rem' }}>{t('news_page.related_title')}</h2>

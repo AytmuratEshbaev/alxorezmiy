@@ -76,7 +76,15 @@
     "leadership_title": "Basshılıq",
     "leadership_label": "Bizin' jáma'á",
     "virtual_tour": "Virtual tur",
-    "virtual_tour_label": "Mektep binası"
+    "virtual_tour_label": "Mektep binası",
+    "virtual_tour_items": {
+      "building": "Mektep binası",
+      "classroom": "Klass bólmesi",
+      "lab": "Laboratoriya",
+      "library": "Kitapxana",
+      "gym": "Sport zalı",
+      "hall": "Jıynalıs zalı"
+    }
   },
   "contact_page": {
     "title": "Baylanısıw",
@@ -212,10 +220,10 @@
   },
   "gallery_page": {
     "title": "Foto hám Video Galereya",
-    "filter_building": "🏛 Bina",
-    "filter_lessons": "📚 Sabaqlar",
-    "filter_sports": "⚽ Sport",
-    "filter_events": "🎉 Ilájlar",
+    "filter_building": "Bina",
+    "filter_lessons": "Sabaqlar",
+    "filter_sports": "Sport",
+    "filter_events": "Ilájlar",
     "empty": "Házirshe súwretler joq"
   },
   "about_history": {

@@ -2,6 +2,8 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { getSettings } from '@/lib/firebase/server-queries';
 import ContactForm from '@/components/contact/ContactForm';
+import Icon from '@/components/ui/Icon';
+import { SocialIcons } from '@/components/layout/social-icons';
 import { buildPageMetadata } from '@/lib/seo';
 import type { Settings } from '@/types';
 
@@ -10,7 +12,12 @@ export const revalidate = 3600;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.contact' });
-  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/contact' });
+  return buildPageMetadata({
+    locale,
+    title: t('title'),
+    description: t('description'),
+    path: '/contact',
+  });
 }
 
 async function safeGetSettings(): Promise<Settings | null> {
@@ -43,28 +50,36 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         <div className="container">
           <div className="grid grid-4">
             <div className="card card-hover contact-card animate-on-scroll">
-              <div className="contact-icon">📍</div>
+              <div className="contact-icon">
+                <Icon name="map-pin" />
+              </div>
               <div>
                 <h4>{t('contact_page.address_label')}</h4>
                 <p>{s?.address || t('contact_page.address')}</p>
               </div>
             </div>
             <div className="card card-hover contact-card animate-on-scroll animate-delay-1">
-              <div className="contact-icon">📞</div>
+              <div className="contact-icon">
+                <Icon name="phone" />
+              </div>
               <div>
                 <h4>{t('contact_page.phone_label')}</h4>
                 <p>{s?.phone || t('contact_page.phone')}</p>
               </div>
             </div>
             <div className="card card-hover contact-card animate-on-scroll animate-delay-2">
-              <div className="contact-icon">📧</div>
+              <div className="contact-icon">
+                <Icon name="mail" />
+              </div>
               <div>
                 <h4>{t('contact_page.email_label')}</h4>
                 <p>{s?.email || t('contact_page.email')}</p>
               </div>
             </div>
             <div className="card card-hover contact-card animate-on-scroll animate-delay-3">
-              <div className="contact-icon">🕐</div>
+              <div className="contact-icon">
+                <Icon name="clock" />
+              </div>
               <div>
                 <h4>{t('contact_page.hours_label')}</h4>
                 <p>{s?.hours || t('contact_page.hours')}</p>
@@ -97,26 +112,52 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               </div>
 
               <div style={{ marginTop: 'var(--space-xl)' }}>
-                <h3 style={{ marginBottom: 'var(--space-md)' }}>{t('contact_page.social_title')}</h3>
+                <h3 style={{ marginBottom: 'var(--space-md)' }}>
+                  {t('contact_page.social_title')}
+                </h3>
                 <div className="flex gap-md" style={{ flexWrap: 'wrap' }}>
                   {s?.telegram && (
-                    <a href={s.telegram} className="btn btn-secondary btn-sm" style={{ gap: 8 }} target="_blank" rel="noopener">
-                      <span>✈️</span> Telegram
+                    <a
+                      href={s.telegram}
+                      className="btn btn-secondary btn-sm"
+                      style={{ gap: 8 }}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {SocialIcons.telegram} Telegram
                     </a>
                   )}
                   {s?.instagram && (
-                    <a href={s.instagram} className="btn btn-secondary btn-sm" style={{ gap: 8 }} target="_blank" rel="noopener">
-                      <span>📷</span> Instagram
+                    <a
+                      href={s.instagram}
+                      className="btn btn-secondary btn-sm"
+                      style={{ gap: 8 }}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {SocialIcons.instagram} Instagram
                     </a>
                   )}
                   {s?.facebook && (
-                    <a href={s.facebook} className="btn btn-secondary btn-sm" style={{ gap: 8 }} target="_blank" rel="noopener">
-                      <span>📘</span> Facebook
+                    <a
+                      href={s.facebook}
+                      className="btn btn-secondary btn-sm"
+                      style={{ gap: 8 }}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {SocialIcons.facebook} Facebook
                     </a>
                   )}
                   {s?.youtube && (
-                    <a href={s.youtube} className="btn btn-secondary btn-sm" style={{ gap: 8 }} target="_blank" rel="noopener">
-                      <span>▶️</span> YouTube
+                    <a
+                      href={s.youtube}
+                      className="btn btn-secondary btn-sm"
+                      style={{ gap: 8 }}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {SocialIcons.youtube} YouTube
                     </a>
                   )}
                 </div>

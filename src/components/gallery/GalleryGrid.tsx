@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { getLocalizedField } from '@/lib/utils';
 import { transformImage } from '@/lib/imagekit';
+import Icon from '@/components/ui/Icon';
 import type { GalleryItem, Locale } from '@/types';
 
 interface Props {
@@ -24,12 +25,15 @@ export default function GalleryGrid({ items, locale }: Props) {
     { value: 'building', label: t('gallery_page.filter_building') },
     { value: 'lessons', label: t('gallery_page.filter_lessons') },
     { value: 'sports', label: t('gallery_page.filter_sports') },
-    { value: 'events', label: t('gallery_page.filter_events') }
+    { value: 'events', label: t('gallery_page.filter_events') },
   ];
 
   return (
     <>
-      <div className="flex-between" style={{ marginBottom: 'var(--space-xl)', flexWrap: 'wrap', gap: 'var(--space-md)' }}>
+      <div
+        className="flex-between"
+        style={{ marginBottom: 'var(--space-xl)', flexWrap: 'wrap', gap: 'var(--space-md)' }}
+      >
         <div className="filter-group" style={{ marginBottom: 0 }}>
           {filters.map((f) => (
             <button
@@ -52,10 +56,14 @@ export default function GalleryGrid({ items, locale }: Props) {
               gridColumn: '1/-1',
               textAlign: 'center',
               color: 'var(--ink-3)',
-              padding: 'var(--s-12) var(--s-4)'
+              padding: 'var(--s-12) var(--s-4)',
             }}
           >
-            <div aria-hidden="true" style={{ fontSize: '2.5rem', marginBottom: 'var(--s-3)', opacity: 0.5 }}>🖼️</div>
+            <Icon
+              name="image"
+              size={44}
+              style={{ color: 'var(--ink-4)', marginBottom: 'var(--s-3)' }}
+            />
             <p style={{ margin: 0, fontWeight: 500, color: 'var(--ink-2)' }}>
               {t('gallery_page_extra.empty_title')}
             </p>

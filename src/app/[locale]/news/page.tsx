@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { getNewsList } from '@/lib/firebase/server-queries';
 import NewsCard from '@/components/news/NewsCard';
+import Icon from '@/components/ui/Icon';
 import { buildPageMetadata } from '@/lib/seo';
 import type { News, Locale } from '@/types';
 
@@ -10,7 +11,12 @@ export const revalidate = 60;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.news' });
-  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/news' });
+  return buildPageMetadata({
+    locale,
+    title: t('title'),
+    description: t('description'),
+    path: '/news',
+  });
 }
 
 async function safeGetNews(): Promise<News[]> {
@@ -49,11 +55,17 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
                 color: 'var(--ink-3)',
                 padding: 'var(--s-16) var(--s-4)',
                 maxWidth: 480,
-                margin: '0 auto'
+                margin: '0 auto',
               }}
             >
-              <div aria-hidden="true" style={{ fontSize: '3rem', marginBottom: 'var(--s-4)', opacity: 0.5 }}>📰</div>
-              <h2 style={{ fontSize: '1.25rem', marginBottom: 'var(--s-2)', color: 'var(--ink-2)' }}>
+              <Icon
+                name="newspaper"
+                size={48}
+                style={{ color: 'var(--ink-4)', marginBottom: 'var(--s-4)' }}
+              />
+              <h2
+                style={{ fontSize: '1.25rem', marginBottom: 'var(--s-2)', color: 'var(--ink-2)' }}
+              >
                 {t('news_page.empty_title')}
               </h2>
               <p style={{ margin: 0, fontSize: '0.9375rem' }}>{t('news_page.empty_text')}</p>
