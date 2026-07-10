@@ -1,10 +1,10 @@
 # alxorezmiy.uz
 
-Official website of Al-Xorezmiy school. Multilingual (uz / ru / kk / en) Next.js 14 app with a Firebase-backed admin panel.
+Official website of Al-Xorezmiy school. Multilingual (uz / ru / kk / en) Next.js 15 app with a Firebase-backed admin panel.
 
 ## Tech stack
 
-- **Next.js 14** (App Router, ISR, RSC)
+- **Next.js 15** (App Router, ISR, RSC)
 - **TypeScript** (strict)
 - **next-intl** — i18n routing + translations
 - **Firebase** — Firestore (content), Auth (admin), Admin SDK (server)

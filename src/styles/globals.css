@@ -53,10 +53,10 @@
   --brand-grad:   linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
   --brand-grad-soft: linear-gradient(135deg, var(--navy-soft) 0%, var(--amber-soft) 100%);
 
-  /* Typography */
-  --font-display: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-body:    'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono:    'Geist Mono', 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  /* Typography — Geist is self-hosted via next/font (see src/lib/fonts.ts) */
+  --font-display: var(--font-geist, 'Geist'), -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-body:    var(--font-geist, 'Geist'), -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono:    var(--font-geist-mono, 'Geist Mono'), 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
 
   /* Spacing — 4pt scale */
   --s-1:  4px;   --s-2:  8px;   --s-3: 12px;   --s-4: 16px;
@@ -120,6 +120,19 @@
   --brand-gradient: var(--brand-grad);
   --brand-gradient-soft: var(--brand-grad-soft);
   --shadow-glow: 0 0 28px rgba(245,158,11,.20);
+
+  /* Spacing/radius aliases — several pages reference these names */
+  --space-xs:  var(--s-2);
+  --space-sm:  var(--s-3);
+  --space-md:  var(--s-4);
+  --space-lg:  var(--s-6);
+  --space-xl:  var(--s-10);
+  --space-2xl: var(--s-16);
+  --space-3xl: var(--s-24);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
 }
 
 html { color-scheme: light; }
@@ -159,9 +172,17 @@ input, textarea, select { font: inherit; }
 ::-moz-selection { background: var(--amber); color: var(--navy); }
 
 :focus-visible {
-  outline: 2px solid var(--amber);
+  /* Navy on light surfaces — ≥3:1 non-text contrast (WCAG 1.4.11).
+     Dark theme overrides this to a bright amber (see dark-theme.css). */
+  outline: 2px solid var(--navy);
   outline-offset: 3px;
   border-radius: var(--r-sm);
+}
+/* Dark surfaces inside the light theme need a light ring */
+.hero :focus-visible,
+.footer :focus-visible,
+.mobile-nav :focus-visible {
+  outline-color: var(--amber-3);
 }
 
 /* Skip link */
@@ -238,6 +259,44 @@ em, i { font-style: italic; }
 
 .flex-between { display: flex; align-items: center; justify-content: space-between; }
 .text-center { text-align: center; }
+.w-full { width: 100%; }
+
+/* Styled checklist — used on admission & directions pages */
+.checklist {
+  list-style: none;
+  margin: 0 0 var(--s-6);
+  padding: 0;
+  display: grid;
+  gap: var(--s-3);
+}
+.checklist li {
+  position: relative;
+  padding-left: var(--s-8);
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--r-xs);
+  background: var(--amber-soft);
+  border: 1px solid rgba(245,158,11,.4);
+}
+.checklist li::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 6px;
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid var(--amber-text);
+  border-bottom: 2px solid var(--amber-text);
+  transform: rotate(-45deg);
+}
 
 .grid { display: grid; gap: var(--s-6); }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
@@ -602,7 +661,7 @@ em, i { font-style: italic; }
 /* ─── Hero — Full-bleed photo, huge display heading ─── */
 .hero {
   position: relative;
-  min-height: 100vh;                /* full viewport floor — stats sit below the fold */
+  min-height: 100dvh;               /* dvh: stable on iOS Safari — stats sit below the fold */
   display: flex;
   align-items: center;              /* visually balanced — content sits at optical center */
   padding: calc(var(--navbar-total) + var(--s-8)) 0 var(--s-12);
@@ -1144,7 +1203,7 @@ em, i { font-style: italic; }
 .footer-about p {
   font-size: .9375rem;
   line-height: 1.6;
-  color: rgba(255,255,255,.62);
+  color: rgba(255,255,255,.74); /* ≥4.5:1 on navy */
   margin-bottom: var(--s-5);
   max-width: 32ch;
 }
@@ -1174,7 +1233,7 @@ em, i { font-style: italic; }
   gap: var(--s-3);
 }
 .footer-links a, .footer-contact a {
-  color: rgba(255,255,255,.68);
+  color: rgba(255,255,255,.74);
   font-size: .9375rem;
   transition: color var(--t-base);
 }
@@ -1184,7 +1243,7 @@ em, i { font-style: italic; }
   align-items: flex-start;
   gap: var(--s-3);
   font-size: .9375rem;
-  color: rgba(255,255,255,.68);
+  color: rgba(255,255,255,.74);
 }
 .footer-contact li > span:first-child {
   color: var(--amber);
@@ -1202,7 +1261,7 @@ em, i { font-style: italic; }
   align-items: center;
   font-family: var(--font-mono);
   font-size: .75rem;
-  color: rgba(255,255,255,.45);
+  color: rgba(255,255,255,.72); /* ≥4.5:1 on navy (WCAG AA) */
 }
 
 /* ─── Back to top ─── */

@@ -45,7 +45,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           <div className="container" style={{ maxWidth: 860 }}>
             <div
               className="card animate-on-scroll"
-              style={{ textAlign: 'center', background: 'var(--brand-gradient-soft)', border: '1px solid rgba(99,102,241,0.15)' }}
+              style={{ textAlign: 'center', background: 'var(--brand-gradient-soft)', border: '1px solid var(--navy-line)' }}
             >
               <span className="section-label" style={{ marginBottom: 'var(--s-4)' }}>📜 {t('footer.official_name')}</span>
               <p style={{ fontSize: '1.0625rem', lineHeight: 1.7, color: 'var(--text-hi)', fontWeight: 500, margin: 0 }}>{fullName}</p>

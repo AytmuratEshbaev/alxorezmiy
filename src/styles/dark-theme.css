@@ -93,6 +93,11 @@
   background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.04) 1px, transparent 0);
 }
 
+/* Focus ring — bright amber on dark surfaces (≥3:1, WCAG 1.4.11) */
+[data-theme="dark"] :focus-visible {
+  outline-color: var(--amber-3);
+}
+
 /* Hero in dark — same photo, darker overlay */
 [data-theme="dark"] .hero {
   background:

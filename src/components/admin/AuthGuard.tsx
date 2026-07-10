@@ -26,9 +26,9 @@ export function AuthGuard({ children }: { children: ReactNode }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#F8FAFC',
-          color: '#64748B',
-          fontFamily: 'system-ui, sans-serif'
+          background: 'var(--admin-bg, #F8FAFC)',
+          color: 'var(--text-secondary, #64748B)',
+          fontFamily: 'var(--font-geist, system-ui), sans-serif'
         }}
       >
         Yuklanmoqda...
