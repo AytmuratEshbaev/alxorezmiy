@@ -12,6 +12,15 @@ import type { Locale, News } from '@/types';
 
 export const revalidate = 60;
 
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz').replace(/\/$/, '');
+
+/** Convert a serialized timestamp (ISO string) or Firestore Timestamp to a full ISO datetime. */
+function toISO(ts: string | { toDate: () => Date } | undefined): string | undefined {
+  if (!ts) return undefined;
+  const d = typeof ts === 'object' && 'toDate' in ts ? ts.toDate() : new Date(ts);
+  return isNaN(d.getTime()) ? undefined : d.toISOString();
+}
+
 export async function generateStaticParams() {
   try {
     const ids = await getNewsIds();
@@ -30,7 +39,7 @@ export async function generateMetadata({
   const { locale, id } = await params;
   try {
     const item = await getNewsById(id);
-    if (!item) return {};
+    if (!item) return { title: 'Al-Xorazmiy maktabi' };
     const title = getLocalizedField(item, 'title', locale as Locale);
     const content = getLocalizedField(item, 'content', locale as Locale);
     const image = item.image ? transformImage(item.image, { width: 1200 }) : undefined;
@@ -40,10 +49,14 @@ export async function generateMetadata({
       description: content.substring(0, 160),
       path: `/news/${id}`,
       image,
+      imageAlt: title,
+      ogType: 'article',
+      publishedTime: toISO(item.createdAt),
+      modifiedTime: toISO(item.updatedAt),
     });
   } catch (err) {
     console.warn('[news/[id]] generateMetadata failed:', err);
-    return {};
+    return { title: 'Al-Xorazmiy maktabi' };
   }
 }
 
@@ -83,8 +96,52 @@ export default async function NewsDetailPage({
     console.warn('[news/[id]] related fetch failed:', err);
   }
 
+  const articleUrl = `${SITE_URL}/${locale}/news/${id}`;
+  const publishedISO = toISO(item.createdAt);
+  const modifiedISO = toISO(item.updatedAt);
+  const ldArticle = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: title,
+    image: item.image
+      ? [transformImage(item.image, { width: 1200 })]
+      : [`${SITE_URL}/assets/images/logo.webp`],
+    datePublished: publishedISO,
+    dateModified: modifiedISO || publishedISO,
+    inLanguage: locale,
+    publisher: {
+      '@type': 'EducationalOrganization',
+      name: 'Al-Xorazmiy maktabi',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/assets/images/logo.webp`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': articleUrl,
+    },
+  };
+  const ldBreadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: t('common.home'), item: `${SITE_URL}/${locale}` },
+      { '@type': 'ListItem', position: 2, name: t('nav.news'), item: `${SITE_URL}/${locale}/news` },
+      { '@type': 'ListItem', position: 3, name: title, item: articleUrl },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldArticle) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldBreadcrumb) }}
+      />
       <div className="page-header">
         <h1>{title}</h1>
         <div className="breadcrumb">

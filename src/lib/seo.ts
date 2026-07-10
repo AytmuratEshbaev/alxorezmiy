@@ -3,12 +3,14 @@ import { routing } from '@/i18n/routing';
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz').replace(/\/$/, '');
 
+const BRAND = 'Al-Xorazmiy maktabi';
+
 // next-intl uses BCP-47-ish locale tags. Map our routing locales to OG ones.
 const OG_LOCALES: Record<string, string> = {
   uz: 'uz_UZ',
   ru: 'ru_RU',
   kk: 'kk_KZ',
-  en: 'en_US'
+  en: 'en_US',
 };
 
 export interface PageMetaInput {
@@ -19,6 +21,14 @@ export interface PageMetaInput {
   path?: string;
   /** Optional OG image override (absolute or root-relative URL). */
   image?: string;
+  /** Alt text for the OG/Twitter image. Falls back to the (branded) title. */
+  imageAlt?: string;
+  /** OG type. Defaults to 'website'. Use 'article' for news detail pages. */
+  ogType?: 'website' | 'article';
+  /** ISO datetime — maps to openGraph article:published_time when ogType is 'article'. */
+  publishedTime?: string;
+  /** ISO datetime — maps to openGraph article:modified_time when ogType is 'article'. */
+  modifiedTime?: string;
 }
 
 /**
@@ -30,10 +40,17 @@ export function buildPageMetadata({
   title,
   description,
   path = '',
-  image
+  image,
+  imageAlt,
+  ogType = 'website',
+  publishedTime,
+  modifiedTime,
 }: PageMetaInput): Metadata {
   const url = `${SITE_URL}/${locale}${path}`;
   const ogImage = image || '/assets/images/logo.webp';
+  // Avoid a double brand suffix when the title already contains the school name.
+  const fullTitle = title.includes(BRAND) ? title : `${title} — ${BRAND}`;
+  const alt = imageAlt || fullTitle;
 
   const languages: Record<string, string> = {};
   for (const l of routing.locales) {
@@ -41,27 +58,35 @@ export function buildPageMetadata({
   }
   languages['x-default'] = `${SITE_URL}/${routing.defaultLocale}${path}`;
 
+  const images = [{ url: ogImage, width: 1200, height: 630, alt }];
+
+  const openGraphBase = {
+    title: fullTitle,
+    description,
+    url,
+    siteName: BRAND,
+    locale: OG_LOCALES[locale] || locale,
+    images,
+  };
+
+  const openGraph: Metadata['openGraph'] =
+    ogType === 'article'
+      ? { ...openGraphBase, type: 'article', publishedTime, modifiedTime }
+      : { ...openGraphBase, type: 'website' };
+
   return {
-    title,
+    title: fullTitle,
     description,
     alternates: {
       canonical: url,
-      languages
+      languages,
     },
-    openGraph: {
-      title,
-      description,
-      url,
-      siteName: 'Al-Xorazmiy maktabi',
-      locale: OG_LOCALES[locale] || locale,
-      type: 'website',
-      images: [{ url: ogImage }]
-    },
+    openGraph,
     twitter: {
       card: 'summary_large_image',
-      title,
+      title: fullTitle,
       description,
-      images: [ogImage]
-    }
+      images: [{ url: ogImage, alt }],
+    },
   };
 }
