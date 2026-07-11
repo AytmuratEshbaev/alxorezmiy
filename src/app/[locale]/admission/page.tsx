@@ -1,5 +1,7 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
+import Icon from '@/components/ui/Icon';
+import ApplicationForm from '@/components/admission/ApplicationForm';
 import { buildPageMetadata } from '@/lib/seo';
 
 export const revalidate = 3600;
@@ -7,7 +9,12 @@ export const revalidate = 3600;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.admission' });
-  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/admission' });
+  return buildPageMetadata({
+    locale,
+    title: t('title'),
+    description: t('description'),
+    path: '/admission',
+  });
 }
 
 export default async function AdmissionPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -60,17 +67,33 @@ export default async function AdmissionPage({ params }: { params: Promise<{ loca
       </section>
 
       <section className="section" style={{ background: 'var(--bg-secondary)' }}>
-        <div className="container text-center animate-on-scroll">
-          <h2>{t('admission_page.download_title')}</h2>
-          <p style={{ marginBottom: 'var(--space-xl)', maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}>
-            {t('admission_page.download_text')}
-          </p>
-          <a href="#" className="btn btn-primary btn-lg" target="_blank" rel="noopener">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 8 }}>
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-            </svg>
-            {t('admission_page.download_btn')}
-          </a>
+        <div className="container">
+          <div className="section-header animate-on-scroll">
+            <span className="section-label">{t('admission_form.section_label')}</span>
+            <h2>{t('admission_form.title')}</h2>
+            <p>{t('admission_form.subtitle')}</p>
+          </div>
+          <div
+            className="feature-panel animate-on-scroll"
+            style={{ maxWidth: 600, margin: '0 auto' }}
+          >
+            <ApplicationForm />
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <div className="feature-panel feature-panel-center animate-on-scroll">
+            <div className="feature-panel-icon">
+              <Icon name="download" size={26} />
+            </div>
+            <h2>{t('admission_page.download_title')}</h2>
+            <p>{t('admission_page.download_text')}</p>
+            <Link href={'/contact' as never} className="btn btn-primary">
+              {t('nav.contact')}
+            </Link>
+          </div>
         </div>
       </section>
     </>

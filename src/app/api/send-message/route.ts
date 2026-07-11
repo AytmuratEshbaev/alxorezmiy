@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
+import { FieldValue } from 'firebase-admin/firestore';
 import { escapeHtml } from '@/lib/utils';
+import { rateLimit, clientIp } from '@/lib/rate-limit';
+import { adminDb } from '@/lib/firebase/admin';
 
 const ALLOWED_ORIGINS = [
   process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz',
@@ -24,11 +27,31 @@ export async function POST(req: Request) {
   const origin = req.headers.get('origin');
   const headers = corsHeaders(origin);
 
-  let body: { name?: string; email?: string; subject?: string; message?: string };
+  let body: {
+    name?: string;
+    email?: string;
+    subject?: string;
+    message?: string;
+    website?: string;
+  };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400, headers });
+  }
+
+  // Honeypot: real users never fill the hidden "website" field. Bots do.
+  // Return a fake success so we don't tip them off that they were rejected.
+  if (body.website && body.website.trim() !== '') {
+    return NextResponse.json({ ok: true }, { headers });
+  }
+
+  // Rate-limit by IP: 5 requests / 10 minutes.
+  if (!rateLimit(`send-message:${clientIp(req)}`, { limit: 5, windowMs: 10 * 60 * 1000 })) {
+    return NextResponse.json(
+      { error: "Juda ko'p so'rov. Iltimos, birozdan keyin urinib ko'ring." },
+      { status: 429, headers }
+    );
   }
 
   const { name, email, subject, message } = body;
@@ -42,13 +65,28 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Maydonlar uzunligi cheklovdan oshib ketdi' }, { status: 400, headers });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.ADMIN_EMAIL;
-  if (!apiKey || !to) {
-    return NextResponse.json({ ok: true, emailSent: false, note: 'Email service not configured' }, { headers });
+  // Best-effort persistence to the `messages` collection (admin panel reads this).
+  // Wrapped in try/catch so email still sends if Firestore is unavailable.
+  let persisted = false;
+  try {
+    await adminDb.collection('messages').add({
+      name,
+      email,
+      subject,
+      message,
+      read: false,
+      createdAt: FieldValue.serverTimestamp()
+    });
+    persisted = true;
+  } catch (err) {
+    console.warn('[send-message] Firestore persist failed:', (err as Error).message);
   }
 
-  const html = `
+  let emailSent = false;
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = process.env.ADMIN_EMAIL;
+  if (apiKey && to) {
+    const html = `
     <!DOCTYPE html><html><body style="margin:0;padding:0;background:#F4F4F8;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#0F172A;">
       <div style="max-width:600px;margin:0 auto;padding:32px 24px;">
         <div style="background:linear-gradient(135deg,#6366F1,#8B5CF6);padding:24px;border-radius:12px 12px 0 0;color:white;">
@@ -69,24 +107,35 @@ export async function POST(req: Request) {
     </body></html>
   `;
 
-  try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: 'Al-Xorazmiy <onboarding@resend.dev>',
-        to: [to],
-        reply_to: email,
-        subject: `[Sayt] ${subject}`,
-        html
-      })
-    });
-    if (!r.ok) {
-      const errText = await r.text();
-      return NextResponse.json({ error: 'Email yuborilmadi', detail: errText }, { status: 500, headers });
+    try {
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: 'Al-Xorazmiy <onboarding@resend.dev>',
+          to: [to],
+          reply_to: email,
+          subject: `[Sayt] ${subject}`,
+          html
+        })
+      });
+      emailSent = r.ok;
+      if (!r.ok) {
+        console.warn('[send-message] Resend failed:', await r.text());
+      }
+    } catch (err) {
+      console.warn('[send-message] Resend error:', (err as Error).message);
     }
-    return NextResponse.json({ ok: true, emailSent: true }, { headers });
-  } catch (err) {
-    return NextResponse.json({ error: (err as Error).message }, { status: 500, headers });
   }
+
+  // Succeed if EITHER channel worked (mirrors /api/apply) — a persisted message
+  // reaches the admin panel, so erroring here would only cause duplicate retries.
+  if (!persisted && !emailSent) {
+    return NextResponse.json(
+      { error: 'Message could not be processed' },
+      { status: 503, headers }
+    );
+  }
+
+  return NextResponse.json({ ok: true, persisted, emailSent }, { headers });
 }

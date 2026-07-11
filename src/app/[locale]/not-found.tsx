@@ -13,7 +13,7 @@ export default async function NotFound() {
         padding: 'var(--s-12) var(--s-4)',
         textAlign: 'center',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
     >
       <div
@@ -24,7 +24,7 @@ export default async function NotFound() {
           zIndex: -1,
           background:
             'radial-gradient(ellipse at top, var(--amber-soft) 0%, transparent 55%),radial-gradient(ellipse at bottom, var(--navy-soft) 0%, transparent 55%)',
-          opacity: 0.9
+          opacity: 0.9,
         }}
       />
 
@@ -40,37 +40,80 @@ export default async function NotFound() {
             backgroundClip: 'text',
             lineHeight: 0.9,
             marginBottom: 'var(--s-6)',
-            letterSpacing: '-.05em'
+            letterSpacing: '-.05em',
           }}
         >
           404
         </div>
-        <span className="hero-eyebrow" style={{ display: 'inline-flex', marginBottom: 'var(--s-4)' }}>
+        <span
+          className="hero-eyebrow"
+          style={{ display: 'inline-flex', marginBottom: 'var(--s-4)' }}
+        >
           {t('not_found.eyebrow')}
         </span>
-        <h1 style={{ marginBottom: 'var(--s-4)', fontSize: 'clamp(1.5rem,3vw,2.25rem)' }}>{t('not_found.title')}</h1>
-        <p style={{ fontSize: '1.0625rem', marginBottom: 'var(--s-8)', color: 'var(--text-mid)', lineHeight: 1.6 }}>
+        <h1 style={{ marginBottom: 'var(--s-4)', fontSize: 'clamp(1.5rem,3vw,2.25rem)' }}>
+          {t('not_found.title')}
+        </h1>
+        <p
+          style={{
+            fontSize: '1.0625rem',
+            marginBottom: 'var(--s-8)',
+            color: 'var(--text-mid)',
+            lineHeight: 1.6,
+          }}
+        >
           {t('not_found.message')}
         </p>
-        <div style={{ display: 'flex', gap: 'var(--s-3)', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href={'/' as never} className="btn btn-primary btn-lg">{t('not_found.back_home')}</Link>
-          <Link href={'/contact' as never} className="btn btn-ghost btn-lg" style={{ color: 'var(--text-hi)', borderColor: 'var(--border)' }}>
+        <div
+          style={{ display: 'flex', gap: 'var(--s-3)', justifyContent: 'center', flexWrap: 'wrap' }}
+        >
+          <Link href={'/' as never} className="btn btn-primary btn-lg">
+            {t('not_found.back_home')}
+          </Link>
+          <Link href={'/contact' as never} className="btn btn-outline btn-lg">
             {t('not_found.go_contact')}
           </Link>
         </div>
-        <div style={{ marginTop: 'var(--s-12)', paddingTop: 'var(--s-6)', borderTop: '1px solid var(--border-subtle)' }}>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-lo)', marginBottom: 'var(--s-3)' }}>{t('not_found.or_visit')}</p>
-          <div style={{ display: 'flex', gap: 'var(--s-4)', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href={'/about' as never} style={{ fontSize: '0.9375rem', color: 'var(--brand-1)', textDecoration: 'none' }}>
+        <div
+          style={{
+            marginTop: 'var(--s-12)',
+            paddingTop: 'var(--s-6)',
+            borderTop: '1px solid var(--border-subtle)',
+          }}
+        >
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-lo)', marginBottom: 'var(--s-3)' }}>
+            {t('not_found.or_visit')}
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              gap: 'var(--s-4)',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <Link
+              href={'/about' as never}
+              style={{ fontSize: '0.9375rem', color: 'var(--brand-1)', textDecoration: 'none' }}
+            >
               {t('nav.about')}
             </Link>
-            <Link href={'/teachers' as never} style={{ fontSize: '0.9375rem', color: 'var(--brand-1)', textDecoration: 'none' }}>
+            <Link
+              href={'/teachers' as never}
+              style={{ fontSize: '0.9375rem', color: 'var(--brand-1)', textDecoration: 'none' }}
+            >
               {t('nav.teachers')}
             </Link>
-            <Link href={'/news' as never} style={{ fontSize: '0.9375rem', color: 'var(--brand-1)', textDecoration: 'none' }}>
+            <Link
+              href={'/news' as never}
+              style={{ fontSize: '0.9375rem', color: 'var(--brand-1)', textDecoration: 'none' }}
+            >
               {t('nav.news')}
             </Link>
-            <Link href={'/admission' as never} style={{ fontSize: '0.9375rem', color: 'var(--brand-1)', textDecoration: 'none' }}>
+            <Link
+              href={'/admission' as never}
+              style={{ fontSize: '0.9375rem', color: 'var(--brand-1)', textDecoration: 'none' }}
+            >
               {t('nav.admission')}
             </Link>
           </div>

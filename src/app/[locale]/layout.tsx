@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { routing, type AppLocale } from '@/i18n/routing';
+import { fontVariables } from '@/lib/fonts';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import SiteShell from '@/components/layout/SiteShell';
 import Footer from '@/components/layout/Footer';
@@ -42,7 +43,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} className={fontVariables} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

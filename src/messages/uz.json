@@ -76,7 +76,15 @@
     "leadership_title": "Rahbariyat",
     "leadership_label": "Bizning jamoa",
     "virtual_tour": "Virtual tur",
-    "virtual_tour_label": "Maktab binosi"
+    "virtual_tour_label": "Maktab binosi",
+    "virtual_tour_items": {
+      "building": "Maktab binosi",
+      "classroom": "Sinf xonasi",
+      "lab": "Laboratoriya",
+      "library": "Kutubxona",
+      "gym": "Sport zali",
+      "hall": "Yig'ilishlar zali"
+    }
   },
   "contact_page": {
     "title": "Bog'lanish",
@@ -98,7 +106,13 @@
     "form_success": "Xabaringiz muvaffaqiyatli yuborildi!",
     "form_error": "Xatolik yuz berdi. Qaytadan urinib ko'ring.",
     "social_title": "Ijtimoiy tarmoqlar",
-    "map_title": "Xaritada"
+    "map_title": "Xaritada",
+    "error_name": "Ismingizni kiriting",
+    "error_email": "Email manzilingizni kiriting",
+    "error_email_invalid": "To'g'ri email manzil kiriting",
+    "error_subject": "Mavzuni kiriting",
+    "error_message": "Xabaringizni kiriting",
+    "info_title": "Bogʼlanish maʻlumotlari"
   },
   "common": {
     "read_more": "Batafsil",
@@ -130,7 +144,23 @@
   "a11y": {
     "skip": "Asosiy mazmunga o'tish",
     "home_link": "Bosh sahifa",
-    "menu": "Menyu"
+    "menu": "Menyu",
+    "mobile_menu": "Asosiy menyu",
+    "search": "Qidirish (Ctrl+K)",
+    "lang_select": "Tilni tanlash",
+    "theme_toggle": "Tema almashtirish",
+    "back_to_top": "Yuqoriga"
+  },
+  "search": {
+    "placeholder": "Qidirish: yangilik, o'qituvchi...",
+    "dialog_label": "Sayt bo'yicha qidiruv",
+    "input_label": "Qidiruv so'rovi",
+    "min_chars": "Kamida 2 ta harf yozing",
+    "keyboard": "Klaviatura",
+    "no_results": "\"{query}\" bo'yicha hech narsa topilmadi",
+    "type_news": "Yangilik",
+    "type_teacher": "O'qituvchi",
+    "type_faq": "Savol-javob"
   },
   "achievements": {
     "title": "Yutuqlarimiz",
@@ -212,10 +242,10 @@
   },
   "gallery_page": {
     "title": "Foto va Video Galereya",
-    "filter_building": "🏛 Bino",
-    "filter_lessons": "📚 Darslar",
-    "filter_sports": "⚽ Sport",
-    "filter_events": "🎉 Tadbirlar",
+    "filter_building": "Bino",
+    "filter_lessons": "Darslar",
+    "filter_sports": "Sport",
+    "filter_events": "Tadbirlar",
     "empty": "Hozircha rasmlar yo'q"
   },
   "about_history": {
@@ -300,7 +330,12 @@
     "share_facebook": "Facebook",
     "share_copy": "Havolani nusxalash",
     "share_copied": "Havola nusxalandi",
-    "related_title": "Tegishli yangiliklar"
+    "related_title": "Tegishli yangiliklar",
+    "share_whatsapp": "WhatsApp",
+    "share_native": "Ulashish",
+    "load_more": "Ko'proq yuklash",
+    "load_more_loading": "Yuklanmoqda...",
+    "load_more_end": "Barcha yangiliklar ko'rsatildi"
   },
   "teachers_page": {
     "title": "O'qituvchilar",
@@ -319,7 +354,11 @@
   "gallery_page_extra": {
     "empty_title": "Galereya tayyorlanmoqda",
     "empty_text": "Yaqin orada bu yerda maktab hayotidan rasmlar paydo bo'ladi.",
-    "open_image": "Rasmni kattalashtirish"
+    "open_image": "Rasmni kattalashtirish",
+    "lightbox_label": "Rasm ko'rinishi",
+    "close": "Yopish",
+    "prev": "Oldingi rasm",
+    "next": "Keyingi rasm"
   },
   "faq_page_extra": {
     "empty_title": "Savollar yaqin orada",
@@ -329,5 +368,24 @@
     "scroll_down": "Quyiroq aylantirish",
     "expand": "Kengaytirish",
     "collapse": "Yopish"
+  },
+  "admission_form": {
+    "section_label": "Onlayn ariza",
+    "title": "Onlayn qabul arizasi",
+    "subtitle": "Farzandingizni maktabimizga yozdirish uchun quyidagi shaklni to'ldiring. Ma'muriyat siz bilan bog'lanadi.",
+    "student_name": "O'quvchining to'liq ismi",
+    "phone": "Telefon raqami",
+    "grade": "Qabul qilinadigan sinf",
+    "grade_placeholder": "Sinfni tanlang",
+    "grade_option": "{grade}-sinf",
+    "message": "Qo'shimcha xabar (ixtiyoriy)",
+    "submit": "Arizani yuborish",
+    "sending": "Yuborilmoqda...",
+    "success": "Arizangiz qabul qilindi. Tez orada siz bilan bog'lanamiz.",
+    "error": "Ariza yuborishda xatolik yuz berdi. Iltimos, keyinroq urinib ko'ring.",
+    "error_student_name": "O'quvchining ismini kiriting",
+    "error_phone": "Telefon raqamini kiriting",
+    "error_phone_invalid": "Telefon raqami noto'g'ri",
+    "error_grade": "Sinfni tanlang"
   }
 }

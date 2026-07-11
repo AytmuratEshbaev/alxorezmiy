@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { AdminHeader } from '@/components/admin/AdminHeader';
-import { getDocuments } from '@/lib/firebase/client-queries';
+import { getCollectionCount } from '@/lib/firebase/client-queries';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface Counts {
@@ -54,23 +54,17 @@ export default function DashboardPage() {
     let cancelled = false;
     (async () => {
       try {
-        const [news, teachers, olympiad, gallery, faq, messages] = await Promise.all([
-          getDocuments<{ id: string }>('news'),
-          getDocuments<{ id: string }>('teachers'),
-          getDocuments<{ id: string }>('olympiad'),
-          getDocuments<{ id: string }>('gallery'),
-          getDocuments<{ id: string }>('faq'),
-          getDocuments<{ id: string; read?: boolean }>('messages')
+        // Aggregate counts — 6 count queries instead of downloading every document
+        const [news, teachers, olympiad, gallery, faq, unreadMessages] = await Promise.all([
+          getCollectionCount('news'),
+          getCollectionCount('teachers'),
+          getCollectionCount('olympiad'),
+          getCollectionCount('gallery'),
+          getCollectionCount('faq'),
+          getCollectionCount('messages', { field: 'read', op: '==', value: false })
         ]);
         if (cancelled) return;
-        setCounts({
-          news: news.length,
-          teachers: teachers.length,
-          olympiad: olympiad.length,
-          gallery: gallery.length,
-          faq: faq.length,
-          unreadMessages: messages.filter((m) => !m.read).length
-        });
+        setCounts({ news, teachers, olympiad, gallery, faq, unreadMessages });
       } catch (err) {
         console.error('Dashboard counts error:', err);
       }

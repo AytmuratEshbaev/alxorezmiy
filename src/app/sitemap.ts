@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
-import { getNewsIds } from '@/lib/firebase/server-queries';
+import { getNewsList } from '@/lib/firebase/server-queries';
+import type { News } from '@/types';
 
 const STATIC_PATHS = [
   '',
@@ -12,19 +13,29 @@ const STATIC_PATHS = [
   '/achievements',
   '/gallery',
   '/faq',
-  '/contact'
+  '/contact',
 ];
+
+// Stable fallback for entries with no usable timestamp — avoids a churning
+// lastModified that would otherwise change on every build.
+const FALLBACK_DATE = new Date('2025-01-01T00:00:00.000Z');
+
+function toDate(ts: string | { toDate: () => Date } | undefined): Date {
+  if (!ts) return FALLBACK_DATE;
+  const d = typeof ts === 'object' && 'toDate' in ts ? ts.toDate() : new Date(ts);
+  return isNaN(d.getTime()) ? FALLBACK_DATE : d;
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = (process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz').replace(/\/$/, '');
   const now = new Date();
 
-  let newsIds: string[] = [];
+  let news: News[] = [];
   try {
-    newsIds = await getNewsIds();
+    news = await getNewsList(1000);
   } catch (err) {
-    console.warn('[sitemap] getNewsIds failed:', err);
-    newsIds = [];
+    console.warn('[sitemap] getNewsList failed:', err);
+    news = [];
   }
 
   const entries: MetadataRoute.Sitemap = [];
@@ -35,15 +46,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${base}/${locale}${path}`,
         lastModified: now,
         changeFrequency: path === '' || path === '/news' ? 'daily' : 'weekly',
-        priority: path === '' ? 1 : 0.7
+        priority: path === '' ? 1 : 0.7,
       });
     }
-    for (const id of newsIds) {
+    for (const item of news) {
       entries.push({
-        url: `${base}/${locale}/news/${id}`,
-        lastModified: now,
+        url: `${base}/${locale}/news/${item.id}`,
+        lastModified: toDate(item.updatedAt || item.createdAt),
         changeFrequency: 'weekly',
-        priority: 0.5
+        priority: 0.5,
       });
     }
   }

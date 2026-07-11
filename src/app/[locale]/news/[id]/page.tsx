@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
@@ -12,6 +13,15 @@ import type { Locale, News } from '@/types';
 
 export const revalidate = 60;
 
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz').replace(/\/$/, '');
+
+/** Convert a serialized timestamp (ISO string) or Firestore Timestamp to a full ISO datetime. */
+function toISO(ts: string | { toDate: () => Date } | undefined): string | undefined {
+  if (!ts) return undefined;
+  const d = typeof ts === 'object' && 'toDate' in ts ? ts.toDate() : new Date(ts);
+  return isNaN(d.getTime()) ? undefined : d.toISOString();
+}
+
 export async function generateStaticParams() {
   try {
     const ids = await getNewsIds();
@@ -22,11 +32,15 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
   const { locale, id } = await params;
   try {
     const item = await getNewsById(id);
-    if (!item) return {};
+    if (!item) return { title: 'Al-Xorazmiy maktabi' };
     const title = getLocalizedField(item, 'title', locale as Locale);
     const content = getLocalizedField(item, 'content', locale as Locale);
     const image = item.image ? transformImage(item.image, { width: 1200 }) : undefined;
@@ -35,25 +49,37 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title,
       description: content.substring(0, 160),
       path: `/news/${id}`,
-      image
+      image,
+      imageAlt: title,
+      ogType: 'article',
+      publishedTime: toISO(item.createdAt),
+      modifiedTime: toISO(item.updatedAt),
     });
   } catch (err) {
     console.warn('[news/[id]] generateMetadata failed:', err);
-    return {};
+    return { title: 'Al-Xorazmiy maktabi' };
   }
 }
 
-export default async function NewsDetailPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
+export default async function NewsDetailPage({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
   const { locale, id } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
 
-  let item: News | null = null;
-  try {
-    item = await getNewsById(id);
-  } catch (err) {
-    console.warn('[news/[id]] getNewsById failed:', err);
+  // Fetch the article and the news pool for "related" in parallel; allSettled keeps each
+  // failure independent (a related-fetch error must not block the article).
+  const [itemResult, allNewsResult] = await Promise.allSettled([getNewsById(id), getNewsList(20)]);
+  if (itemResult.status === 'rejected') {
+    console.warn('[news/[id]] getNewsById failed:', itemResult.reason);
   }
+  if (allNewsResult.status === 'rejected') {
+    console.warn('[news/[id]] related fetch failed:', allNewsResult.reason);
+  }
+  const item: News | null = itemResult.status === 'fulfilled' ? itemResult.value : null;
   if (!item || item.status !== 'published') notFound();
 
   const title = getLocalizedField(item, 'title', locale as Locale);
@@ -65,18 +91,57 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
       : item.category;
 
   // Related news — same category, exclude self, up to 3
-  let related: News[] = [];
-  try {
-    const all = await getNewsList(20);
-    related = all
-      .filter((n) => n.id !== item!.id && n.status === 'published' && n.category === item!.category)
-      .slice(0, 3);
-  } catch (err) {
-    console.warn('[news/[id]] related fetch failed:', err);
-  }
+  const allNews: News[] = allNewsResult.status === 'fulfilled' ? allNewsResult.value : [];
+  const related: News[] = allNews
+    .filter((n) => n.id !== item.id && n.status === 'published' && n.category === item.category)
+    .slice(0, 3);
+
+  const articleUrl = `${SITE_URL}/${locale}/news/${id}`;
+  const publishedISO = toISO(item.createdAt);
+  const modifiedISO = toISO(item.updatedAt);
+  const ldArticle = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: title,
+    image: item.image
+      ? [transformImage(item.image, { width: 1200 })]
+      : [`${SITE_URL}/assets/images/logo.webp`],
+    datePublished: publishedISO,
+    dateModified: modifiedISO || publishedISO,
+    inLanguage: locale,
+    publisher: {
+      '@type': 'EducationalOrganization',
+      name: 'Al-Xorazmiy maktabi',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/assets/images/logo.webp`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': articleUrl,
+    },
+  };
+  const ldBreadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: t('common.home'), item: `${SITE_URL}/${locale}` },
+      { '@type': 'ListItem', position: 2, name: t('nav.news'), item: `${SITE_URL}/${locale}/news` },
+      { '@type': 'ListItem', position: 3, name: title, item: articleUrl },
+    ],
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldArticle) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldBreadcrumb) }}
+      />
       <div className="page-header">
         <h1>{title}</h1>
         <div className="breadcrumb">
@@ -94,7 +159,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
               display: 'flex',
               flexWrap: 'wrap',
               alignItems: 'center',
-              gap: 'var(--s-3)'
+              gap: 'var(--s-3)',
             }}
           >
             <span className="card-category">{catLabel}</span>
@@ -104,18 +169,32 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
             >
               {formatDate(item.createdAt, locale as Locale)}
             </time>
-            <span aria-hidden="true" style={{ color: 'var(--ink-4)' }}>·</span>
+            <span aria-hidden="true" style={{ color: 'var(--ink-4)' }}>
+              ·
+            </span>
             <span style={{ color: 'var(--text-tertiary)', fontSize: '.9375rem' }}>
               {t('news_page.read_time', { minutes })}
             </span>
           </header>
           {item.image && (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              src={transformImage(item.image, { width: 1200 })}
-              alt={title}
-              style={{ width: '100%', borderRadius: 'var(--r-lg)' }}
-            />
+            <div
+              style={{
+                position: 'relative',
+                width: '100%',
+                aspectRatio: '16 / 9',
+                borderRadius: 'var(--r-lg)',
+                overflow: 'hidden',
+              }}
+            >
+              <Image
+                src={item.image}
+                alt={title}
+                fill
+                priority
+                sizes="(max-width: 800px) 100vw, 800px"
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
           )}
           <div
             style={{
@@ -123,20 +202,16 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
               lineHeight: 1.7,
               marginTop: 'var(--s-6)',
               color: 'var(--text-secondary)',
-              fontSize: '1.05rem'
+              fontSize: '1.05rem',
             }}
           >
             {content}
           </div>
 
-          <NewsShareButtons title={title} path={`/${locale}/news/${id}`} />
+          <NewsShareButtons title={title} url={articleUrl} path={`/${locale}/news/${id}`} />
 
           <div style={{ marginTop: 'var(--s-8)' }}>
-            <Link
-              href={'/news' as never}
-              className="btn btn-ghost"
-              style={{ color: 'var(--primary)' }}
-            >
+            <Link href={'/news' as never} className="btn btn-outline">
               {t('news_page.back_to_list')}
             </Link>
           </div>
@@ -144,7 +219,10 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ loc
       </article>
 
       {related.length > 0 && (
-        <section className="section" style={{ background: 'var(--bg-secondary)', paddingTop: 'var(--s-12)' }}>
+        <section
+          className="section"
+          style={{ background: 'var(--bg-secondary)', paddingTop: 'var(--s-12)' }}
+        >
           <div className="container">
             <div className="section-header" style={{ marginBottom: 'var(--s-8)' }}>
               <h2 style={{ fontSize: '1.75rem' }}>{t('news_page.related_title')}</h2>

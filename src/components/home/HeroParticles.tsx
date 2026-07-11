@@ -11,13 +11,13 @@ export default function HeroParticles() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const config = {
-      count: window.innerWidth < 768 ? 32 : 72,
+      count: window.innerWidth < 768 ? 32 : 48,
       maxDist: 140,
       speed: 0.25,
       size: 1.6,
-      mouseRadius: 180
+      mouseRadius: 180,
     };
     let particles: { x: number; y: number; vx: number; vy: number }[] = [];
     let w = 0;
@@ -40,7 +40,7 @@ export default function HeroParticles() {
         x: Math.random() * w,
         y: Math.random() * h,
         vx: (Math.random() - 0.5) * config.speed * dpr,
-        vy: (Math.random() - 0.5) * config.speed * dpr
+        vy: (Math.random() - 0.5) * config.speed * dpr,
       }));
     };
     const draw = () => {

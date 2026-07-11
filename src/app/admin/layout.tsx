@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { fontVariables } from '@/lib/fonts';
 import AdminLayoutClient from './AdminLayoutClient';
 
 export const dynamic = 'force-dynamic';
@@ -9,5 +10,9 @@ export const metadata = {
 };
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  return <AdminLayoutClient>{children}</AdminLayoutClient>;
+  return (
+    <div className={fontVariables} style={{ display: 'contents' }}>
+      <AdminLayoutClient>{children}</AdminLayoutClient>
+    </div>
+  );
 }

@@ -14,11 +14,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
+    // The inline <head> script has already resolved and applied the theme
+    // before paint — read it back instead of re-deriving (single source).
+    const applied = document.documentElement.getAttribute('data-theme');
+    if (applied === 'dark' || applied === 'light') {
+      setTheme(applied);
+      return;
+    }
     const stored =
       (localStorage.getItem('theme') as Theme | null) ||
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     setTheme(stored);
-    document.documentElement.setAttribute('data-theme', stored);
   }, []);
 
   useEffect(() => {

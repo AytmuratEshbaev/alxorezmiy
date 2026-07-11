@@ -15,23 +15,23 @@ const pwa = withPWAInit({
         handler: 'CacheFirst',
         options: {
           cacheName: 'google-fonts',
-          expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 }
-        }
+          expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
+        },
       },
       {
         urlPattern: /^https:\/\/ik\.imagekit\.io\/.*/i,
         handler: 'StaleWhileRevalidate',
         options: {
           cacheName: 'imagekit-assets',
-          expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 }
-        }
+          expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
+        },
       },
       {
         urlPattern: /\/api\/.*/i,
-        handler: 'NetworkOnly'
-      }
-    ]
-  }
+        handler: 'NetworkOnly',
+      },
+    ],
+  },
 });
 
 /** @type {import('next').NextConfig} */
@@ -39,10 +39,12 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
+    loader: 'custom',
+    loaderFile: './src/lib/imagekit-loader.ts',
     remotePatterns: [
       { protocol: 'https', hostname: 'ik.imagekit.io' },
-      { protocol: 'https', hostname: 'images.unsplash.com' }
-    ]
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+    ],
   },
   async headers() {
     return [
@@ -51,17 +53,17 @@ const nextConfig = {
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' }
-        ]
-      }
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
     ];
   },
   async redirects() {
     return [
       // Legacy: /news/abc → /uz/news/abc
-      { source: '/news/:id', destination: '/uz/news/:id', permanent: true }
+      { source: '/news/:id', destination: '/uz/news/:id', permanent: true },
     ];
-  }
+  },
 };
 
 export default pwa(withNextIntl(nextConfig));

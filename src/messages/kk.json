@@ -46,7 +46,7 @@
     "achievements_label": "Paxrımız",
     "achievements_all": "Barlıq jetiskenlikler →",
     "contact_title": "Baylanıs",
-    "contact_label": "Kontakt"
+    "contact_label": "Baylanıs"
   },
   "directions_list": {
     "math": "Matematika",
@@ -76,7 +76,15 @@
     "leadership_title": "Basshılıq",
     "leadership_label": "Bizin' jáma'á",
     "virtual_tour": "Virtual tur",
-    "virtual_tour_label": "Mektep binası"
+    "virtual_tour_label": "Mektep binası",
+    "virtual_tour_items": {
+      "building": "Mektep binası",
+      "classroom": "Klass bólmesi",
+      "lab": "Laboratoriya",
+      "library": "Kitapxana",
+      "gym": "Sport zalı",
+      "hall": "Jıynalıs zalı"
+    }
   },
   "contact_page": {
     "title": "Baylanısıw",
@@ -98,7 +106,13 @@
     "form_success": "Xabarıńız tabıslı jiberildi!",
     "form_error": "Qátelik júz berdi. Qayta urınıp kóriń.",
     "social_title": "Sociallıq tarmaqllar",
-    "map_title": "Xaritada"
+    "map_title": "Kartada",
+    "error_name": "Atıńızdı kiritiń",
+    "error_email": "Email mánzilińizdi kiritiń",
+    "error_email_invalid": "Durıs email mánzilin kiritiń",
+    "error_subject": "Tema kiritiń",
+    "error_message": "Xabarıńızdı kiritiń",
+    "info_title": "Baylanıs maǵlıwmatları"
   },
   "common": {
     "read_more": "Tolıq",
@@ -122,7 +136,7 @@
   "footer": {
     "about_text": "Muhammad al-Xorezmiy arnawlı mektebi — anıq hám tábiyiy pánler boyınsha terénlestirgen bilim beretug'ın zamanagóy bilim mákemesi.",
     "quick_links": "Tez siltewler",
-    "contact_info": "Kontakt",
+    "contact_info": "Baylanıs",
     "social": "Sociallıq tarmaqllar",
     "official_name": "Rásmiy atı",
     "copyright": "© 2026 Al-Xorezmiy arnawlı mektebi. Barlıq huqıqlar qorg'alg'an."
@@ -130,7 +144,23 @@
   "a11y": {
     "skip": "Tiykarǵı mazmunǵa ótiw",
     "home_link": "Bas bet",
-    "menu": "Menyu"
+    "menu": "Menyu",
+    "mobile_menu": "Tiykarǵı menyu",
+    "search": "Izlew (Ctrl+K)",
+    "lang_select": "Tildi tańlaw",
+    "theme_toggle": "Temanı almastırıw",
+    "back_to_top": "Joqarıǵa"
+  },
+  "search": {
+    "placeholder": "Izlew: jańalıq, muǵallim...",
+    "dialog_label": "Sayt boyınsha izlew",
+    "input_label": "Izlew soraw",
+    "min_chars": "Keminde 2 háribi jazıń",
+    "keyboard": "Klaviatura",
+    "no_results": "\"{query}\" boyınsha esh nárse tabılmadı",
+    "type_news": "Jańalıq",
+    "type_teacher": "Muǵallim",
+    "type_faq": "Soraw-juwap"
   },
   "achievements": {
     "title": "Jetiskenliklerimiz",
@@ -212,10 +242,10 @@
   },
   "gallery_page": {
     "title": "Foto hám Video Galereya",
-    "filter_building": "🏛 Bina",
-    "filter_lessons": "📚 Sabaqlar",
-    "filter_sports": "⚽ Sport",
-    "filter_events": "🎉 Ilájlar",
+    "filter_building": "Bina",
+    "filter_lessons": "Sabaqlar",
+    "filter_sports": "Sport",
+    "filter_events": "Ilájlar",
     "empty": "Házirshe súwretler joq"
   },
   "about_history": {
@@ -300,7 +330,12 @@
     "share_facebook": "Facebook",
     "share_copy": "Siltemeni kóshiriw",
     "share_copied": "Sılteme kóshirildi",
-    "related_title": "Uqsas jańalıqlar"
+    "related_title": "Uqsas jańalıqlar",
+    "share_whatsapp": "WhatsApp",
+    "share_native": "Bólisiw",
+    "load_more": "Kóbirek júklew",
+    "load_more_loading": "Júklenbekte...",
+    "load_more_end": "Barlıq jańalıqlar kórsetildi"
   },
   "teachers_page": {
     "title": "Muǵallimler",
@@ -319,7 +354,11 @@
   "gallery_page_extra": {
     "empty_title": "Galereya tayarlanbaqta",
     "empty_text": "Jaqında bul jerde mektep ómirinen súwretler payda boladı.",
-    "open_image": "Súwretti úlkeytiw"
+    "open_image": "Súwretti úlkeytiw",
+    "lightbox_label": "Súwret kórinisi",
+    "close": "Jabıw",
+    "prev": "Aldıńǵı súwret",
+    "next": "Keyingi súwret"
   },
   "faq_page_extra": {
     "empty_title": "Sorawlar tezde",
@@ -329,5 +368,24 @@
     "scroll_down": "Tómen aylandırıw",
     "expand": "Keńeytiw",
     "collapse": "Jabıw"
+  },
+  "admission_form": {
+    "section_label": "Onlayn arza",
+    "title": "Onlayn qabıllaw arzası",
+    "subtitle": "Balańızdı mektebimizge jazdırıw ushın tómendegi formanı toltırıń. Basqarma siz benen baylanısadı.",
+    "student_name": "Oqıwshınıń tolıq atı",
+    "phone": "Telefon nomeri",
+    "grade": "Qabıllanatuǵın klass",
+    "grade_placeholder": "Klasstı saylań",
+    "grade_option": "{grade}-klass",
+    "message": "Qosımsha xabar (erkin)",
+    "submit": "Arzanı jiberiw",
+    "sending": "Jiberilmekte...",
+    "success": "Arzańız qabıl etildi. Tez arada siz benen baylanısamız.",
+    "error": "Arza jiberiwde qátelik júz berdi. Iltimas, keyinirek urınıp kóriń.",
+    "error_student_name": "Oqıwshınıń atın kiritiń",
+    "error_phone": "Telefon nomerin kiritiń",
+    "error_phone_invalid": "Telefon nomeri qáte",
+    "error_grade": "Klasstı saylań"
   }
 }

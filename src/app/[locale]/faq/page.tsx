@@ -1,6 +1,7 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
 import { getFaq } from '@/lib/firebase/server-queries';
+import { getLocalizedField } from '@/lib/utils';
 import FaqAccordion from '@/components/faq/FaqAccordion';
 import { buildPageMetadata } from '@/lib/seo';
 import type { FaqItem, Locale } from '@/types';
@@ -10,7 +11,12 @@ export const revalidate = 300;
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.faq' });
-  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/faq' });
+  return buildPageMetadata({
+    locale,
+    title: t('title'),
+    description: t('description'),
+    path: '/faq',
+  });
 }
 
 async function safeGetFaq(): Promise<FaqItem[]> {
@@ -28,8 +34,30 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
   const t = await getTranslations();
   const items = await safeGetFaq();
 
+  const faqLd =
+    items.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: items.map((item) => ({
+            '@type': 'Question',
+            name: getLocalizedField(item, 'question', locale as Locale),
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: getLocalizedField(item, 'answer', locale as Locale),
+            },
+          })),
+        }
+      : null;
+
   return (
     <>
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
       <div className="page-header">
         <h1>{t('faq_page.title')}</h1>
         <div className="breadcrumb">

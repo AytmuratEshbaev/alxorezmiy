@@ -76,7 +76,15 @@
     "leadership_title": "Leadership",
     "leadership_label": "Our Team",
     "virtual_tour": "Virtual Tour",
-    "virtual_tour_label": "School Building"
+    "virtual_tour_label": "School Building",
+    "virtual_tour_items": {
+      "building": "School Building",
+      "classroom": "Classroom",
+      "lab": "Laboratory",
+      "library": "Library",
+      "gym": "Sports Hall",
+      "hall": "Assembly Hall"
+    }
   },
   "contact_page": {
     "title": "Contact Us",
@@ -98,7 +106,13 @@
     "form_success": "Your message has been sent successfully!",
     "form_error": "An error occurred. Please try again.",
     "social_title": "Social Media",
-    "map_title": "On the Map"
+    "map_title": "On the Map",
+    "error_name": "Please enter your name",
+    "error_email": "Please enter your email",
+    "error_email_invalid": "Please enter a valid email address",
+    "error_subject": "Please enter a subject",
+    "error_message": "Please enter your message",
+    "info_title": "Contact information"
   },
   "common": {
     "read_more": "Read More",
@@ -130,7 +144,23 @@
   "a11y": {
     "skip": "Skip to main content",
     "home_link": "Home",
-    "menu": "Menu"
+    "menu": "Menu",
+    "mobile_menu": "Main menu",
+    "search": "Search (Ctrl+K)",
+    "lang_select": "Select language",
+    "theme_toggle": "Toggle theme",
+    "back_to_top": "Back to top"
+  },
+  "search": {
+    "placeholder": "Search: news, teacher...",
+    "dialog_label": "Site search",
+    "input_label": "Search query",
+    "min_chars": "Type at least 2 characters",
+    "keyboard": "Keyboard",
+    "no_results": "No results found for \"{query}\"",
+    "type_news": "News",
+    "type_teacher": "Teacher",
+    "type_faq": "FAQ"
   },
   "achievements": {
     "title": "Our Achievements",
@@ -212,10 +242,10 @@
   },
   "gallery_page": {
     "title": "Photo and Video Gallery",
-    "filter_building": "🏛 Building",
-    "filter_lessons": "📚 Lessons",
-    "filter_sports": "⚽ Sports",
-    "filter_events": "🎉 Events",
+    "filter_building": "Building",
+    "filter_lessons": "Lessons",
+    "filter_sports": "Sports",
+    "filter_events": "Events",
     "empty": "No images yet"
   },
   "about_history": {
@@ -300,7 +330,12 @@
     "share_facebook": "Facebook",
     "share_copy": "Copy link",
     "share_copied": "Link copied",
-    "related_title": "Related news"
+    "related_title": "Related news",
+    "share_whatsapp": "WhatsApp",
+    "share_native": "Share",
+    "load_more": "Load more",
+    "load_more_loading": "Loading...",
+    "load_more_end": "All news shown"
   },
   "teachers_page": {
     "title": "Teachers",
@@ -319,7 +354,11 @@
   "gallery_page_extra": {
     "empty_title": "Gallery is being prepared",
     "empty_text": "Photos from school life will appear here soon.",
-    "open_image": "Enlarge image"
+    "open_image": "Enlarge image",
+    "lightbox_label": "Image viewer",
+    "close": "Close",
+    "prev": "Previous image",
+    "next": "Next image"
   },
   "faq_page_extra": {
     "empty_title": "Questions coming soon",
@@ -329,5 +368,24 @@
     "scroll_down": "Scroll down",
     "expand": "Expand",
     "collapse": "Collapse"
+  },
+  "admission_form": {
+    "section_label": "Online application",
+    "title": "Online admission application",
+    "subtitle": "Fill in the form below to apply for your child's enrolment. Our administration will contact you.",
+    "student_name": "Student's full name",
+    "phone": "Phone number",
+    "grade": "Grade applying for",
+    "grade_placeholder": "Select a grade",
+    "grade_option": "Grade {grade}",
+    "message": "Additional message (optional)",
+    "submit": "Submit application",
+    "sending": "Sending...",
+    "success": "Your application has been received. We will contact you soon.",
+    "error": "An error occurred while submitting. Please try again later.",
+    "error_student_name": "Enter the student's name",
+    "error_phone": "Enter a phone number",
+    "error_phone_invalid": "Invalid phone number",
+    "error_grade": "Select a grade"
   }
 }

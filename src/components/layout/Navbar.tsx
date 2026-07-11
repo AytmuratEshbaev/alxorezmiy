@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useEffect, useState, type RefObject } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 import { NAV_ITEMS } from './nav-config';
@@ -8,7 +9,15 @@ import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import SearchTrigger from '@/components/ui/SearchTrigger';
 
-export default function Navbar({ onHamburgerClick }: { onHamburgerClick: () => void }) {
+export default function Navbar({
+  onHamburgerClick,
+  mobileOpen,
+  hamburgerRef,
+}: {
+  onHamburgerClick: () => void;
+  mobileOpen: boolean;
+  hamburgerRef: RefObject<HTMLButtonElement>;
+}) {
   const t = useTranslations();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -29,13 +38,14 @@ export default function Navbar({ onHamburgerClick }: { onHamburgerClick: () => v
 
   return (
     <>
-      <a href="#main-content" className="skip-link">{t('a11y.skip')}</a>
+      <a href="#main-content" className="skip-link">
+        {t('a11y.skip')}
+      </a>
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`} id="navbar">
         <div className="navbar-inner">
           <Link href="/" className="navbar-logo" aria-label={t('a11y.home_link')}>
             <span className="navbar-logo-icon">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/images/logo.webp" alt="" width={44} height={44} />
+              <Image src="/assets/images/logo.webp" alt="" width={44} height={44} priority />
             </span>
           </Link>
           <div className="nav-links">
@@ -61,12 +71,15 @@ export default function Navbar({ onHamburgerClick }: { onHamburgerClick: () => v
             <button
               type="button"
               className="hamburger"
+              ref={hamburgerRef}
               aria-label={t('a11y.menu')}
-              aria-expanded="false"
+              aria-expanded={mobileOpen}
               aria-controls="mobileNav"
               onClick={onHamburgerClick}
             >
-              <span></span><span></span><span></span>
+              <span></span>
+              <span></span>
+              <span></span>
             </button>
           </div>
         </div>

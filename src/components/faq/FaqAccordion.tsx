@@ -2,6 +2,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { getLocalizedField } from '@/lib/utils';
+import Icon from '@/components/ui/Icon';
 import type { FaqItem, Locale } from '@/types';
 
 interface Props {
@@ -23,12 +24,15 @@ export default function FaqAccordion({ items, locale }: Props) {
     { value: 'all', label: t('common.all') },
     { value: 'admission', label: t('faq_page.filter_admission') },
     { value: 'education', label: t('faq_page.filter_education') },
-    { value: 'general', label: t('faq_page.filter_general') }
+    { value: 'general', label: t('faq_page.filter_general') },
   ];
 
   return (
     <>
-      <div className="flex-between" style={{ marginBottom: 'var(--space-xl)', flexWrap: 'wrap', gap: 'var(--space-md)' }}>
+      <div
+        className="flex-between"
+        style={{ marginBottom: 'var(--space-xl)', flexWrap: 'wrap', gap: 'var(--space-md)' }}
+      >
         <h2 style={{ fontSize: '1.5rem' }}>{t('faq_page.all_questions')}</h2>
         <div className="filter-group" style={{ marginBottom: 0 }}>
           {filters.map((f) => (
@@ -48,9 +52,17 @@ export default function FaqAccordion({ items, locale }: Props) {
         {filtered.length === 0 ? (
           <div
             role="status"
-            style={{ textAlign: 'center', color: 'var(--ink-3)', padding: 'var(--s-12) var(--s-4)' }}
+            style={{
+              textAlign: 'center',
+              color: 'var(--ink-3)',
+              padding: 'var(--s-12) var(--s-4)',
+            }}
           >
-            <div aria-hidden="true" style={{ fontSize: '2.5rem', marginBottom: 'var(--s-3)', opacity: 0.5 }}>❓</div>
+            <Icon
+              name="question"
+              size={44}
+              style={{ color: 'var(--ink-4)', marginBottom: 'var(--s-3)' }}
+            />
             <p style={{ margin: 0, fontWeight: 500, color: 'var(--ink-2)' }}>
               {t('faq_page_extra.empty_title')}
             </p>
@@ -78,7 +90,14 @@ export default function FaqAccordion({ items, locale }: Props) {
                     {getLocalizedField(item, 'question', locale)}
                   </h3>
                   <span className="accordion-icon" aria-hidden="true">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <path d="M6 9l6 6 6-6" />
                     </svg>
                   </span>
@@ -88,10 +107,16 @@ export default function FaqAccordion({ items, locale }: Props) {
                   role="region"
                   aria-labelledby={buttonId}
                   className="accordion-body"
-                  style={{ maxHeight: open ? 1000 : 0 }}
                 >
                   <div className="accordion-body-content">
-                    <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        color: 'var(--text-secondary)',
+                        lineHeight: 1.6,
+                        whiteSpace: 'pre-line',
+                      }}
+                    >
                       {getLocalizedField(item, 'answer', locale)}
                     </p>
                   </div>
