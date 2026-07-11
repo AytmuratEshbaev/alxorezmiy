@@ -58,7 +58,11 @@ export function buildPageMetadata({
   }
   languages['x-default'] = `${SITE_URL}/${routing.defaultLocale}${path}`;
 
-  const images = [{ url: ogImage, width: 1200, height: 630, alt }];
+  // Declare dimensions only for the bundled fallback logo (its real size);
+  // override images come from ImageKit with unknown dimensions — omit rather than lie.
+  const images = image
+    ? [{ url: image, alt }]
+    : [{ url: ogImage, width: 1000, height: 1000, alt }];
 
   const openGraphBase = {
     title: fullTitle,

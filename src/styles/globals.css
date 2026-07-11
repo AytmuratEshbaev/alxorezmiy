@@ -1029,6 +1029,11 @@ time,
   overflow: hidden;
   isolation: isolate;
 }
+.hero-canvas {
+  position: absolute; /* out of the flex flow — a static canvas pushes .container off-screen */
+  inset: 0;
+  z-index: 0;
+}
 .hero .container {
   position: relative;
   z-index: 1;
@@ -2023,7 +2028,7 @@ time,
   box-shadow: 0 0 0 3px var(--amber-soft);
 }
 .form-control::placeholder {
-  color: var(--ink-4);
+  color: var(--ink-3); /* ink-4 is 2.6:1 on white — fails WCAG 1.4.3 for placeholder text */
 }
 textarea.form-control {
   min-height: 140px;
@@ -2408,55 +2413,6 @@ tbody tr:hover {
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.32);
 }
 
-/* ─── Stepper ─── */
-.stepper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--s-12);
-  gap: var(--s-2);
-}
-.step {
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
-  flex: 1;
-  position: relative;
-}
-.step:not(:last-child)::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--navy-line);
-  margin: 0 var(--s-2);
-}
-.step-num {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  border: 1px solid var(--navy-line);
-  color: var(--ink-3);
-  background: var(--surface);
-}
-.step.active .step-num {
-  background: var(--navy);
-  color: var(--amber);
-  border-color: var(--navy);
-}
-.step-label {
-  font-size: 0.9375rem;
-  color: var(--ink-3);
-}
-.step.active .step-label {
-  color: var(--ink);
-  font-weight: 500;
-}
-
 /* ─── FAQ ─── */
 .faq-item {
   border-bottom: 1px solid var(--navy-line);
@@ -2727,7 +2683,7 @@ tbody tr:hover {
   padding: 4px 0;
 }
 .search-modal-input::placeholder {
-  color: var(--ink-4);
+  color: var(--ink-3); /* ink-4 fails WCAG 1.4.3 contrast for placeholder text */
   font-weight: 400;
 }
 

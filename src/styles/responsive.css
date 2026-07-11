@@ -13,8 +13,6 @@
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .btn-nav-cta { display: none; }
-  .stepper { flex-wrap: wrap; gap: var(--s-4); }
-  .step:not(:last-child)::after { display: none; }
   .page-header { padding-top: calc(var(--navbar-total) + var(--s-8)); padding-bottom: var(--s-10); padding-left: var(--s-5); padding-right: var(--s-5); }
 }
 

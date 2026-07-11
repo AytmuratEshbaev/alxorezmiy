@@ -2,6 +2,8 @@
 
 Official website of Al-Xorezmiy school. Multilingual (uz / ru / kk / en) Next.js 15 app with a Firebase-backed admin panel.
 
+Key user-facing features: online admission application (`/[locale]/admission` → `/api/apply`, honeypot + IP rate-limit spam protection), contact form (`/api/send-message`), gallery lightbox, paginated news with load-more, site-wide search modal (Ctrl+K), dark theme, PWA/offline support.
+
 ## Tech stack
 
 - **Next.js 15** (App Router, ISR, RSC)
@@ -61,7 +63,7 @@ See `.env.local.example` for the full list.
 
 - Public: `/[locale]/{,about,admission,contact,directions,faq,gallery,teachers,achievements,news,news/[id]}` — SSG / ISR.
 - Admin: `/admin/{login,...}` — dynamic, Firebase Auth guarded.
-- API: `/api/imagekit-auth`, `/api/send-message`.
+- API: `/api/imagekit-auth`, `/api/send-message`, `/api/apply`.
 - Meta: `/sitemap.xml`, `/robots.txt`, `/manifest.json`.
 
 Legacy `/news/abc` URLs redirect to `/uz/news/abc` via `next.config.mjs`.

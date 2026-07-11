@@ -12,6 +12,7 @@ Thumbs.db
 # Skills
 .agents/
 skills-lock.json
+__pycache__/
 
 # next.js
 .next/
@@ -28,3 +29,6 @@ public/workbox-*.js.map
 public/worker-*.js
 public/worker-*.js.map
 public/fallback-*.js
+
+# test artifacts
+.playwright-mcp/
