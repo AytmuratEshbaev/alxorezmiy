@@ -1088,7 +1088,7 @@ time,
 }
 
 .hero-content p {
-  font-size: clamp(0.9375rem, 1.05vw, 1.0625rem);
+  font-size: clamp(0.9375rem, 0.8rem + 0.45vw, 1.1875rem);
   color: rgba(255, 255, 255, 0.86);
   max-width: 560px;
   line-height: 1.5;

@@ -5,6 +5,7 @@
 /* ── Tablet (1024px) ── */
 @media (max-width: 1024px) {
   .container { padding: 0 var(--s-5); }
+  .carousel-wrapper { margin: 0 calc(-1 * var(--s-5)); padding: 0 var(--s-5); }
   .section { padding: var(--s-20) 0; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
@@ -22,10 +23,12 @@
   background: var(--navy);
   z-index: 999;
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 6px;
+  justify-content: safe center; gap: 6px;
+  overflow-y: auto; overscroll-behavior: contain;
   opacity: 0; visibility: hidden; pointer-events: none;
   transition: opacity 0.32s var(--ease-out), visibility 0.32s;
   padding-top: var(--navbar-h);
+  padding-bottom: var(--s-6);
   background-image: radial-gradient(circle at 1px 1px, rgba(245,158,11,.18) 1px, transparent 0);
   background-size: 32px 32px;
 }
@@ -73,6 +76,11 @@
   .hero-actions .btn { width: 100%; justify-content: center; }
   .stat-card { padding: var(--s-4) 0; }
   .stat-number { font-size: 2.5rem; }
+  .stats-section .grid-4 { grid-template-columns: repeat(2, 1fr); gap: var(--s-6) var(--s-5); }
+  .stats-section .stat-number { font-size: 2.25rem; }
+  .direction-card { padding: var(--s-5); display: grid; grid-template-columns: auto 1fr; column-gap: var(--s-4); align-items: start; }
+  .direction-card .direction-icon { margin-bottom: 0; grid-row: span 2; width: 44px; height: 44px; }
+  .direction-card h3 { margin-bottom: var(--s-1); }
   .page-header { padding-top: calc(var(--navbar-total) + var(--s-6)); padding-bottom: var(--s-8); padding-left: var(--s-4); padding-right: var(--s-4); }
   .carousel-track .card { min-width: 280px; }
   .map-container { height: 320px; }
@@ -131,7 +139,9 @@
     margin-right: calc(-1 * var(--s-5));
     padding-left: var(--s-5);
     padding-right: var(--s-5);
+    scrollbar-width: none;
   }
+  .filter-group::-webkit-scrollbar { display: none; }
   .filter-btn { white-space: nowrap; flex-shrink: 0; }
   .back-to-top { bottom: 18px; right: 18px; width: 44px; height: 44px; }
   /* Touch targets — WCAG 2.5.5 minimum 44x44 on mobile */
@@ -154,6 +164,8 @@
 /* ── Small Mobile (480px) ── */
 @media (max-width: 480px) {
   .container { padding: 0 var(--s-4); }
+  .carousel-wrapper { margin: 0 calc(-1 * var(--s-4)); padding: 0 var(--s-4); }
+  .filter-group { margin-left: calc(-1 * var(--s-4)); margin-right: calc(-1 * var(--s-4)); padding-left: var(--s-4); padding-right: var(--s-4); }
   .btn { padding: 13px 22px; font-size: 0.9375rem; }
   .btn-lg { padding: 15px 28px; font-size: 1rem; }
   .card { padding: var(--s-5); }

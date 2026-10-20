@@ -18,6 +18,10 @@ export default async function Footer({ locale }: { locale: Locale }) {
   const t = await getTranslations();
   const s = await safeGetSettings();
   const fullName = s ? getLocalizedField(s, 'fullName', locale) : '';
+  const address = s?.address || t('contact_page.address');
+  const phone = s?.phone || t('contact_page.phone');
+  const email = s?.email || t('contact_page.email');
+  const hours = s?.hours || t('contact_page.hours');
 
   return (
     <footer className="footer">
@@ -75,27 +79,19 @@ export default async function Footer({ locale }: { locale: Locale }) {
           <div>
             <h4>{t('footer.contact_info')}</h4>
             <ul className="footer-contact">
-              {s?.address && (
-                <li>
-                  <span>{SocialIcons.pin}</span> <span>{s.address}</span>
-                </li>
-              )}
-              {s?.phone && (
-                <li>
-                  <span>{SocialIcons.phone}</span>{' '}
-                  <a href={`tel:${s.phone.replace(/\s+/g, '')}`}>{s.phone}</a>
-                </li>
-              )}
-              {s?.email && (
-                <li>
-                  <span>{SocialIcons.mail}</span> <a href={`mailto:${s.email}`}>{s.email}</a>
-                </li>
-              )}
-              {s?.hours && (
-                <li>
-                  <span>{SocialIcons.clock}</span> <span>{s.hours}</span>
-                </li>
-              )}
+              <li>
+                <span>{SocialIcons.pin}</span> <span>{address}</span>
+              </li>
+              <li>
+                <span>{SocialIcons.phone}</span>{' '}
+                <a href={`tel:${phone.replace(/\s+/g, '')}`}>{phone}</a>
+              </li>
+              <li>
+                <span>{SocialIcons.mail}</span> <a href={`mailto:${email}`}>{email}</a>
+              </li>
+              <li>
+                <span>{SocialIcons.clock}</span> <span>{hours}</span>
+              </li>
             </ul>
           </div>
           <div>
