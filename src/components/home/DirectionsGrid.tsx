@@ -26,7 +26,7 @@ export default async function DirectionsGrid() {
             <h2>{t('sections.directions_title')}</h2>
             <p>{t('sections.directions_text')}</p>
           </div>
-          <div className="grid grid-3">
+          <div className="grid grid-4">
             {DIRECTION_SUBJECTS.map((subject, i) => (
               <div
                 key={subject}

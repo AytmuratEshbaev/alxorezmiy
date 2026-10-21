@@ -20,7 +20,7 @@
 /* ── Mobile Nav ── */
 .mobile-nav {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: var(--navy);
+  background: rgb(var(--navy-deep-rgb));
   z-index: 999;
   display: flex; flex-direction: column; align-items: center;
   justify-content: safe center; gap: 6px;
@@ -29,8 +29,6 @@
   transition: opacity 0.32s var(--ease-out), visibility 0.32s;
   padding-top: var(--navbar-h);
   padding-bottom: var(--s-6);
-  background-image: radial-gradient(circle at 1px 1px, rgba(245,158,11,.18) 1px, transparent 0);
-  background-size: 32px 32px;
 }
 .mobile-nav.active { opacity: 1; visibility: visible; pointer-events: auto; }
 .mobile-nav a {
@@ -57,13 +55,13 @@
 .mobile-nav.active a:nth-child(8) { transition-delay: 0.26s; }
 .mobile-nav.active a:nth-child(9) { transition-delay: 0.29s; }
 .mobile-nav a:hover, .mobile-nav a.active {
-  color: var(--amber);
+  color: #ffffff;
 }
 
 /* ── Mobile (768px) ── */
 @media (max-width: 768px) {
   html { font-size: 15px; }
-  body { font-size: 16px; background-size: 24px 24px; }
+  body { font-size: 16px; }
   .section { padding: var(--s-16) 0; }
   .section-header { margin-bottom: var(--s-12); }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
@@ -111,10 +109,10 @@
   }
   .achievements-table tbody td::before {
     content: attr(data-label);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+  font-weight: 600;
     font-size: .6875rem;
-    text-transform: uppercase;
-    letter-spacing: .08em;
+    letter-spacing: 0;
     color: var(--ink-3);
     margin-right: var(--s-3);
     min-width: 70px;

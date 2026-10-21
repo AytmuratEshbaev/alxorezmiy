@@ -1,13 +1,11 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import HeroParticles from './HeroParticles';
 
 export default async function Hero() {
   const t = await getTranslations('hero');
   const tA11y = await getTranslations('a11y_extra');
   return (
     <section className="hero" id="hero">
-      <HeroParticles />
       <div className="container">
         <div className="hero-content">
           <span className="hero-eyebrow animate-on-scroll">{t('eyebrow')}</span>

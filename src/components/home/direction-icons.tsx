@@ -1,17 +1,10 @@
 import type { ReactNode } from 'react';
 
-// Shared subject icons for the six academic directions.
+// Shared subject icons for the four academic directions.
 // Used by both the home DirectionsGrid and the /directions page so the same
 // subject always renders the same custom SVG. Thin (1.8) stroke to match the
 // original home-page direction cards.
-export const DIRECTION_SUBJECTS = [
-  'math',
-  'physics',
-  'informatics',
-  'chemistry',
-  'biology',
-  'languages',
-] as const;
+export const DIRECTION_SUBJECTS = ['math', 'physics', 'informatics', 'languages'] as const;
 
 export type DirectionSubject = (typeof DIRECTION_SUBJECTS)[number];
 
@@ -35,22 +28,6 @@ const PATHS: Record<DirectionSubject, ReactNode> = {
       <polyline points="16 18 22 12 16 6" />
       <polyline points="8 6 2 12 8 18" />
       <line x1="13" y1="4" x2="11" y2="20" strokeDasharray="2 2" />
-    </>
-  ),
-  chemistry: (
-    <>
-      <path d="M9 3v6L4 19a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3L15 9V3" />
-      <line x1="9" y1="3" x2="15" y2="3" />
-      <circle cx="10" cy="16" r="1" fill="currentColor" />
-      <circle cx="14" cy="14" r="1" fill="currentColor" />
-    </>
-  ),
-  biology: (
-    <>
-      <path d="M4 3c0 6 8 10 8 18c0-8 8-12 8-18" />
-      <path d="M4 3c4 2 12 2 16 0" />
-      <path d="M5 8c4 1 10 1 14 0" />
-      <path d="M6 13c3 1 9 1 12 0" />
     </>
   ),
   languages: (

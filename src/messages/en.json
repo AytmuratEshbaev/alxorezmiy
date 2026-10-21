@@ -37,7 +37,7 @@
     "about_btn": "Learn More",
     "directions_title": "Programs",
     "directions_label": "Our Strength",
-    "directions_text": "Advanced programs in mathematics, physics, computer science, and more",
+    "directions_text": "Advanced programs in mathematics, physics, computer science, and English",
     "news_title": "Latest News",
     "news_label": "News",
     "news_text": "The latest news and announcements from school life",
@@ -54,7 +54,7 @@
     "informatics": "Computer Science",
     "chemistry": "Chemistry",
     "biology": "Biology",
-    "languages": "Foreign Languages"
+    "languages": "English"
   },
   "about_page": {
     "title": "About the School",
@@ -212,7 +212,7 @@
     "informatics": "Programming, algorithms, artificial intelligence",
     "chemistry": "Organic, inorganic, analytical chemistry",
     "biology": "Genetics, ecology, biotechnology",
-    "languages": "English, German, French"
+    "languages": "Academic English, IELTS and TOEFL preparation"
   },
   "admission_page": {
     "title": "Admission Process",
@@ -291,7 +291,7 @@
     },
     "directions": {
       "title": "Programs — Al-Khwarizmi School",
-      "description": "Advanced programs in mathematics, physics, computer science, chemistry, and biology."
+      "description": "Advanced programs in mathematics, physics, computer science, and English."
     },
     "faq": {
       "title": "FAQ — Al-Khwarizmi School",

@@ -58,7 +58,6 @@ export default async function DirectionsPage({ params }: { params: Promise<{ loc
                     </span>
                   ))}
                 </div>
-                <span className="brand-panel-mono">{'> alxorezmiy.uz / directions'}</span>
               </div>
             </div>
           </div>
@@ -70,7 +69,7 @@ export default async function DirectionsPage({ params }: { params: Promise<{ loc
           <div className="section-header animate-on-scroll">
             <h2>{t('directions_page.subjects_title')}</h2>
           </div>
-          <div className="grid grid-3">
+          <div className="grid grid-4">
             {DIRECTION_SUBJECTS.map((subject, i) => (
               <div
                 key={subject}

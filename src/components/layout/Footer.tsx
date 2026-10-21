@@ -121,10 +121,10 @@ export default async function Footer({ locale }: { locale: Locale }) {
           >
             <span
               style={{
-                fontFamily: 'var(--font-mono)',
+                fontFamily: 'var(--font-body)',
                 fontSize: '0.6875rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
+                textTransform: 'none',
+                letterSpacing: 0,
                 color: 'rgba(255,255,255,.4)',
                 display: 'block',
                 marginBottom: '6px',
