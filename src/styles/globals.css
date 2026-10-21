@@ -1248,44 +1248,38 @@ time,
   align-items: center;
   flex-shrink: 0;
 }
+/* Logo — vector mark (LogoMark.tsx), colour follows the theme via currentColor */
 .navbar-logo-icon {
   display: inline-flex;
-  width: 68px;
-  height: 68px;
   align-items: center;
   justify-content: center;
-  transition: transform var(--t-base) var(--ease-out);
-  background: transparent;
-  border: none;
-  border-radius: 0;
+  color: var(--navy);
 }
-.navbar-logo:hover .navbar-logo-icon {
-  transform: rotate(-6deg) scale(1.05);
-}
-.navbar-logo-icon img {
-  width: 62px;
-  height: 62px;
-  object-fit: contain;
+.navbar-logo-mark {
+  display: block;
+  width: 46px;
+  height: auto;
 }
 
-/* Center nav links — uppercase, condensed */
+/* Nav links sit right after the logo; sentence case keeps long kk/uz labels compact */
 .nav-links {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
+  justify-content: flex-start;
+  gap: 2px;
   flex: 1;
+  min-width: 0;
+  margin-left: var(--s-6);
 }
 .nav-links > a,
 .nav-item-has-children > a {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 10px 14px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  padding: 8px 12px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0;
   color: var(--ink-2);
   border-radius: 100px;
   transition:
