@@ -1,14 +1,13 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { getSettings, getNewsList, getOlympiad } from '@/lib/firebase/server-queries';
+import { getSettings, getNewsList } from '@/lib/firebase/server-queries';
 import { getLocalizedField } from '@/lib/utils';
 import Hero from '@/components/home/Hero';
 import StatsCounter from '@/components/home/StatsCounter';
 import DirectionsGrid from '@/components/home/DirectionsGrid';
 import LatestNews from '@/components/home/LatestNews';
-import AchievementsCarousel from '@/components/home/AchievementsCarousel';
 import ContactShort from '@/components/home/ContactShort';
 import { buildPageMetadata } from '@/lib/seo';
-import type { Locale, News, OlympiadResult, Settings } from '@/types';
+import type { Locale, News, Settings } from '@/types';
 
 export const revalidate = 300;
 
@@ -34,10 +33,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
   const t = await getTranslations();
 
-  const [settings, news, olympiad] = await Promise.all([
+  const [settings, news] = await Promise.all([
     safe<Settings | null>(() => getSettings(), null, 'getSettings'),
-    safe<News[]>(() => getNewsList(6), [], 'getNewsList'),
-    safe<OlympiadResult[]>(() => getOlympiad(), [], 'getOlympiad')
+    safe<News[]>(() => getNewsList(6), [], 'getNewsList')
   ]);
 
   const stats = [
@@ -80,7 +78,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <StatsCounter stats={stats} />
       <DirectionsGrid />
       <LatestNews items={news.slice(0, 3)} locale={locale as Locale} />
-      <AchievementsCarousel items={olympiad.slice(0, 10)} />
       <ContactShort settings={settings} />
     </>
   );
