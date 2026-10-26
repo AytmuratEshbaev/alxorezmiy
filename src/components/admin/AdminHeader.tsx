@@ -1,14 +1,12 @@
 'use client';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
 
 export function AdminHeader({ title }: { title: string }) {
   const { user, logout } = useAuth();
-  const router = useRouter();
 
-  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Admin';
-  const initial = (user?.displayName || user?.email || 'A')[0].toUpperCase();
+  const displayName = user.name || user.email.split('@')[0] || 'Admin';
+  const initial = (user.name || user.email || 'A')[0].toUpperCase();
 
   const handleLogout = async () => {
     const ok = await confirmDialog({
@@ -20,7 +18,6 @@ export function AdminHeader({ title }: { title: string }) {
     });
     if (!ok) return;
     await logout();
-    router.replace('/admin/login');
   };
 
   const toggleSidebar = () => {
@@ -41,7 +38,7 @@ export function AdminHeader({ title }: { title: string }) {
       </div>
       <div className="navbar-right">
         <a
-          href="https://alxorezmiy.uz"
+          href="/"
           target="_blank"
           rel="noopener noreferrer"
           className="btn-logout"

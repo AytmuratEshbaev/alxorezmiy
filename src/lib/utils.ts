@@ -1,8 +1,9 @@
 import type { LocalizedFields, Locale } from '@/types';
 
 export function escapeHtml(s: string | undefined | null): string {
-  return String(s ?? '').replace(/[&<>"']/g, (m) =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m] as string)
+  return String(s ?? '').replace(
+    /[&<>"']/g,
+    (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m] as string
   );
 }
 
@@ -15,9 +16,9 @@ export function getLocalizedField<T extends LocalizedFields>(
   return rec[`${prefix}_${locale}`] || rec[`${prefix}_uz`] || '';
 }
 
-function toDate(ts: string | { toDate: () => Date } | undefined): Date | null {
+function toDate(ts: string | undefined | null): Date | null {
   if (!ts) return null;
-  const d = typeof ts === 'object' && 'toDate' in ts ? ts.toDate() : new Date(ts);
+  const d = new Date(ts);
   return isNaN(d.getTime()) ? null : d;
 }
 
@@ -25,24 +26,21 @@ const LOCALE_BCP47: Record<string, string> = {
   uz: 'uz-UZ',
   ru: 'ru-RU',
   kk: 'kk-KZ',
-  en: 'en-US'
+  en: 'en-US',
 };
 
 /**
  * Locale-aware short date, e.g. "28 Mar 2026" / "28 марта 2026".
- * Accepts ISO string or Firestore Timestamp-like { toDate }.
+ * Accepts an ISO string.
  */
-export function formatDate(
-  ts: string | { toDate: () => Date } | undefined,
-  locale: Locale = 'uz'
-): string {
+export function formatDate(ts: string | undefined | null, locale: Locale = 'uz'): string {
   const d = toDate(ts);
   if (!d) return '';
   try {
     return new Intl.DateTimeFormat(LOCALE_BCP47[locale] || 'uz-UZ', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     }).format(d);
   } catch {
     return d.toISOString().split('T')[0];
@@ -50,7 +48,7 @@ export function formatDate(
 }
 
 /** ISO `YYYY-MM-DD` — for machine-readable contexts (datetime attr, sort keys). */
-export function formatDateISO(ts: string | { toDate: () => Date } | undefined): string {
+export function formatDateISO(ts: string | undefined | null): string {
   const d = toDate(ts);
   return d ? d.toISOString().split('T')[0] : '';
 }

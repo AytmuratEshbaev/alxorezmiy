@@ -23,6 +23,6 @@
       "@/messages/*": ["src/messages/*"]
     }
   },
-  "include": ["next-env.d.ts", "src/**/*", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "cloudflare-env.d.ts", "src/**/*", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,7 +1,10 @@
 import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
-import { getNewsList } from '@/lib/firebase/server-queries';
+import { getNewsList } from '@/lib/db/queries';
 import type { News } from '@/types';
+
+// D1'dan so'rov vaqtida o'qiladi (build paytida binding yo'q).
+export const dynamic = 'force-dynamic';
 
 const STATIC_PATHS = [
   '',
@@ -20,9 +23,9 @@ const STATIC_PATHS = [
 // lastModified that would otherwise change on every build.
 const FALLBACK_DATE = new Date('2025-01-01T00:00:00.000Z');
 
-function toDate(ts: string | { toDate: () => Date } | undefined): Date {
+function toDate(ts: string | undefined): Date {
   if (!ts) return FALLBACK_DATE;
-  const d = typeof ts === 'object' && 'toDate' in ts ? ts.toDate() : new Date(ts);
+  const d = new Date(ts);
   return isNaN(d.getTime()) ? FALLBACK_DATE : d;
 }
 

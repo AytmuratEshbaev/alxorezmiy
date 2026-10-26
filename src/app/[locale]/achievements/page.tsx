@@ -1,12 +1,10 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { getOlympiad } from '@/lib/firebase/server-queries';
+import { getOlympiad } from '@/lib/db/queries';
 import AchievementCard from '@/components/achievements/AchievementCard';
 import Icon from '@/components/ui/Icon';
 import { buildPageMetadata } from '@/lib/seo';
 import type { OlympiadResult } from '@/types';
-
-export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

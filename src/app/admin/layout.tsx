@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react';
+import '@/styles/globals.css';
+import '@/styles/admin.css';
 import { fontVariables } from '@/lib/fonts';
-import AdminLayoutClient from './AdminLayoutClient';
+import { ConfirmDialogHost } from '@/components/admin/ConfirmDialog';
+import { ToastHost } from '@/components/admin/Toast';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +15,9 @@ export const metadata = {
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className={fontVariables} style={{ display: 'contents' }}>
-      <AdminLayoutClient>{children}</AdminLayoutClient>
+      {children}
+      <ConfirmDialogHost />
+      <ToastHost />
     </div>
   );
 }

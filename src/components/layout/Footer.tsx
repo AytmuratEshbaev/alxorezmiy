@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { getSettings } from '@/lib/firebase/server-queries';
+import { getSettings } from '@/lib/db/queries';
 import { SocialIcons } from './social-icons';
 import { getLocalizedField } from '@/lib/utils';
 import type { Locale, Settings } from '@/types';

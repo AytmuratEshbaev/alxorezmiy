@@ -2,34 +2,26 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { getNewsById, getNewsIds, getNewsList } from '@/lib/firebase/server-queries';
+import { getNewsById, getNewsList } from '@/lib/db/queries';
 import { getLocalizedField, formatDate, formatDateISO, readingTimeMinutes } from '@/lib/utils';
-import { transformImage } from '@/lib/imagekit';
-import { routing } from '@/i18n/routing';
+import { resizedImage } from '@/lib/image-loader';
 import { buildPageMetadata } from '@/lib/seo';
 import NewsCard from '@/components/news/NewsCard';
 import NewsShareButtons from '@/components/news/NewsShareButtons';
 import type { Locale, News } from '@/types';
 
-export const revalidate = 60;
-
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz').replace(/\/$/, '');
 
-/** Convert a serialized timestamp (ISO string) or Firestore Timestamp to a full ISO datetime. */
-function toISO(ts: string | { toDate: () => Date } | undefined): string | undefined {
-  if (!ts) return undefined;
-  const d = typeof ts === 'object' && 'toDate' in ts ? ts.toDate() : new Date(ts);
-  return isNaN(d.getTime()) ? undefined : d.toISOString();
+/** OG/JSON-LD rasmlari absolyut URL bo'lishi shart. */
+function absoluteUrl(src: string): string {
+  return src.startsWith('/') ? `${SITE_URL}${src}` : src;
 }
 
-export async function generateStaticParams() {
-  try {
-    const ids = await getNewsIds();
-    return routing.locales.flatMap((locale) => ids.map((id) => ({ locale, id })));
-  } catch (err) {
-    console.warn('[news/[id]] generateStaticParams failed:', err);
-    return [];
-  }
+/** Serialized timestamp (ISO string) → full ISO datetime. */
+function toISO(ts: string | undefined): string | undefined {
+  if (!ts) return undefined;
+  const d = new Date(ts);
+  return isNaN(d.getTime()) ? undefined : d.toISOString();
 }
 
 export async function generateMetadata({
@@ -43,7 +35,7 @@ export async function generateMetadata({
     if (!item) return { title: 'Al-Xorazmiy maktabi' };
     const title = getLocalizedField(item, 'title', locale as Locale);
     const content = getLocalizedField(item, 'content', locale as Locale);
-    const image = item.image ? transformImage(item.image, { width: 1200 }) : undefined;
+    const image = item.image ? absoluteUrl(resizedImage(item.image, 1200)) : undefined;
     return buildPageMetadata({
       locale,
       title,
@@ -104,7 +96,7 @@ export default async function NewsDetailPage({
     '@type': 'NewsArticle',
     headline: title,
     image: item.image
-      ? [transformImage(item.image, { width: 1200 })]
+      ? [absoluteUrl(resizedImage(item.image, 1200))]
       : [`${SITE_URL}/assets/images/logo.webp`],
     datePublished: publishedISO,
     dateModified: modifiedISO || publishedISO,

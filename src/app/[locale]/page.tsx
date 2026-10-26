@@ -1,5 +1,5 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { getSettings, getNewsList, getOlympiad } from '@/lib/firebase/server-queries';
+import { getSettings, getNewsList, getOlympiad } from '@/lib/db/queries';
 import { getLocalizedField } from '@/lib/utils';
 import Hero from '@/components/home/Hero';
 import StatsCounter from '@/components/home/StatsCounter';
@@ -9,8 +9,6 @@ import AchievementsCarousel from '@/components/home/AchievementsCarousel';
 import ContactShort from '@/components/home/ContactShort';
 import { buildPageMetadata } from '@/lib/seo';
 import type { Locale, News, OlympiadResult, Settings } from '@/types';
-
-export const revalidate = 300;
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz').replace(/\/$/, '');
 
@@ -37,14 +35,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const [settings, news, olympiad] = await Promise.all([
     safe<Settings | null>(() => getSettings(), null, 'getSettings'),
     safe<News[]>(() => getNewsList(6), [], 'getNewsList'),
-    safe<OlympiadResult[]>(() => getOlympiad(), [], 'getOlympiad')
+    safe<OlympiadResult[]>(() => getOlympiad(), [], 'getOlympiad'),
   ]);
 
   const stats = [
     { label: t('stats.students'), count: settings?.students_count || 520, suffix: '+' },
     { label: t('stats.teachers'), count: settings?.teachers_count || 65 },
     { label: t('stats.experience'), count: settings?.experience_years || 15, suffix: '+' },
-    { label: t('stats.olympiad'), count: settings?.olympiad_winners || 180, suffix: '+' }
+    { label: t('stats.olympiad'), count: settings?.olympiad_winners || 180, suffix: '+' },
   ];
 
   const fullName = settings ? getLocalizedField(settings, 'fullName', locale as Locale) : '';
@@ -63,19 +61,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           '@type': 'PostalAddress',
           streetAddress: settings.address,
           addressLocality: 'Nukus',
-          addressCountry: 'UZ'
+          addressCountry: 'UZ',
         }
       : undefined,
     telephone: settings?.phone,
-    email: settings?.email
+    email: settings?.email,
   };
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <Hero />
       <StatsCounter stats={stats} />
       <DirectionsGrid />

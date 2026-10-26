@@ -24,36 +24,23 @@ export default function NewsLoadMore({
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(!hasMoreInitial || !initialCursor);
   const [error, setError] = useState(false);
-  // Firestore cursor: the last QueryDocumentSnapshot once we've loaded a page,
-  // otherwise the serialized ISO string from the server's last item.
-  const [cursor, setCursor] = useState<unknown>(initialCursor);
+  const [cursor, setCursor] = useState<string | null>(initialCursor);
 
   async function loadMore() {
-    if (loading || done) return;
+    if (loading || done || !cursor) return;
     setLoading(true);
     setError(false);
     try {
-      // Mirror getNewsList: where status == 'published', orderBy createdAt desc.
-      const [{ collection, query, where, orderBy, startAfter, limit, getDocs, Timestamp }, { db }] =
-        await Promise.all([import('firebase/firestore'), import('@/lib/firebase/client')]);
-
-      const startVal = typeof cursor === 'string' ? Timestamp.fromDate(new Date(cursor)) : cursor;
-
-      const q = query(
-        collection(db, 'news'),
-        where('status', '==', 'published'),
-        orderBy('createdAt', 'desc'),
-        startAfter(startVal),
-        limit(pageSize)
-      );
-      const snap = await getDocs(q);
-      const page = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as News);
+      const qs = new URLSearchParams({ before: cursor, limit: String(pageSize) });
+      const res = await fetch(`/api/public/news?${qs}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const { items: page } = (await res.json()) as { items: News[] };
       setItems((prev) => [...prev, ...page]);
 
-      if (snap.docs.length < pageSize) {
+      if (page.length < pageSize) {
         setDone(true);
       } else {
-        setCursor(snap.docs[snap.docs.length - 1]);
+        setCursor(page[page.length - 1].createdAt);
       }
     } catch (err) {
       console.warn('[NewsLoadMore] load failed:', err);

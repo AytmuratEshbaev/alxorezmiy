@@ -1,63 +1,53 @@
 import 'server-only';
+import { getEnv } from '@/lib/cf';
 
 /**
- * Simple in-memory sliding-window rate limiter.
- *
- * NOTE: state lives in the module scope of a single serverless/Node instance.
- * It is therefore PER-INSTANCE — under horizontal scaling each instance keeps
- * its own window. That is perfectly fine for this project's scale (a small
- * school site with low traffic); it defends against naive floods without a
- * Redis/KV dependency. For strict global limits swap this for a shared store.
+ * Cloudflare Workers Rate Limiting binding'i orqali cheklov (global, barcha
+ * instansiyalar uchun umumiy). Limit/period wrangler.jsonc'da belgilangan.
+ * Binding mavjud bo'lmasa (masalan, `next dev` bindingsiz) — oddiy in-memory fallback.
  */
+type LimiterName = 'FORM_LIMITER' | 'LOGIN_LIMITER';
 
-interface Bucket {
-  // Timestamps (ms) of requests still inside the active window.
-  hits: number[];
-}
+const memory = new Map<string, number[]>();
+const FALLBACK = { limit: 5, windowMs: 60_000 };
 
-const buckets = new Map<string, Bucket>();
-
-// Periodic cleanup so keys for idle clients don't accumulate forever.
-const CLEANUP_INTERVAL_MS = 10 * 60 * 1000;
-let lastCleanup = Date.now();
-
-function cleanup(now: number, maxWindowMs: number) {
-  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
-  lastCleanup = now;
-  for (const [key, bucket] of buckets) {
-    bucket.hits = bucket.hits.filter((t) => now - t < maxWindowMs);
-    if (bucket.hits.length === 0) buckets.delete(key);
-  }
-}
-
-/**
- * Returns `true` if the request is allowed, `false` if the caller has exceeded
- * `limit` requests within the trailing `windowMs`.
- */
-export function rateLimit(
-  key: string,
-  { limit, windowMs }: { limit: number; windowMs: number }
-): boolean {
+function memoryLimit(key: string): boolean {
   const now = Date.now();
-  cleanup(now, windowMs);
-
-  let bucket = buckets.get(key);
-  if (!bucket) {
-    bucket = { hits: [] };
-    buckets.set(key, bucket);
+  const hits = (memory.get(key) || []).filter((t) => now - t < FALLBACK.windowMs);
+  if (hits.length >= FALLBACK.limit) {
+    memory.set(key, hits);
+    return false;
   }
-
-  // Drop timestamps outside the window, then decide.
-  bucket.hits = bucket.hits.filter((t) => now - t < windowMs);
-  if (bucket.hits.length >= limit) return false;
-
-  bucket.hits.push(now);
+  hits.push(now);
+  memory.set(key, hits);
+  if (memory.size > 5000) memory.clear();
   return true;
 }
 
-/** Extract the client IP from an incoming request's forwarding headers. */
+/** true — ruxsat, false — limitdan oshdi. */
+export async function rateLimit(limiter: LimiterName, key: string): Promise<boolean> {
+  let binding: RateLimit | undefined;
+  try {
+    binding = getEnv()[limiter];
+  } catch {
+    binding = undefined;
+  }
+  if (!binding) return memoryLimit(`${limiter}:${key}`);
+  try {
+    const { success } = await binding.limit({ key });
+    return success;
+  } catch (err) {
+    console.warn('[rate-limit] binding error:', (err as Error).message);
+    return memoryLimit(`${limiter}:${key}`);
+  }
+}
+
+/** Cloudflare har doim haqiqiy mijoz IP'sini `cf-connecting-ip` da beradi (soxtalashtirib bo'lmaydi). */
 export function clientIp(req: Request): string {
-  const xff = req.headers.get('x-forwarded-for');
-  if (xff) return xff.split(',')[0].trim();
-  return req.headers.get('x-real-ip')?.trim() || 'unknown';
+  return (
+    req.headers.get('cf-connecting-ip')?.trim() ||
+    req.headers.get('x-real-ip')?.trim() ||
+    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+    'unknown'
+  );
 }

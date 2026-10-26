@@ -1,12 +1,10 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { getTeachers } from '@/lib/firebase/server-queries';
+import { getTeachers } from '@/lib/db/queries';
 import TeacherCard from '@/components/teachers/TeacherCard';
 import Icon from '@/components/ui/Icon';
 import { buildPageMetadata } from '@/lib/seo';
 import type { Teacher, Locale } from '@/types';
-
-export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

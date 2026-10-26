@@ -30,5 +30,10 @@ public/worker-*.js
 public/worker-*.js.map
 public/fallback-*.js
 
+# Cloudflare / OpenNext
+.open-next/
+.wrangler/
+.dev.vars
+
 # test artifacts
 .playwright-mcp/

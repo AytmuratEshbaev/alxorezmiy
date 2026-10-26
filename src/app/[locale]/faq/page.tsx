@@ -1,12 +1,10 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { getFaq } from '@/lib/firebase/server-queries';
+import { getFaq } from '@/lib/db/queries';
 import { getLocalizedField } from '@/lib/utils';
 import FaqAccordion from '@/components/faq/FaqAccordion';
 import { buildPageMetadata } from '@/lib/seo';
 import type { FaqItem, Locale } from '@/types';
-
-export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

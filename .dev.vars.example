@@ -1,0 +1,7 @@
+# Lokal ishlab chiqish uchun secret'lar: shu faylni `.dev.vars` nomi bilan nusxalang.
+# (`next dev` va `wrangler` ikkalasi ham .dev.vars'ni o'qiydi.) Hammasi ixtiyoriy:
+# bo'sh bo'lsa xat yuborilmaydi va Turnstile tekshiruvi o'tkazib yuboriladi.
+
+RESEND_API_KEY=
+ADMIN_EMAIL=
+TURNSTILE_SECRET_KEY=

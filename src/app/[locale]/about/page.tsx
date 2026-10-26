@@ -1,12 +1,10 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { getSettings } from '@/lib/firebase/server-queries';
+import { getSettings } from '@/lib/db/queries';
 import { getLocalizedField } from '@/lib/utils';
 import { buildPageMetadata } from '@/lib/seo';
 import Icon, { type IconName } from '@/components/ui/Icon';
 import type { Locale, Settings } from '@/types';
-
-export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

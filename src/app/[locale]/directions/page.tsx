@@ -3,8 +3,6 @@ import { Link } from '@/i18n/routing';
 import { buildPageMetadata } from '@/lib/seo';
 import { DIRECTION_SUBJECTS, DirectionIcon } from '@/components/home/direction-icons';
 
-export const revalidate = 3600;
-
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.directions' });

@@ -1,5 +1,9 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 import withPWAInit from '@ducanh2912/next-pwa';
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
+
+// `next dev` ichida D1/R2/rate-limit binding'larini (lokal miniflare) ulaydi.
+if (process.env.NODE_ENV === 'development') initOpenNextCloudflareForDev();
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
@@ -19,10 +23,13 @@ const pwa = withPWAInit({
         },
       },
       {
-        urlPattern: /^https:\/\/ik\.imagekit\.io\/.*/i,
-        handler: 'StaleWhileRevalidate',
+        // Cloudflare Image Resizing natijalari va R2 media fayllari (o'zgarmas URL'lar).
+        urlPattern: ({ url, sameOrigin }) =>
+          sameOrigin &&
+          (url.pathname.startsWith('/cdn-cgi/image/') || url.pathname.startsWith('/media/')),
+        handler: 'CacheFirst',
         options: {
-          cacheName: 'imagekit-assets',
+          cacheName: 'site-images',
           expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
         },
       },
@@ -40,11 +47,7 @@ const nextConfig = {
   poweredByHeader: false,
   images: {
     loader: 'custom',
-    loaderFile: './src/lib/imagekit-loader.ts',
-    remotePatterns: [
-      { protocol: 'https', hostname: 'ik.imagekit.io' },
-      { protocol: 'https', hostname: 'images.unsplash.com' },
-    ],
+    loaderFile: './src/lib/image-loader.ts',
   },
   async headers() {
     return [

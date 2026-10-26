@@ -13,26 +13,25 @@ import '@/styles/globals.css';
 import '@/styles/dark-theme.css';
 import '@/styles/responsive.css';
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
+// Kontent D1'dan har so'rovda o'qiladi — admin o'zgarishlari darhol ko'rinadi.
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz'),
   manifest: '/manifest.json',
   icons: {
     icon: '/assets/icons/favicon.svg',
-    apple: '/assets/images/logo.webp'
-  }
+    apple: '/assets/images/logo.webp',
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0D0D5C'
+  themeColor: '#0D0D5C',
 };
 
 export default async function LocaleLayout({
   children,
-  params
+  params,
 }: {
   children: ReactNode;
   params: Promise<{ locale: string }>;
@@ -47,16 +46,14 @@ export default async function LocaleLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`
+            __html: `(function(){try{var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
           }}
         />
       </head>
       <body>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
-            <SiteShell footer={<Footer locale={locale as Locale} />}>
-              {children}
-            </SiteShell>
+            <SiteShell footer={<Footer locale={locale as Locale} />}>{children}</SiteShell>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

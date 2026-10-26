@@ -4,8 +4,6 @@ import Icon from '@/components/ui/Icon';
 import ApplicationForm from '@/components/admission/ApplicationForm';
 import { buildPageMetadata } from '@/lib/seo';
 
-export const revalidate = 3600;
-
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.admission' });

@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import Turnstile from '@/components/ui/Turnstile';
 
 type FieldErrors = Partial<Record<'studentName' | 'phone' | 'grade', string>>;
 
@@ -18,6 +19,8 @@ export default function ApplicationForm() {
   const [form, setForm] = useState({ studentName: '', phone: '', grade: '', message: '' });
   const [website, setWebsite] = useState(''); // honeypot
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileReset, setTurnstileReset] = useState(0);
 
   function validate(): FieldErrors {
     const next: FieldErrors = {};
@@ -51,7 +54,7 @@ export default function ApplicationForm() {
       const res = await fetch('/api/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, website }),
+        body: JSON.stringify({ ...form, website, turnstileToken }),
       });
       if (!res.ok) throw new Error('failed');
       setStatus('success');
@@ -59,6 +62,8 @@ export default function ApplicationForm() {
     } catch (err) {
       console.error('Apply error:', err);
       setStatus('error');
+    } finally {
+      setTurnstileReset((k) => k + 1);
     }
   }
 
@@ -159,6 +164,7 @@ export default function ApplicationForm() {
           />
         </div>
 
+        <Turnstile onToken={setTurnstileToken} resetKey={turnstileReset} />
         <button type="submit" className="btn btn-primary btn-lg w-full" disabled={sending}>
           <span>{sending ? t('sending') : t('submit')}</span>
           {sending ? (

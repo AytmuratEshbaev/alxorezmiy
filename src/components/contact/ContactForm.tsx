@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import Turnstile from '@/components/ui/Turnstile';
 
 type FieldErrors = Partial<Record<'name' | 'email' | 'subject' | 'message', string>>;
 
@@ -16,6 +17,8 @@ export default function ContactForm() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [website, setWebsite] = useState(''); // honeypot — always empty for humans
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileReset, setTurnstileReset] = useState(0);
 
   function validate(): FieldErrors {
     const next: FieldErrors = {};
@@ -51,7 +54,7 @@ export default function ContactForm() {
       const res = await fetch('/api/send-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, website }),
+        body: JSON.stringify({ ...form, website, turnstileToken }),
       });
       if (!res.ok) throw new Error('failed');
       setStatus('success');
@@ -59,6 +62,8 @@ export default function ContactForm() {
     } catch (err) {
       console.error('Send error:', err);
       setStatus('error');
+    } finally {
+      setTurnstileReset((k) => k + 1);
     }
   }
 
@@ -157,6 +162,7 @@ export default function ContactForm() {
             </p>
           )}
         </div>
+        <Turnstile onToken={setTurnstileToken} resetKey={turnstileReset} />
         <button type="submit" className="btn btn-primary btn-lg w-full" disabled={sending}>
           <span>{sending ? t('form_sending') : t('form_send')}</span>
           {sending ? (

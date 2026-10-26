@@ -1,43 +1,31 @@
 'use client';
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode
-} from 'react';
-import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
-import { auth } from '@/lib/firebase/client';
+import { createContext, useContext, type ReactNode } from 'react';
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+}
 
 interface AuthContextValue {
-  user: User | null;
-  loading: boolean;
+  user: AuthUser;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+async function logout() {
+  try {
+    await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' });
+  } finally {
+    // To'liq qayta yuklash — client router keshida himoyalangan sahifalar qolmasin.
+    window.location.href = '/admin/login';
+  }
+}
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
-    return () => unsub();
-  }, []);
-
-  const logout = async () => {
-    await signOut(auth);
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+/** Foydalanuvchi serverda (panel layout) aniqlanadi va shu yerga uzatiladi. */
+export function AuthProvider({ user, children }: { user: AuthUser; children: ReactNode }) {
+  return <AuthContext.Provider value={{ user, logout }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth(): AuthContextValue {

@@ -1,141 +1,86 @@
 import { NextResponse } from 'next/server';
-import { FieldValue } from 'firebase-admin/firestore';
 import { escapeHtml } from '@/lib/utils';
+import { getDb } from '@/lib/cf';
+import { isSameOrigin, readJson, jsonError } from '@/lib/http';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
-import { adminDb } from '@/lib/firebase/admin';
+import { verifyTurnstile } from '@/lib/turnstile';
+import { sendAdminEmail, emailLayout } from '@/lib/email';
+import { newId, nowIso } from '@/lib/db/rows';
 
-const ALLOWED_ORIGINS = [
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz',
-  ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:3000'] : [])
-];
-
-function corsHeaders(origin: string | null): Record<string, string> {
-  const allowed = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
-  return {
-    'Access-Control-Allow-Origin': allowed,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Vary': 'Origin'
-  };
+interface Body {
+  name?: unknown;
+  email?: unknown;
+  subject?: unknown;
+  message?: unknown;
+  website?: unknown;
+  turnstileToken?: unknown;
 }
 
-export async function OPTIONS(req: Request) {
-  return new NextResponse(null, { status: 204, headers: corsHeaders(req.headers.get('origin')) });
-}
+const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
 
 export async function POST(req: Request) {
-  const origin = req.headers.get('origin');
-  const headers = corsHeaders(origin);
+  if (!isSameOrigin(req)) return jsonError('Forbidden', 403);
 
-  let body: {
-    name?: string;
-    email?: string;
-    subject?: string;
-    message?: string;
-    website?: string;
-  };
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400, headers });
+  const body = await readJson<Body>(req);
+  if (!body) return jsonError('Invalid JSON', 400);
+
+  // Honeypot: odamlar yashirin "website" maydonini to'ldirmaydi, botlar to'ldiradi.
+  // Soxta muvaffaqiyat qaytaramiz — bot rad etilganini bilmasin.
+  if (str(body.website)) return NextResponse.json({ ok: true });
+
+  const ip = clientIp(req);
+  if (!(await rateLimit('FORM_LIMITER', `send-message:${ip}`))) {
+    return jsonError("Juda ko'p so'rov. Iltimos, birozdan keyin urinib ko'ring.", 429);
   }
 
-  // Honeypot: real users never fill the hidden "website" field. Bots do.
-  // Return a fake success so we don't tip them off that they were rejected.
-  if (body.website && body.website.trim() !== '') {
-    return NextResponse.json({ ok: true }, { headers });
-  }
+  const name = str(body.name);
+  const email = str(body.email);
+  const subject = str(body.subject);
+  const message = str(body.message);
 
-  // Rate-limit by IP: 5 requests / 10 minutes.
-  if (!rateLimit(`send-message:${clientIp(req)}`, { limit: 5, windowMs: 10 * 60 * 1000 })) {
-    return NextResponse.json(
-      { error: "Juda ko'p so'rov. Iltimos, birozdan keyin urinib ko'ring." },
-      { status: 429, headers }
-    );
-  }
-
-  const { name, email, subject, message } = body;
   if (!name || !email || !subject || !message) {
-    return NextResponse.json({ error: "Barcha maydonlar to'ldirilishi shart" }, { status: 400, headers });
+    return jsonError("Barcha maydonlar to'ldirilishi shart", 400);
   }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ error: "Email format noto'g'ri" }, { status: 400, headers });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+    return jsonError("Email format noto'g'ri", 400);
   }
   if (message.length > 5000 || subject.length > 200 || name.length > 100) {
-    return NextResponse.json({ error: 'Maydonlar uzunligi cheklovdan oshib ketdi' }, { status: 400, headers });
+    return jsonError('Maydonlar uzunligi cheklovdan oshib ketdi', 400);
+  }
+  if (!(await verifyTurnstile(str(body.turnstileToken), ip))) {
+    return jsonError("Tekshiruvdan o'tilmadi. Sahifani yangilab, qayta urinib ko'ring.", 403);
   }
 
-  // Best-effort persistence to the `messages` collection (admin panel reads this).
-  // Wrapped in try/catch so email still sends if Firestore is unavailable.
   let persisted = false;
   try {
-    await adminDb.collection('messages').add({
-      name,
-      email,
-      subject,
-      message,
-      read: false,
-      createdAt: FieldValue.serverTimestamp()
-    });
+    const now = nowIso();
+    await getDb()
+      .prepare(
+        `INSERT INTO messages (id, name, email, subject, message, read, createdAt, updatedAt)
+         VALUES (?, ?, ?, ?, ?, 0, ?, ?)`
+      )
+      .bind(newId(), name, email, subject, message, now, now)
+      .run();
     persisted = true;
   } catch (err) {
-    console.warn('[send-message] Firestore persist failed:', (err as Error).message);
+    console.error('[send-message] D1 persist failed:', (err as Error).message);
   }
 
-  let emailSent = false;
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.ADMIN_EMAIL;
-  if (apiKey && to) {
-    const html = `
-    <!DOCTYPE html><html><body style="margin:0;padding:0;background:#F4F4F8;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#0F172A;">
-      <div style="max-width:600px;margin:0 auto;padding:32px 24px;">
-        <div style="background:linear-gradient(135deg,#6366F1,#8B5CF6);padding:24px;border-radius:12px 12px 0 0;color:white;">
-          <h1 style="margin:0;font-size:20px;font-weight:700;">📨 Yangi xabar — Al-Xorazmiy maktabi</h1>
-        </div>
-        <div style="background:white;padding:32px 24px;border-radius:0 0 12px 12px;border:1px solid #E5E7EB;border-top:none;">
-          <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-            <tr><td style="padding:8px 0;color:#64748B;font-size:14px;width:90px;">Ism:</td><td style="padding:8px 0;font-weight:600;">${escapeHtml(name)}</td></tr>
-            <tr><td style="padding:8px 0;color:#64748B;font-size:14px;">Email:</td><td style="padding:8px 0;"><a href="mailto:${escapeHtml(email)}" style="color:#6366F1;">${escapeHtml(email)}</a></td></tr>
-            <tr><td style="padding:8px 0;color:#64748B;font-size:14px;">Mavzu:</td><td style="padding:8px 0;font-weight:600;">${escapeHtml(subject)}</td></tr>
-          </table>
-          <div style="background:#F8FAFC;padding:20px;border-radius:8px;border-left:4px solid #6366F1;">
-            <div style="color:#64748B;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Xabar matni:</div>
-            <div style="white-space:pre-wrap;line-height:1.6;color:#0F172A;">${escapeHtml(message)}</div>
-          </div>
-        </div>
-      </div>
-    </body></html>
-  `;
+  const emailSent = await sendAdminEmail({
+    subject: `[Sayt] ${subject}`,
+    replyTo: email,
+    html: emailLayout(
+      '📨 Yangi xabar — Al-Xorazmiy maktabi',
+      [
+        ['Ism:', escapeHtml(name)],
+        ['Email:', `<a href="mailto:${escapeHtml(email)}" style="color:#6366F1;">${escapeHtml(email)}</a>`],
+        ['Mavzu:', escapeHtml(subject)]
+      ],
+      { label: 'Xabar matni:', html: escapeHtml(message) }
+    )
+  });
 
-    try {
-      const r = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: 'Al-Xorazmiy <onboarding@resend.dev>',
-          to: [to],
-          reply_to: email,
-          subject: `[Sayt] ${subject}`,
-          html
-        })
-      });
-      emailSent = r.ok;
-      if (!r.ok) {
-        console.warn('[send-message] Resend failed:', await r.text());
-      }
-    } catch (err) {
-      console.warn('[send-message] Resend error:', (err as Error).message);
-    }
-  }
-
-  // Succeed if EITHER channel worked (mirrors /api/apply) — a persisted message
-  // reaches the admin panel, so erroring here would only cause duplicate retries.
-  if (!persisted && !emailSent) {
-    return NextResponse.json(
-      { error: 'Message could not be processed' },
-      { status: 503, headers }
-    );
-  }
-
-  return NextResponse.json({ ok: true, persisted, emailSent }, { headers });
+  // Ikki kanaldan biri ishlasa — muvaffaqiyat (saqlangan xabar admin panelga baribir yetib boradi).
+  if (!persisted && !emailSent) return jsonError('Message could not be processed', 503);
+  return NextResponse.json({ ok: true });
 }

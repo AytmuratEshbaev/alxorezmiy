@@ -5,7 +5,7 @@ export default createMiddleware(routing);
 
 export const config = {
   matcher: [
-    // Apply to all routes except API, admin, _next, static files
-    '/((?!api|admin|_next|_vercel|.*\\..*).*)'
-  ]
+    // Barcha yo'llar, API, admin, media (R2), cdn-cgi, _next va statik fayllardan tashqari
+    '/((?!api|admin|media|cdn-cgi|_next|.*\\..*).*)',
+  ],
 };

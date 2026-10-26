@@ -1,0 +1,49 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "alxorezmiy",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true },
+
+  // Domen: Cloudflare dashboard → Workers → alxorezmiy → Settings → Domains & Routes
+  // orqali alxorezmiy.uz va www.alxorezmiy.uz ni Custom Domain sifatida ulang.
+  // (Image Resizing /cdn-cgi/image/ faqat o'z zonangizda ishlaydi, workers.dev'da emas.)
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "alxorezmiy-db",
+      // `npx wrangler d1 create alxorezmiy-db` chiqargan ID'ni shu yerga qo'ying.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      // `npx wrangler r2 bucket create alxorezmiy-media`
+      "bucket_name": "alxorezmiy-media"
+    }
+  ],
+
+  // Workers Rate Limiting — global (barcha instansiyalar uchun umumiy) cheklov.
+  // period faqat 10 yoki 60 soniya bo'lishi mumkin. namespace_id — akkaunt ichida noyob son.
+  "ratelimits": [
+    { "name": "FORM_LIMITER", "namespace_id": "4101", "simple": { "limit": 5, "period": 60 } },
+    { "name": "LOGIN_LIMITER", "namespace_id": "4102", "simple": { "limit": 5, "period": 60 } }
+  ],
+
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://alxorezmiy.uz",
+    "RESEND_FROM": "Al-Xorazmiy <onboarding@resend.dev>"
+  }
+
+  // Secret'lar (dashboard yoki `npx wrangler secret put <NOM>`):
+  //   RESEND_API_KEY, ADMIN_EMAIL, TURNSTILE_SECRET_KEY
+}

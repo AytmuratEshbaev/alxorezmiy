@@ -1,13 +1,11 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { getNewsList } from '@/lib/firebase/server-queries';
+import { getNewsList } from '@/lib/db/queries';
 import NewsCard from '@/components/news/NewsCard';
 import NewsLoadMore from '@/components/news/NewsLoadMore';
 import Icon from '@/components/ui/Icon';
 import { buildPageMetadata } from '@/lib/seo';
 import type { News, Locale } from '@/types';
-
-export const revalidate = 60;
 
 const PAGE_SIZE = 12;
 
@@ -31,12 +29,6 @@ async function safeGetNews(limit: number): Promise<News[]> {
   }
 }
 
-function toISO(ts: string | { toDate: () => Date } | undefined): string | null {
-  if (!ts) return null;
-  const d = typeof ts === 'object' && 'toDate' in ts ? ts.toDate() : new Date(ts);
-  return isNaN(d.getTime()) ? null : d.toISOString();
-}
-
 export default async function NewsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -45,7 +37,8 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
   const fetched = await safeGetNews(PAGE_SIZE + 1);
   const hasMore = fetched.length > PAGE_SIZE;
   const items = fetched.slice(0, PAGE_SIZE);
-  const cursor = items.length > 0 ? toISO(items[items.length - 1].createdAt) : null;
+  // Kursor bazadagi createdAt bilan aynan bir xil satr bo'lishi kerak (WHERE createdAt < ?).
+  const cursor = items.length > 0 ? items[items.length - 1].createdAt || null : null;
 
   return (
     <>

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { getLocalizedField } from '@/lib/utils';
-import { transformImage } from '@/lib/imagekit';
+import { resizedImage } from '@/lib/image-loader';
 import Icon from '@/components/ui/Icon';
 import type { GalleryItem, Locale } from '@/types';
 
@@ -180,7 +180,7 @@ export default function GalleryGrid({ items, locale }: Props) {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={transformImage(current.url, { width: 1600 })}
+              src={resizedImage(current.url, 1600)}
               alt={currentCaption || t('gallery_page.title')}
             />
             {currentCaption && <div className="lightbox-caption">{currentCaption}</div>}

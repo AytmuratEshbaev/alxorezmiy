@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo, useRef, useId } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { getDocuments } from '@/lib/firebase/client-queries';
 import { getLocalizedField } from '@/lib/utils';
 import { useRouter } from '@/i18n/routing';
 import Icon, { type IconName } from '@/components/ui/Icon';
@@ -83,23 +82,14 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
       let tc: Teacher[] = [];
       let fq: FaqItem[] = [];
       try {
-        n = await getDocuments<News>('news', {
-          orderBy: 'createdAt',
-          direction: 'desc',
-          limit: 50,
-        });
+        const res = await fetch('/api/public/search');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = (await res.json()) as { news: News[]; teachers: Teacher[]; faq: FaqItem[] };
+        n = data.news;
+        tc = data.teachers;
+        fq = data.faq;
       } catch (err) {
-        console.warn('[SearchModal] news fetch failed:', err);
-      }
-      try {
-        tc = await getDocuments<Teacher>('teachers', { limit: 50 });
-      } catch (err) {
-        console.warn('[SearchModal] teachers fetch failed:', err);
-      }
-      try {
-        fq = await getDocuments<FaqItem>('faq', { limit: 100 });
-      } catch (err) {
-        console.warn('[SearchModal] faq fetch failed:', err);
+        console.warn('[SearchModal] search index fetch failed:', err);
       }
       if (cancelled) return;
       const publishedNews = n.filter((x) => x.status === 'published');

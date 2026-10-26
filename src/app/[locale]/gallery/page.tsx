@@ -1,16 +1,19 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { getGallery } from '@/lib/firebase/server-queries';
+import { getGallery } from '@/lib/db/queries';
 import GalleryGrid from '@/components/gallery/GalleryGrid';
 import { buildPageMetadata } from '@/lib/seo';
 import type { GalleryItem, Locale } from '@/types';
 
-export const revalidate = 300;
-
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'meta.gallery' });
-  return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '/gallery' });
+  return buildPageMetadata({
+    locale,
+    title: t('title'),
+    description: t('description'),
+    path: '/gallery',
+  });
 }
 
 async function safeGetGallery(): Promise<GalleryItem[]> {
