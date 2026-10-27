@@ -1,16 +1,15 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { getSettings, getNewsList, getOlympiad } from '@/lib/db/queries';
+import { getSettings, getNewsList } from '@/lib/db/queries';
 import { filled, getLocalizedField, htmlLang, safe } from '@/lib/utils';
 import Hero from '@/components/home/Hero';
 import StatsCounter, { type StatItem } from '@/components/home/StatsCounter';
 import DirectionsGrid from '@/components/home/DirectionsGrid';
 import LatestNews from '@/components/home/LatestNews';
-import AchievementsCarousel from '@/components/home/AchievementsCarousel';
 import ContactShort from '@/components/home/ContactShort';
 import { getSocialLinks } from '@/components/layout/SocialLinks';
 import JsonLd from '@/components/ui/JsonLd';
 import { LOGO_PATH, SITE_URL, buildPageMetadata } from '@/lib/seo';
-import type { Locale, News, OlympiadResult, Settings } from '@/types';
+import type { Locale, News, Settings } from '@/types';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -30,10 +29,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
   const t = await getTranslations();
 
-  const [settings, news, olympiad] = await Promise.all([
+  const [settings, news] = await Promise.all([
     safe<Settings | null>(() => getSettings(), null, 'home getSettings'),
     safe<News[]>(() => getNewsList(3), [], 'home getNewsList'),
-    safe<OlympiadResult[]>(() => getOlympiad(10), [], 'home getOlympiad'),
   ]);
 
   // Faqat admin kiritgan raqamlar — o'rnatilmaganlari ko'rsatilmaydi (soxta qiymat yo'q).
@@ -84,8 +82,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <Hero />
       <StatsCounter stats={stats} />
       <DirectionsGrid />
-      <LatestNews items={news} locale={locale as Locale} />
-      <AchievementsCarousel items={olympiad} />
+      <LatestNews items={news.slice(0, 3)} locale={locale as Locale} />
       <ContactShort settings={settings} />
     </>
   );

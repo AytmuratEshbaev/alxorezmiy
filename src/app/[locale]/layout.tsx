@@ -62,7 +62,7 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0D0D5C',
+  themeColor: '#153A4C',
 };
 
 // Bo'yoqdan oldin: `js` klassi (no-JS'da animatsiyali bloklar yashirinmasin) va tema.

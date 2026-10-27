@@ -1,5 +1,4 @@
 'use client';
-import Image from 'next/image';
 import { useEffect, useState, type RefObject } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
@@ -8,6 +7,7 @@ import NavbarDropdown from './NavbarDropdown';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import SearchTrigger from '@/components/ui/SearchTrigger';
+import LogoMark from '@/components/ui/LogoMark';
 
 export default function Navbar({
   onHamburgerClick,
@@ -38,7 +38,7 @@ export default function Navbar({
         <div className="navbar-inner">
           <Link href="/" className="navbar-logo" aria-label={t('a11y.home_link')}>
             <span className="navbar-logo-icon">
-              <Image src="/assets/images/logo.webp" alt="" width={44} height={44} priority />
+              <LogoMark className="navbar-logo-mark" />
             </span>
           </Link>
           <div className="nav-links">

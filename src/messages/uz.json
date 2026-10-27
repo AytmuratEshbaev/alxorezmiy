@@ -35,7 +35,7 @@
     "about_btn": "Batafsil ma'lumot",
     "directions_title": "Yo'nalishlar",
     "directions_label": "Bizning kuchimiz",
-    "directions_text": "Matematika, fizika, informatika va boshqa fanlar bo'yicha chuqurlashtirilgan dasturlar",
+    "directions_text": "Matematika, fizika, informatika va ingliz tili bo'yicha chuqurlashtirilgan dasturlar",
     "news_title": "So'nggi yangiliklar",
     "news_label": "Yangiliklar",
     "news_text": "Maktab hayotidan eng so'nggi yangilik va e'lonlar",
@@ -52,7 +52,7 @@
     "informatics": "Informatika",
     "chemistry": "Kimyo",
     "biology": "Biologiya",
-    "languages": "Chet tillari"
+    "languages": "Ingliz tili"
   },
   "about_page": {
     "title": "Maktab haqida",
@@ -183,7 +183,7 @@
     "informatics": "Dasturlash, algoritmlar, sun'iy intellekt",
     "chemistry": "Organik, noorganik, analitik kimyo",
     "biology": "Genetika, ekologiya, biotexnologiya",
-    "languages": "Ingliz, nemis, fransuz tillari"
+    "languages": "Akademik ingliz tili, IELTS va TOEFL tayyorgarligi"
   },
   "admission_page": {
     "title": "Qabul Jarayoni",
@@ -259,7 +259,7 @@
     },
     "directions": {
       "title": "Yo'nalishlar — Al-Xorazmiy maktabi",
-      "description": "Matematika, fizika, informatika, kimyo, biologiya bo'yicha chuqurlashtirilgan dasturlar."
+      "description": "Matematika, fizika, informatika va ingliz tili bo'yicha chuqurlashtirilgan dasturlar."
     },
     "faq": {
       "title": "FAQ — Al-Xorazmiy maktabi",

@@ -35,7 +35,7 @@
     "about_btn": "Tolıq maǵlıwmat",
     "directions_title": "Baǵdarlar",
     "directions_label": "Bizdiń kúshimiz",
-    "directions_text": "Matematika, fizika, informatika hám basqa pánler boyınsha terénlestirgen baǵdarlamalar",
+    "directions_text": "Matematika, fizika, informatika hám inglis tili boyınsha terénlestirgen baǵdarlamalar",
     "news_title": "Aqırǵı jańalıqlar",
     "news_label": "Jańalıqlar",
     "news_text": "Mektep turmusınan eń aqırǵı jańalıq hám xabarlar",
@@ -52,7 +52,7 @@
     "informatics": "Informatika",
     "chemistry": "Ximiya",
     "biology": "Biologiya",
-    "languages": "Shet tilleri"
+    "languages": "Inglis tili"
   },
   "about_page": {
     "title": "Mektep haqqında",
@@ -183,7 +183,7 @@
     "informatics": "Baǵdarlamalaw, algoritmler, jasalma intellekt",
     "chemistry": "Organikalıq, organikalıq emes, analitik ximiya",
     "biology": "Genetika, ekologiya, biotexnologiya",
-    "languages": "Inglis, nemis, fransuz tilleri"
+    "languages": "Akademiyalıq inglis tili, IELTS hám TOEFL tayarlıǵı"
   },
   "admission_page": {
     "title": "Qabıllaw jarayanı",
@@ -259,7 +259,7 @@
     },
     "directions": {
       "title": "Baǵdarlar — Al-Xorezmiy mektebi",
-      "description": "Matematika, fizika, informatika, ximiya, biologiya boyınsha terénlestirgen baǵdarlamalar."
+      "description": "Matematika, fizika, informatika hám inglis tili boyınsha terénlestirgen baǵdarlamalar."
     },
     "faq": {
       "title": "FAQ — Al-Xorezmiy mektebi",

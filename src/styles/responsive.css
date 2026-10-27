@@ -5,29 +5,36 @@
 /* ── Tablet (1024px) ── */
 @media (max-width: 1024px) {
   .container { padding: 0 var(--s-5); }
+  .carousel-wrapper { margin: 0 calc(-1 * var(--s-5)); padding: 0 var(--s-5); }
   .section { padding: var(--s-20) 0; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .footer-grid, .footer-grid.footer-grid-3 { grid-template-columns: repeat(2, 1fr); gap: var(--s-10); }
   .hero { min-height: 100dvh; }
+  .page-header { padding-top: calc(var(--navbar-total) + var(--s-8)); padding-bottom: var(--s-10); padding-left: var(--s-5); padding-right: var(--s-5); }
+}
+
+/* ── Navbar → hamburger ──
+   Longest locale (kk) needs ~1018px for the full desktop menu (measured 2026-10-21),
+   so switch earlier than the tablet breakpoint to keep a safety margin incl. scrollbar. */
+@media (max-width: 1120px) {
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .btn-nav-cta { display: none; }
-  .page-header { padding-top: calc(var(--navbar-total) + var(--s-8)); padding-bottom: var(--s-10); padding-left: var(--s-5); padding-right: var(--s-5); }
 }
 
 /* ── Mobile Nav ── */
 .mobile-nav {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: var(--navy);
+  background: rgb(var(--navy-deep-rgb));
   z-index: 999;
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 6px;
+  justify-content: safe center; gap: 6px;
+  overflow-y: auto; overscroll-behavior: contain;
   opacity: 0; visibility: hidden; pointer-events: none;
   transition: opacity 0.32s var(--ease-out), visibility 0.32s;
   padding-top: var(--navbar-h);
-  background-image: radial-gradient(circle at 1px 1px, rgba(245,158,11,.18) 1px, transparent 0);
-  background-size: 32px 32px;
+  padding-bottom: var(--s-6);
 }
 .mobile-nav.active { opacity: 1; visibility: visible; pointer-events: auto; }
 .mobile-nav a {
@@ -54,7 +61,7 @@
 .mobile-nav.active a:nth-child(8) { transition-delay: 0.26s; }
 .mobile-nav.active a:nth-child(9) { transition-delay: 0.29s; }
 .mobile-nav a:hover, .mobile-nav a.active {
-  color: var(--amber);
+  color: #ffffff;
 }
 /* Yopish tugmasi — menyu ochilganda birinchi fokuslanadigan element */
 .mobile-nav-close {
@@ -78,7 +85,7 @@
 /* ── Mobile (768px) ── */
 @media (max-width: 768px) {
   html { font-size: 15px; }
-  body { font-size: 16px; background-size: 24px 24px; }
+  body { font-size: 16px; }
   .section { padding: var(--s-16) 0; }
   .section-header { margin-bottom: var(--s-12); }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
@@ -91,6 +98,11 @@
   .hero-actions .btn { width: 100%; justify-content: center; }
   .stat-card { padding: var(--s-4) 0; }
   .stat-number { font-size: 2.5rem; }
+  .stats-section .grid-4 { grid-template-columns: repeat(2, 1fr); gap: var(--s-6) var(--s-5); }
+  .stats-section .stat-number { font-size: 2.25rem; }
+  .direction-card { padding: var(--s-5); display: grid; grid-template-columns: auto 1fr; column-gap: var(--s-4); align-items: start; }
+  .direction-card .direction-icon { margin-bottom: 0; grid-row: span 2; width: 44px; height: 44px; }
+  .direction-card h3 { margin-bottom: var(--s-1); }
   .page-header { padding-top: calc(var(--navbar-total) + var(--s-6)); padding-bottom: var(--s-8); padding-left: var(--s-4); padding-right: var(--s-4); }
   .carousel-track .card { min-width: 280px; }
   .map-container { height: 320px; }
@@ -121,10 +133,10 @@
   }
   .achievements-table tbody td::before {
     content: attr(data-label);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+  font-weight: 600;
     font-size: .6875rem;
-    text-transform: uppercase;
-    letter-spacing: .08em;
+    letter-spacing: 0;
     color: var(--ink-3);
     margin-right: var(--s-3);
     min-width: 70px;
@@ -149,7 +161,9 @@
     margin-right: calc(-1 * var(--s-5));
     padding-left: var(--s-5);
     padding-right: var(--s-5);
+    scrollbar-width: none;
   }
+  .filter-group::-webkit-scrollbar { display: none; }
   .filter-btn { white-space: nowrap; flex-shrink: 0; }
   .back-to-top { bottom: 18px; right: 18px; width: 44px; height: 44px; }
   /* Touch targets — WCAG 2.5.5 minimum 44x44 on mobile */
@@ -176,15 +190,16 @@
   .carousel-btn { width: 48px; height: 48px; }
   /* Floating navbar shrinks on mobile */
   :root { --navbar-h: 64px; --navbar-top: 12px; --navbar-total: 76px; }
-  .navbar-logo-icon { width: 52px; height: 52px; }
-  .navbar-logo-icon img { width: 48px; height: 48px; }
-  .navbar-inner { padding: 0 6px 0 6px; gap: var(--s-2); }
+  .navbar-logo-mark { width: 40px; }
+  .navbar-inner { padding: 0 6px 0 16px; gap: var(--s-2); }
   .container { padding: 0 var(--s-5); }
 }
 
 /* ── Small Mobile (480px) ── */
 @media (max-width: 480px) {
   .container { padding: 0 var(--s-4); }
+  .carousel-wrapper { margin: 0 calc(-1 * var(--s-4)); padding: 0 var(--s-4); }
+  .filter-group { margin-left: calc(-1 * var(--s-4)); margin-right: calc(-1 * var(--s-4)); padding-left: var(--s-4); padding-right: var(--s-4); }
   .btn { padding: 13px 22px; font-size: 0.9375rem; }
   .btn-lg { padding: 15px 28px; font-size: 1rem; }
   .card { padding: var(--s-5); }
