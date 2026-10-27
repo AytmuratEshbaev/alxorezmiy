@@ -1,6 +1,10 @@
 # Lokal ishlab chiqish uchun secret'lar: shu faylni `.dev.vars` nomi bilan nusxalang.
 # (`next dev` va `wrangler` ikkalasi ham .dev.vars'ni o'qiydi.) Hammasi ixtiyoriy:
 # bo'sh bo'lsa xat yuborilmaydi va Turnstile tekshiruvi o'tkazib yuboriladi.
+# TELEGRAM_BOT_TOKEN siz admin panelga kirib bo'lmaydi. Bot webhook'i HTTPS manzil talab
+# qiladi — lokal sinov uchun alohida test bot va tunnel kerak (README → Lokal ishlab chiqish).
+
+TELEGRAM_BOT_TOKEN=
 
 RESEND_API_KEY=
 ADMIN_EMAIL=

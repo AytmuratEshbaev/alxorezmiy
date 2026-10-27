@@ -74,7 +74,7 @@ export default function DashboardPage() {
     };
   }, [load]);
 
-  const greeting = user.name || user.email.split('@')[0] || 'Admin';
+  const greeting = user.name || user.username || 'Admin';
 
   return (
     <>

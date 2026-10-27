@@ -9,16 +9,20 @@ import { nowIso } from '@/lib/db/rows';
  * cookie'ni almashtira olmaydi. Brauzerlar http://localhost'da ham Secure cookie'ni qabul qiladi.
  */
 export const SESSION_COOKIE = '__Host-ax_session';
-const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+/** Faolsizlik chegarasi: shuncha vaqt panel ochilmasa, qayta Telegram orqali tasdiqlash kerak. */
+const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 /** Faollikdan qat'i nazar, kirishdan keyin shu muddatda sessiya albatta tugaydi. */
-const ABSOLUTE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-/** Sessiya muddati shu vaqtdan kam qolsa, so'rovda uzaytiriladi (sliding expiration). */
-const RENEW_THRESHOLD_MS = 24 * 60 * 60 * 1000;
+const ABSOLUTE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+/** Oxirgi uzaytirishdan shuncha vaqt o'tgach, so'rovda muddat yana uzaytiriladi (sliding expiration). */
+const RENEW_THRESHOLD_MS = 60 * 60 * 1000;
 
 export interface AdminUser {
   id: string;
-  email: string;
+  telegramId: string;
   name: string;
+  username: string;
+  /** Oxirgi marta Telegram orqali tasdiqlangan vaqt — reauth.ts uchun. */
+  verifiedAt: string;
 }
 
 function randomToken(): string {
@@ -28,7 +32,7 @@ function randomToken(): string {
   return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-async function sha256Hex(input: string): Promise<string> {
+export async function sha256Hex(input: string): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
@@ -61,7 +65,8 @@ export async function createSession(adminId: string): Promise<void> {
     db.prepare(`DELETE FROM sessions WHERE id = ?`).bind(previous ? await sha256Hex(previous) : ''),
     db
       .prepare(
-        `INSERT INTO sessions (id, admin_id, expiresAt, absoluteExpiresAt, createdAt) VALUES (?, ?, ?, ?, ?)`
+        `INSERT INTO sessions (id, admin_id, expiresAt, absoluteExpiresAt, createdAt, verifiedAt)
+         VALUES (?, ?, ?, ?, ?5, ?5)`
       )
       .bind(
         await sha256Hex(token),
@@ -93,7 +98,8 @@ export const getSessionUser = cache(async (): Promise<AdminUser | null> => {
   const id = await sha256Hex(token);
   const row = await getDb()
     .prepare(
-      `SELECT a.id, a.email, a.name, s.expiresAt, s.absoluteExpiresAt
+      `SELECT a.id, a.telegram_id AS telegramId, a.name, a.username, s.verifiedAt,
+              s.expiresAt, s.absoluteExpiresAt
          FROM sessions s JOIN admins a ON a.id = s.admin_id
         WHERE s.id = ?`
     )
@@ -102,7 +108,7 @@ export const getSessionUser = cache(async (): Promise<AdminUser | null> => {
   if (!row) return null;
 
   const now = Date.now();
-  const expiresAt = Date.parse(row.expiresAt);
+  let expiresAt = Date.parse(row.expiresAt);
   const absoluteAt = Date.parse(row.absoluteExpiresAt);
   if (!(expiresAt > now) || !(absoluteAt > now)) {
     await getDb().prepare(`DELETE FROM sessions WHERE id = ?`).bind(id).run();
@@ -114,17 +120,30 @@ export const getSessionUser = cache(async (): Promise<AdminUser | null> => {
       .prepare(`UPDATE sessions SET expiresAt = ? WHERE id = ?`)
       .bind(next.toISOString(), id)
       .run();
-    try {
-      // Server Component render'ida cookie yozib bo'lmaydi — u holda keyingi API so'rovida yangilanadi.
-      (await cookies()).set(SESSION_COOKIE, token, cookieOptions(next));
-    } catch {
-      /* read-only context */
-    }
+    expiresAt = next.getTime();
   }
-  return { id: row.id, email: row.email, name: row.name };
+  try {
+    // Server render'i D1 muddatini uzaytirgan bo'lsa ham, keyingi API so'rovi cookie'ni yangilaydi.
+    (await cookies()).set(SESSION_COOKIE, token, cookieOptions(new Date(expiresAt)));
+  } catch {
+    /* Server Component: cookie faqat Route Handler'da yoziladi. */
+  }
+  return {
+    id: row.id,
+    telegramId: row.telegramId,
+    name: row.name,
+    username: row.username,
+    verifiedAt: row.verifiedAt,
+  };
 });
 
-/** Admin'ning barcha sessiyalarini o'chiradi (parol almashganda yoki admin o'chirilganda). */
+/** Joriy so'rov sessiyasining bazadagi ID'si (sha256(token)) yoki null. */
+export async function currentSessionId(): Promise<string | null> {
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  return token && token.length <= 128 ? sha256Hex(token) : null;
+}
+
+/** Admin'ning barcha sessiyalarini o'chiradi (admin o'chirilganda). */
 export async function revokeAllSessions(adminId: string, exceptCurrent = false): Promise<void> {
   if (exceptCurrent) {
     const token = (await cookies()).get(SESSION_COOKIE)?.value;

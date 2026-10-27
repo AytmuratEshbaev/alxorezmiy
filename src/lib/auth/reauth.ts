@@ -1,21 +1,16 @@
 import 'server-only';
-import { getDb } from '@/lib/cf';
-import { verifyPassword } from './password';
-import { rateLimit } from '@/lib/rate-limit';
+import type { AdminUser } from './session';
 
 /**
- * Xavfli amallar (admin qo'shish/o'chirish, boshqaning parolini tiklash) oldidan joriy
- * admin parolini qayta so'rash: o'g'irlangan sessiya bilan yangi "orqa eshik" admin
- * yaratib bo'lmasin.
+ * Xavfli amallar (admin qo'shish/o'chirish) faqat yaqinda Telegram orqali tasdiqlangan sessiyada:
+ * o'g'irlangan eski sessiya bilan yangi "orqa eshik" admin yaratib bo'lmasin.
  */
-export async function verifyCurrentPassword(adminId: string, password: unknown): Promise<boolean> {
-  if (typeof password !== 'string' || !password || password.length > 256) return false;
-  if (!(await rateLimit('LOGIN_LIMITER', `reauth:${adminId}`))) return false;
-  const row = await getDb()
-    .prepare(`SELECT password_hash FROM admins WHERE id = ?`)
-    .bind(adminId)
-    .first<{ password_hash: string }>();
-  return !!row && (await verifyPassword(password, row.password_hash));
+const RECENT_LOGIN_MS = 15 * 60 * 1000;
+
+export function isRecentLogin(user: AdminUser): boolean {
+  const at = Date.parse(user.verifiedAt);
+  const age = Date.now() - at;
+  return Number.isFinite(at) && age >= 0 && age < RECENT_LOGIN_MS;
 }
 
-export const REAUTH_ERROR = "Joriy parolingiz noto'g'ri";
+export const REAUTH_ERROR = 'Xavfsizlik uchun bu amalni Telegram orqali tasdiqlash kerak.';

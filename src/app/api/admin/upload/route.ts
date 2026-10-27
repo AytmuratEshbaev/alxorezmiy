@@ -58,7 +58,7 @@ export async function POST(req: Request) {
   const key = `${folder}/${new Date().getUTCFullYear()}/${id}.${ALLOWED_IMAGE_TYPES[type]}`;
   await getEnv().MEDIA.put(key, bytes, {
     httpMetadata: { contentType: type, cacheControl: 'public, max-age=31536000, immutable' },
-    customMetadata: { originalName: file.name.slice(0, 200), uploadedBy: auth.user.email }
+    customMetadata: { originalName: file.name.slice(0, 200), uploadedBy: `tg:${auth.user.telegramId}` }
   });
 
   return NextResponse.json({ url: mediaUrl(key), fileId: key, name: file.name }, { status: 201 });

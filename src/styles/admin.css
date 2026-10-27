@@ -582,3 +582,11 @@
    .login-page .form-group { text-align: left; }
    .login-page .btn-primary { width: 100%; padding: 14px; font-size: 1.05rem; }
 
+   /* ── Telegram orqali tasdiqlash (login + qayta tasdiqlash modali) ── */
+   .tg-approval-code { font-size: 3rem; font-weight: 800; letter-spacing: 0.15em; color: var(--text-primary); text-align: center; margin: 4px 0 20px; font-variant-numeric: tabular-nums; }
+   .tg-approval-open { display: inline-flex; justify-content: center; text-decoration: none; background: #229ED9; border-color: #229ED9; margin-bottom: 16px; }
+   .tg-approval-open:hover { background: #1C8BC0; border-color: #1C8BC0; }
+   .tg-approval-error { background: rgba(239, 68, 68, .08); color: #B91C1C; border: 1px solid rgba(239, 68, 68, .25); padding: 10px 14px; border-radius: 8px; font-size: 0.875rem; text-align: left; margin-bottom: 16px; font-weight: 500; }
+   .tg-approval-actions { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+   .login-page .tg-approval-actions .btn { flex: 1; width: auto; }
+

@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test:auth": "node --test scripts/test-auth.cjs",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,css,md}\"",
     "cf:build": "opennextjs-cloudflare build",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
@@ -16,13 +17,15 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv --include-runtime=false cloudflare-env.d.ts",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
-    "admin:create": "node scripts/create-admin.mjs"
+    "admin:create": "node scripts/create-admin.mjs",
+    "bot:setup": "node scripts/setup-bot.mjs",
+    "bot:check": "node scripts/setup-bot.mjs --check"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
     "@opennextjs/cloudflare": "^1.20.13",
     "next": "^15.5.28",
-    "next-intl": "^3.20.0",
+    "next-intl": "4.14.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -39,5 +42,16 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "overrides": {
+    "@node-minify/core": {
+      "glob": "10.5.0"
+    },
+    "next": {
+      "postcss": "8.5.32"
+    },
+    "@rollup/plugin-terser": {
+      "serialize-javascript": "7.1.4"
+    }
   }
 }

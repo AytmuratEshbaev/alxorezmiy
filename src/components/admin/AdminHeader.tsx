@@ -7,8 +7,8 @@ export function AdminHeader({ title }: { title: string }) {
   const { user, logout } = useAuth();
   const sidebar = useSidebar();
 
-  const displayName = user.name || user.email.split('@')[0] || 'Admin';
-  const initial = (user.name || user.email || 'A')[0].toUpperCase();
+  const displayName = user.name || (user.username ? `@${user.username}` : 'Admin');
+  const initial = (user.name || user.username || 'A')[0].toUpperCase();
 
   const handleLogout = async () => {
     const ok = await confirmDialog({

@@ -3,8 +3,8 @@ import { getEnv } from '@/lib/cf';
 
 /**
  * Cloudflare Workers Rate Limiting binding'i orqali cheklov. Hisoblagichlar har bir
- * Cloudflare joylashuvi (PoP) uchun alohida va taxminiy — shuning uchun login uchun
- * qo'shimcha ravishda D1'dagi akkaunt bloklash (lib/auth/lockout.ts) ham ishlatiladi.
+ * Cloudflare joylashuvi (PoP) uchun alohida va taxminiy (login'da asosiy himoya —
+ * Telegram imzosi, bu yerda faqat ortiqcha so'rovlar to'xtatiladi).
  * Limit/period wrangler.jsonc'da. Binding bo'lmasa (`next dev`) — in-memory fallback.
  */
 type LimiterName = 'FORM_LIMITER' | 'LOGIN_LIMITER';

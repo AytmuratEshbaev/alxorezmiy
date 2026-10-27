@@ -125,7 +125,7 @@ CREATE TABLE settings (
 );
 INSERT INTO settings (id, data, updatedAt) VALUES ('main', '{}', strftime('%Y-%m-%dT%H:%M:%fZ', 'now'));
 
--- Admin panel foydalanuvchilari (Firebase Auth o'rniga).
+-- Admin panel foydalanuvchilari (Firebase Auth o'rniga). 0002'da Telegram login uchun almashtiriladi.
 CREATE TABLE admins (
   id            TEXT PRIMARY KEY,
   email         TEXT NOT NULL UNIQUE COLLATE NOCASE,
@@ -145,7 +145,7 @@ CREATE TABLE sessions (
 CREATE INDEX idx_sessions_admin ON sessions (admin_id);
 CREATE INDEX idx_sessions_expires ON sessions (expiresAt);
 
--- Login brute-force himoyasi: email bo'yicha muvaffaqiyatsiz urinishlar (IP'dan qat'i nazar).
+-- Login brute-force himoyasi (0002'da olib tashlanadi).
 CREATE TABLE login_failures (
   email       TEXT PRIMARY KEY COLLATE NOCASE,
   count       INTEGER NOT NULL DEFAULT 0,
