@@ -1,8 +1,8 @@
 'use client';
 /**
- * Admin panel uchun klient API (avvalgi Firestore client-queries o'rniga, imzolar deyarli bir xil).
- * Real-time onSnapshot o'rniga: yozish amalidan keyin shu collection'ga obuna bo'lganlar
- * avtomatik qayta yuklanadi, oyna fokusga qaytganda ham yangilanadi.
+ * Admin panel uchun klient API (avvalgi Firestore client-queries o'rniga).
+ * Yozish amalidan keyin shu collection'ga obuna bo'lganlar (`onCollectionChange`) xabardor qilinadi
+ * va ro'yxatlarni qayta yuklaydi.
  */
 
 export interface QueryOptions {
@@ -10,6 +10,13 @@ export interface QueryOptions {
   direction?: 'asc' | 'desc';
   where?: Record<string, string | number | boolean>;
   limit?: number;
+  /** Faqat `createdAt` shu ISO vaqtdan oldingi yozuvlar (createdAt desc sahifalash uchun). */
+  before?: string;
+}
+
+export interface Page<T> {
+  items: T[];
+  hasMore: boolean;
 }
 
 export class ApiError extends Error {
@@ -21,6 +28,24 @@ export class ApiError extends Error {
   }
 }
 
+export const SESSION_EXPIRED_EVENT = 'admin:session-expired';
+export const SESSION_EXPIRED_MESSAGE = 'Sessiya tugadi — qayta kiring';
+
+/**
+ * 401 bo'lsa sahifani majburan almashtirmaymiz (forma ma'lumotlari yo'qolmasin) —
+ * hodisa yuboramiz, ToastHost "Qayta kirish" havolasi bilan ogohlantirish ko'rsatadi.
+ */
+function sessionExpired(): ApiError {
+  if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin/login')) {
+    window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+  }
+  return new ApiError(SESSION_EXPIRED_MESSAGE, 401);
+}
+
+export function isSessionError(err: unknown): boolean {
+  return err instanceof ApiError && err.status === 401;
+}
+
 export async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, {
     ...init,
@@ -30,13 +55,7 @@ export async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
         ? { 'Content-Type': 'application/json', ...init.headers }
         : init?.headers,
   });
-  if (
-    res.status === 401 &&
-    typeof window !== 'undefined' &&
-    !window.location.pathname.startsWith('/admin/login')
-  ) {
-    window.location.href = '/admin/login';
-  }
+  if (res.status === 401) throw sessionExpired();
   const data = (await res.json().catch(() => ({}))) as { error?: string };
   if (!res.ok) throw new ApiError(data.error || `HTTP ${res.status}`, res.status);
   return data as T;
@@ -44,7 +63,16 @@ export async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
 
 const listeners = new Map<string, Set<() => void>>();
 
-function notify(name: string) {
+/** Collection o'zgarganda (yozish amalidan keyin) chaqiriladigan funksiyani ro'yxatga oladi. */
+export function onCollectionChange(name: string, fn: () => void): () => void {
+  if (!listeners.has(name)) listeners.set(name, new Set());
+  listeners.get(name)!.add(fn);
+  return () => {
+    listeners.get(name)?.delete(fn);
+  };
+}
+
+export function notifyCollection(name: string) {
   listeners.get(name)?.forEach((fn) => fn());
 }
 
@@ -53,48 +81,19 @@ function listUrl(name: string, options: QueryOptions) {
   if (options.orderBy) p.set('orderBy', options.orderBy);
   if (options.direction) p.set('direction', options.direction);
   if (options.limit) p.set('limit', String(options.limit));
+  if (options.before) p.set('before', options.before);
   for (const [k, v] of Object.entries(options.where || {})) p.append('where', `${k}:${v}`);
   const qs = p.toString();
   return `/api/admin/data/${name}${qs ? `?${qs}` : ''}`;
 }
 
-export async function getDocuments<T>(name: string, options: QueryOptions = {}): Promise<T[]> {
-  const { items } = await apiFetch<{ items: T[] }>(listUrl(name, options));
-  return items;
+export async function getPage<T>(name: string, options: QueryOptions = {}): Promise<Page<T>> {
+  const res = await apiFetch<{ items: T[]; hasMore?: boolean }>(listUrl(name, options));
+  return { items: res.items, hasMore: !!res.hasMore };
 }
 
-export function subscribeCollection<T>(
-  name: string,
-  callback: (items: T[]) => void,
-  options: QueryOptions = {},
-  onError?: (err: Error) => void
-): () => void {
-  let active = true;
-  let seq = 0;
-  const load = () => {
-    const mine = ++seq;
-    getDocuments<T>(name, options)
-      .then((items) => {
-        // Faqat eng so'nggi so'rov natijasini qo'llaymiz (eski javob yangisini bosib ketmasin).
-        if (active && mine === seq) callback(items);
-      })
-      .catch((err: Error) => {
-        console.error(`[${name}] load error:`, err);
-        if (active) onError?.(err);
-      });
-  };
-  const onFocus = () => document.visibilityState === 'visible' && load();
-
-  if (!listeners.has(name)) listeners.set(name, new Set());
-  listeners.get(name)!.add(load);
-  document.addEventListener('visibilitychange', onFocus);
-  load();
-
-  return () => {
-    active = false;
-    listeners.get(name)?.delete(load);
-    document.removeEventListener('visibilitychange', onFocus);
-  };
+export async function getDocuments<T>(name: string, options: QueryOptions = {}): Promise<T[]> {
+  return (await getPage<T>(name, options)).items;
 }
 
 export async function addDocument<T extends object>(name: string, data: T) {
@@ -102,7 +101,7 @@ export async function addDocument<T extends object>(name: string, data: T) {
     method: 'POST',
     body: JSON.stringify(data),
   });
-  notify(name);
+  notifyCollection(name);
   return res;
 }
 
@@ -116,21 +115,69 @@ export async function updateDocument<T extends object>(
     method: 'PATCH',
     body: JSON.stringify(data),
   });
-  if (!silent) notify(name);
+  if (!silent) notifyCollection(name);
 }
 
 export async function deleteDocument(name: string, id: string) {
   await apiFetch(`/api/admin/data/${name}/${encodeURIComponent(id)}`, { method: 'DELETE' });
-  notify(name);
+  notifyCollection(name);
 }
 
-/** Bir nechta yozuvni yangilab, ro'yxatni faqat bir marta qayta yuklaydi. */
+const BULK_CHUNK = 500;
+
+/** Bir nechta yozuvga bir xil o'zgarishni bulk PATCH bilan yozadi; ro'yxat bir marta yangilanadi. */
 export async function updateMany<T extends object>(name: string, ids: string[], data: T) {
   try {
-    await Promise.all(ids.map((id) => updateDocument(name, id, data, { silent: true })));
+    for (let i = 0; i < ids.length; i += BULK_CHUNK) {
+      await apiFetch(`/api/admin/data/${name}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ ids: ids.slice(i, i + BULK_CHUNK), data }),
+      });
+    }
   } finally {
-    notify(name);
+    notifyCollection(name);
   }
+}
+
+/**
+ * Har xil ma'lumotli bir nechta yangilash (masalan, tartib raqamlari). So'rovlar cheklangan
+ * parallellikda jo'natiladi, ro'yxat oxirida faqat bir marta yangilanadi.
+ */
+export async function updateEach<T extends object>(
+  name: string,
+  updates: { id: string; data: T }[],
+  concurrency = 6
+) {
+  let next = 0;
+  const worker = async () => {
+    while (next < updates.length) {
+      const u = updates[next++];
+      await updateDocument(name, u.id, u.data, { silent: true });
+    }
+  };
+  try {
+    await Promise.all(Array.from({ length: Math.min(concurrency, updates.length) }, worker));
+  } finally {
+    notifyCollection(name);
+  }
+}
+
+/**
+ * Saqlanmagan (bekor qilingan/almashtirilgan) yuklamani R2'dan o'chirish. Server kalit biror
+ * yozuvda ishlatilayotgan bo'lsa o'chirmaydi. Best-effort: xatolar e'tiborsiz qoldiriladi.
+ */
+export function deleteUpload(key: string, { keepalive = false } = {}): Promise<void> {
+  if (!key) return Promise.resolve();
+  return fetch('/api/admin/upload', {
+    method: 'DELETE',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key }),
+    keepalive,
+  }).then(
+    () => undefined,
+    () => undefined
+  );
 }
 
 export interface UploadResult {
@@ -138,6 +185,8 @@ export interface UploadResult {
   fileId: string;
   name: string;
 }
+
+export type UploadFolder = 'news' | 'teachers' | 'gallery' | 'misc';
 
 const MAX_BYTES = 10 * 1024 * 1024;
 const MAX_DIMENSION = 2400;
@@ -171,14 +220,20 @@ async function downscale(file: File): Promise<File> {
   }
 }
 
+export function isAbortError(err: unknown): boolean {
+  return err instanceof DOMException && err.name === 'AbortError';
+}
+
 export async function uploadImage(
   original: File,
-  folder: 'news' | 'teachers' | 'gallery' | 'misc' = 'misc',
-  onProgress?: (pct: number) => void
+  folder: UploadFolder = 'misc',
+  onProgress?: (pct: number) => void,
+  signal?: AbortSignal
 ): Promise<UploadResult> {
   if (!original.type.startsWith('image/')) throw new Error('Faqat rasm fayllari qabul qilinadi');
   const file = await downscale(original);
   if (file.size > MAX_BYTES) throw new Error('Rasm hajmi 10MB dan oshmasligi kerak');
+  if (signal?.aborted) throw new DOMException('Upload aborted', 'AbortError');
 
   const formData = new FormData();
   formData.append('file', file);
@@ -187,6 +242,9 @@ export async function uploadImage(
   // fetch upload progress bermaydi — XHR ishlatamiz.
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
+    const onAbort = () => xhr.abort();
+    const cleanup = () => signal?.removeEventListener('abort', onAbort);
+    signal?.addEventListener('abort', onAbort);
     xhr.open('POST', '/api/admin/upload');
     if (onProgress) {
       xhr.upload.addEventListener('progress', (e) => {
@@ -194,6 +252,11 @@ export async function uploadImage(
       });
     }
     xhr.onload = () => {
+      cleanup();
+      if (xhr.status === 401) {
+        reject(sessionExpired());
+        return;
+      }
       let result: { url?: string; fileId?: string; name?: string; error?: string } = {};
       try {
         result = JSON.parse(xhr.responseText);
@@ -203,10 +266,17 @@ export async function uploadImage(
       if (xhr.status >= 200 && xhr.status < 300 && result.url && result.fileId) {
         resolve({ url: result.url, fileId: result.fileId, name: result.name || file.name });
       } else {
-        reject(new Error(result.error || 'Yuklash muvaffaqiyatsiz'));
+        reject(new ApiError(result.error || 'Yuklash muvaffaqiyatsiz', xhr.status));
       }
     };
-    xhr.onerror = () => reject(new Error('Tarmoq xatosi'));
+    xhr.onerror = () => {
+      cleanup();
+      reject(new Error('Tarmoq xatosi'));
+    };
+    xhr.onabort = () => {
+      cleanup();
+      reject(new DOMException('Upload aborted', 'AbortError'));
+    };
     xhr.send(formData);
   });
 }

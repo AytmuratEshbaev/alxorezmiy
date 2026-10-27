@@ -1,14 +1,12 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
 import { toast } from '@/components/admin/Toast';
-import {
-  subscribeCollection,
-  updateDocument,
-  updateMany,
-  deleteDocument
-} from '@/lib/admin-api';
+import { toastError } from '@/components/admin/errors';
+import { ListErrorBanner, ListStatus, LoadMoreButton } from '@/components/admin/ListStatus';
+import { useCollection } from '@/components/admin/useCollection';
+import { updateDocument, updateMany, deleteDocument } from '@/lib/admin-api';
 import { formatDate } from '@/lib/utils';
 
 interface Message {
@@ -24,43 +22,45 @@ interface Message {
 type Filter = 'all' | 'unread' | 'read';
 
 export default function MessagesAdminPage() {
-  const [items, setItems] = useState<Message[]>([]);
+  const list = useCollection<Message>('messages', {
+    orderBy: 'createdAt',
+    direction: 'desc',
+    pageSize: 100,
+    paginate: true,
+  });
+  const { items } = list;
   const [filter, setFilter] = useState<Filter>('all');
+  const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    const unsub = subscribeCollection<Message>(
-      'messages',
-      (data) => setItems(data),
-      { orderBy: 'createdAt', direction: 'desc' }
-    );
-    return () => unsub();
-  }, []);
-
+  const q = search.trim().toLowerCase();
   const filtered = items.filter((m) => {
-    if (filter === 'unread') return !m.read;
-    if (filter === 'read') return !!m.read;
+    if (filter === 'unread' && m.read) return false;
+    if (filter === 'read' && !m.read) return false;
+    if (q && ![m.name, m.email, m.subject, m.message].some((v) => (v || '').toLowerCase().includes(q)))
+      return false;
     return true;
   });
 
   const total = items.length;
   const unread = items.filter((m) => !m.read).length;
+  const more = list.hasMore ? '+' : '';
 
   const markRead = async (id: string, read: boolean) => {
     try {
       await updateDocument('messages', id, { read });
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     }
   };
 
   const markAllRead = async () => {
-    const unreadItems = items.filter((m) => !m.read);
-    if (unreadItems.length === 0) return;
+    const ids = items.filter((m) => !m.read).map((m) => m.id);
+    if (ids.length === 0) return;
     try {
-      await updateMany('messages', unreadItems.map((m) => m.id), { read: true });
-      toast.success(`${unreadItems.length} ta xabar o'qildi deb belgilandi`);
+      await updateMany('messages', ids, { read: true });
+      toast.success(`${ids.length} ta xabar o'qildi deb belgilandi`);
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     }
   };
 
@@ -69,16 +69,22 @@ export default function MessagesAdminPage() {
       title: "O'chirish",
       message: "Xabarni butunlay o'chirmoqchimisiz?",
       confirmText: "Ha, o'chirish",
-      danger: true
+      danger: true,
     });
     if (!ok) return;
     try {
       await deleteDocument('messages', id);
       toast.success("Xabar o'chirildi");
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     }
   };
+
+  const filters: { key: Filter; label: string }[] = [
+    { key: 'all', label: `Barchasi (${total}${more})` },
+    { key: 'unread', label: `O'qilmagan (${unread})` },
+    { key: 'read', label: `O'qilgan (${total - unread})` },
+  ];
 
   return (
     <>
@@ -88,60 +94,66 @@ export default function MessagesAdminPage() {
           <div className="card-header">
             <h2 className="card-title">Foydalanuvchilardan kelgan xabarlar</h2>
             {unread > 0 && (
-              <button className="btn btn-outline" onClick={markAllRead}>
-                ✓ Hammasini o&apos;qildi deb belgilash
+              <button type="button" className="btn btn-outline" onClick={markAllRead}>
+                ✓ Yuklanganlarni o&apos;qildi deb belgilash
               </button>
             )}
           </div>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-            <button
-              className={'btn ' + (filter === 'all' ? 'btn-primary' : 'btn-outline')}
-              onClick={() => setFilter('all')}
-            >
-              Barchasi ({total})
-            </button>
-            <button
-              className={'btn ' + (filter === 'unread' ? 'btn-primary' : 'btn-outline')}
-              onClick={() => setFilter('unread')}
-            >
-              O&apos;qilmagan ({unread})
-            </button>
-            <button
-              className={'btn ' + (filter === 'read' ? 'btn-primary' : 'btn-outline')}
-              onClick={() => setFilter('read')}
-            >
-              O&apos;qilgan ({total - unread})
-            </button>
+          <div className="admin-toolbar">
+            <div className="admin-filters" role="group" aria-label="Xabarlar filtri">
+              {filters.map((f) => (
+                <button
+                  key={f.key}
+                  type="button"
+                  className={'btn ' + (filter === f.key ? 'btn-primary' : 'btn-outline')}
+                  aria-pressed={filter === f.key}
+                  onClick={() => setFilter(f.key)}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+            <input
+              type="search"
+              className="form-control toolbar-search"
+              placeholder="Ism, email yoki matn bo'yicha qidirish..."
+              aria-label="Xabarlarni qidirish"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
 
-          {filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: 60, color: '#94A3B8' }}>
-              <div style={{ fontSize: '3rem', marginBottom: 12 }}>📭</div>
-              <p>{filter === 'unread' ? "O'qilmagan xabar yo'q" : "Xabarlar yo'q"}</p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <ListErrorBanner error={list.error} hasItems={items.length > 0} onRetry={list.reload} />
+          <ListStatus
+            loading={list.loading}
+            error={list.error}
+            total={total}
+            shown={filtered.length}
+            emptyText={
+              <>
+                <div className="list-state-icon" aria-hidden="true">
+                  📭
+                </div>
+                <p>Xabarlar yo&apos;q</p>
+              </>
+            }
+            noMatchText={filter === 'unread' && !q ? "O'qilmagan xabar yo'q" : 'Topilmadi'}
+            onRetry={list.reload}
+          />
+          {filtered.length > 0 && (
+            <div className="message-list">
               {filtered.map((m) => (
-                <div
-                  key={m.id}
-                  className={'message-card ' + (m.read ? 'read' : 'unread')}
-                  style={{
-                    background: 'white',
-                    borderRadius: 12,
-                    padding: 18,
-                    border: m.read ? '1px solid #E2E8F0' : '1px solid #6366F1'
-                  }}
-                >
-                  <div className="message-meta" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                <article key={m.id} className={'message-card ' + (m.read ? 'read' : 'unread')}>
+                  <div className="message-meta">
                     <div>
                       <strong>{m.name}</strong>
-                      <span style={{ color: '#64748B' }}> · {m.email}</span>
+                      <span className="text-muted"> · {m.email}</span>
                     </div>
-                    <span style={{ color: '#94A3B8', fontSize: '0.85rem' }}>{formatDate(m.createdAt)}</span>
+                    <span className="text-muted small">{formatDate(m.createdAt)}</span>
                   </div>
-                  <h4 style={{ margin: '8px 0' }}>{m.subject}</h4>
-                  <p style={{ whiteSpace: 'pre-line', color: '#475569', lineHeight: 1.6 }}>{m.message}</p>
-                  <div className="message-actions" style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+                  <h4 className="message-subject">{m.subject}</h4>
+                  <p className="message-body">{m.message}</p>
+                  <div className="message-actions">
                     <a
                       href={`mailto:${encodeURIComponent(m.email || '')}?subject=Re: ${encodeURIComponent(m.subject || '')}`}
                       className="btn btn-outline btn-sm"
@@ -149,22 +161,39 @@ export default function MessagesAdminPage() {
                       ✉️ Javob berish
                     </a>
                     {!m.read ? (
-                      <button className="btn btn-outline btn-sm" onClick={() => markRead(m.id, true)}>
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        onClick={() => markRead(m.id, true)}
+                      >
                         ✓ O&apos;qildi deb belgilash
                       </button>
                     ) : (
-                      <button className="btn btn-outline btn-sm" onClick={() => markRead(m.id, false)}>
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        onClick={() => markRead(m.id, false)}
+                      >
                         ↺ O&apos;qilmagan deb belgilash
                       </button>
                     )}
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(m.id)}>
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleDelete(m.id)}
+                    >
                       🗑️ O&apos;chirish
                     </button>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           )}
+          <LoadMoreButton
+            hasMore={list.hasMore}
+            loadingMore={list.loadingMore}
+            onLoadMore={list.loadMore}
+          />
         </div>
       </div>
     </>

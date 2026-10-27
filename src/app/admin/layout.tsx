@@ -9,15 +9,18 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Admin Panel | Al-Xorazmiy',
-  robots: { index: false, follow: false }
+  robots: { index: false, follow: false },
 };
 
+/** Root layout faqat children qaytaradi — admin bo'limi o'z <html>/<body>'sini render qiladi. */
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div className={fontVariables} style={{ display: 'contents' }}>
-      {children}
-      <ConfirmDialogHost />
-      <ToastHost />
-    </div>
+    <html lang="uz" className={fontVariables}>
+      <body>
+        {children}
+        <ConfirmDialogHost />
+        <ToastHost />
+      </body>
+    </html>
   );
 }

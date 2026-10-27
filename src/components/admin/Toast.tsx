@@ -1,16 +1,33 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
+import { SESSION_EXPIRED_EVENT, SESSION_EXPIRED_MESSAGE } from '@/lib/admin-api';
 
 export type ToastVariant = 'success' | 'error' | 'info';
+
+export interface ToastAction {
+  label: string;
+  href: string;
+  /** Yangi oynada ochish (joriy sahifadagi forma holati saqlanib qoladi). */
+  newTab?: boolean;
+}
 
 export interface ToastOptions {
   message: string;
   variant?: ToastVariant;
+  /** ms; 0 — foydalanuvchi yopmaguncha turadi. */
   duration?: number;
+  action?: ToastAction;
+  /** Bir xil kalitli toast allaqachon ko'rinib turgan bo'lsa, yangisi qo'shilmaydi. */
+  key?: string;
 }
 
-interface ToastItem extends Required<ToastOptions> {
+interface ToastItem {
   id: number;
+  message: string;
+  variant: ToastVariant;
+  duration: number;
+  action?: ToastAction;
+  key?: string;
 }
 
 let externalPush: ((opts: ToastOptions) => void) | null = null;
@@ -28,21 +45,16 @@ export function showToast(opts: ToastOptions): void {
 }
 
 export const toast = {
-  success: (message: string, duration?: number) => showToast({ message, variant: 'success', duration }),
+  success: (message: string, duration?: number) =>
+    showToast({ message, variant: 'success', duration }),
   error: (message: string, duration?: number) => showToast({ message, variant: 'error', duration }),
-  info: (message: string, duration?: number) => showToast({ message, variant: 'info', duration })
+  info: (message: string, duration?: number) => showToast({ message, variant: 'info', duration }),
 };
 
 const ICON: Record<ToastVariant, string> = {
   success: '✓',
   error: '✕',
-  info: 'ℹ'
-};
-
-const BG: Record<ToastVariant, string> = {
-  success: 'linear-gradient(135deg, #10B981, #059669)',
-  error: 'linear-gradient(135deg, #EF4444, #DC2626)',
-  info: 'linear-gradient(135deg, #6366F1, #4F46E5)'
+  info: 'ℹ',
 };
 
 export function ToastHost() {
@@ -52,19 +64,24 @@ export function ToastHost() {
     setItems((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const push = useCallback((opts: ToastOptions) => {
-    const id = nextId++;
-    const item: ToastItem = {
-      id,
-      message: opts.message,
-      variant: opts.variant ?? 'info',
-      duration: opts.duration ?? 4000
-    };
-    setItems((prev) => [...prev, item]);
-    if (item.duration > 0) {
-      window.setTimeout(() => remove(id), item.duration);
-    }
-  }, [remove]);
+  const push = useCallback(
+    (opts: ToastOptions) => {
+      const id = nextId++;
+      const item: ToastItem = {
+        id,
+        message: opts.message,
+        variant: opts.variant ?? 'info',
+        duration: opts.duration ?? 4000,
+        action: opts.action,
+        key: opts.key,
+      };
+      setItems((prev) => (item.key && prev.some((t) => t.key === item.key) ? prev : [...prev, item]));
+      if (item.duration > 0) {
+        window.setTimeout(() => remove(id), item.duration);
+      }
+    },
+    [remove]
+  );
 
   useEffect(() => {
     externalPush = push;
@@ -73,73 +90,50 @@ export function ToastHost() {
     };
   }, [push]);
 
-  if (items.length === 0) return null;
+  // 401: forma holatini saqlab qolish uchun sahifani almashtirmaymiz — qayta kirish havolasini beramiz.
+  useEffect(() => {
+    const onExpired = () =>
+      push({
+        key: 'session-expired',
+        message: SESSION_EXPIRED_MESSAGE,
+        variant: 'error',
+        duration: 0,
+        action: { label: 'Qayta kirish', href: '/admin/login', newTab: true },
+      });
+    window.addEventListener(SESSION_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, onExpired);
+  }, [push]);
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 24,
-        right: 24,
-        zIndex: 6000,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 10,
-        pointerEvents: 'none',
-        maxWidth: 'calc(100vw - 48px)'
-      }}
-      aria-live="polite"
-      aria-atomic="true"
-    >
+    <div className="admin-toast-container" aria-live="polite" aria-atomic="false">
       {items.map((t) => (
-        <div
-          key={t.id}
-          role={t.variant === 'error' ? 'alert' : 'status'}
-          onClick={() => remove(t.id)}
-          style={{
-            pointerEvents: 'auto',
-            cursor: 'pointer',
-            background: BG[t.variant],
-            color: 'white',
-            padding: '14px 18px',
-            borderRadius: 12,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            minWidth: 260,
-            maxWidth: 420,
-            boxShadow: '0 12px 32px rgba(15, 23, 42, .25)',
-            fontSize: '0.9375rem',
-            fontWeight: 500,
-            lineHeight: 1.5,
-            animation: 'toastSlideIn 0.25s cubic-bezier(.22, 1, .36, 1)'
-          }}
-        >
-          <span
-            style={{
-              width: 24,
-              height: 24,
-              borderRadius: '50%',
-              background: 'rgba(255,255,255,0.22)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 700,
-              flexShrink: 0,
-              fontSize: '0.875rem'
-            }}
-          >
+        <div key={t.id} role={t.variant === 'error' ? 'alert' : 'status'} className={`admin-toast admin-toast-${t.variant}`}>
+          <span className="admin-toast-icon" aria-hidden="true">
             {ICON[t.variant]}
           </span>
-          <span style={{ flex: 1, wordBreak: 'break-word' }}>{t.message}</span>
+          <span className="admin-toast-message">
+            {t.message}
+            {t.action && (
+              <a
+                className="admin-toast-action"
+                href={t.action.href}
+                target={t.action.newTab ? '_blank' : undefined}
+                rel={t.action.newTab ? 'noopener' : undefined}
+              >
+                {t.action.label}
+              </a>
+            )}
+          </span>
+          <button
+            type="button"
+            className="admin-toast-close"
+            onClick={() => remove(t.id)}
+            aria-label="Bildirishnomani yopish"
+          >
+            ×
+          </button>
         </div>
       ))}
-      <style>{`
-        @keyframes toastSlideIn {
-          from { transform: translateX(120%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-      `}</style>
     </div>
   );
 }

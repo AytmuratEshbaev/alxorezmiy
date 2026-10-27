@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useId, useRef, useState, useCallback } from 'react';
+import { trapTab, useDialogFocus } from '@/components/admin/useDialogFocus';
 
 export interface ConfirmOptions {
   title?: string;
@@ -28,7 +29,11 @@ export function ConfirmDialogHost() {
 
   const show = useCallback((opts: ConfirmOptions) => {
     return new Promise<boolean>((resolve) => {
-      setState({ open: true, ...opts, resolve });
+      setState((prev) => {
+        // Oldingi ochiq dialog javobsiz qolmasin.
+        prev.resolve?.(false);
+        return { open: true, ...opts, resolve };
+      });
     });
   }, []);
 
@@ -44,17 +49,15 @@ export function ConfirmDialogHost() {
     setState({ open: false });
   };
 
-  useEffect(() => {
-    if (!state.open) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close(false);
-    };
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.open]);
-
   if (!state.open) return null;
+  return <ConfirmDialogView state={state} onClose={close} />;
+}
+
+function ConfirmDialogView({ state, onClose }: { state: State; onClose: (r: boolean) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const descId = useId();
+  useDialogFocus(ref);
 
   const {
     title = 'Tasdiqlang',
@@ -62,94 +65,58 @@ export function ConfirmDialogHost() {
     confirmText = 'Tasdiqlash',
     cancelText = 'Bekor qilish',
     danger = false,
-    icon
+    icon,
   } = state;
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 5000,
-        background: 'rgba(15, 23, 42, .65)',
-        backdropFilter: 'blur(6px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 16
-      }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) close(false);
+      className="confirm-overlay"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose(false);
       }}
     >
       <div
-        role="dialog"
+        ref={ref}
+        className={'confirm-dialog' + (danger ? ' danger' : '')}
+        role="alertdialog"
         aria-modal="true"
-        style={{
-          background: 'white',
-          borderRadius: 16,
-          maxWidth: 420,
-          width: '100%',
-          padding: 28,
-          boxShadow: '0 24px 60px rgba(0, 0, 0, .25)'
+        aria-labelledby={titleId}
+        aria-describedby={message ? descId : undefined}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            e.stopPropagation();
+            onClose(false);
+            return;
+          }
+          trapTab(e);
         }}
       >
-        <div
-          style={{
-            width: 56,
-            height: 56,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: '50%',
-            marginBottom: 16,
-            fontSize: '1.6rem',
-            background: danger ? 'rgba(239, 68, 68, .12)' : 'rgba(99, 102, 241, .12)',
-            color: danger ? '#EF4444' : '#6366F1'
-          }}
-        >
+        <div className="confirm-icon" aria-hidden="true">
           {icon ?? (danger ? '⚠️' : '❓')}
         </div>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0F172A', margin: '0 0 8px' }}>
+        <h3 className="confirm-title" id={titleId}>
           {title}
         </h3>
-        <p style={{ fontSize: '.95rem', color: '#475569', lineHeight: 1.55, margin: '0 0 24px' }}>
-          {message}
-        </p>
-        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+        {message && (
+          <p className="confirm-message" id={descId}>
+            {message}
+          </p>
+        )}
+        <div className="confirm-actions">
+          {/* Xavfli amalda tasodifiy Enter tasdiqlab yubormasligi uchun fokus "Bekor qilish"da. */}
           <button
             type="button"
-            onClick={() => close(false)}
-            style={{
-              padding: '11px 22px',
-              borderRadius: 10,
-              fontWeight: 600,
-              cursor: 'pointer',
-              border: '1.5px solid #E2E8F0',
-              background: 'white',
-              color: '#475569'
-            }}
+            className="btn btn-outline"
+            data-autofocus={danger ? '' : undefined}
+            onClick={() => onClose(false)}
           >
             {cancelText}
           </button>
           <button
             type="button"
-            autoFocus
-            onClick={() => close(true)}
-            style={{
-              padding: '11px 22px',
-              borderRadius: 10,
-              fontWeight: 600,
-              cursor: 'pointer',
-              border: '1.5px solid transparent',
-              color: 'white',
-              background: danger
-                ? 'linear-gradient(135deg, #EF4444, #DC2626)'
-                : 'linear-gradient(135deg, #6366F1, #8B5CF6)',
-              boxShadow: danger
-                ? '0 4px 14px rgba(239, 68, 68, .35)'
-                : '0 4px 14px rgba(99, 102, 241, .35)'
-            }}
+            className={'btn ' + (danger ? 'btn-danger' : 'btn-primary')}
+            data-autofocus={danger ? undefined : ''}
+            onClick={() => onClose(true)}
           >
             {confirmText}
           </button>

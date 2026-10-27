@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { apiFetch } from '@/lib/admin-api';
@@ -28,8 +28,8 @@ const STAT_CARDS: {
   { key: 'olympiad', href: '/admin/olympiad', label: 'Olimpiada', icon: '🏆', bg: 'rgba(245,158,11,0.12)', color: '#F59E0B' },
   { key: 'gallery', href: '/admin/gallery', label: 'Galereya', icon: '🖼', bg: 'rgba(168,85,247,0.12)', color: '#A855F7' },
   { key: 'faq', href: '/admin/faq', label: 'FAQ', icon: '❓', bg: 'rgba(239,68,68,0.12)', color: '#EF4444' },
-  { key: 'newApplications', href: '/admin/applications', label: 'Yangi arizalar', icon: '🎓', bg: 'rgba(14,165,233,0.12)', color: '#0EA5E9' },
-  { key: 'unreadMessages', href: '/admin/messages', label: 'Yangi xabarlar', icon: '💬', bg: 'rgba(99,102,241,0.12)', color: '#6366F1' }
+  { key: 'newApplications', href: '/admin/applications', label: "Ko'rilmagan arizalar", icon: '🎓', bg: 'rgba(14,165,233,0.12)', color: '#0EA5E9' },
+  { key: 'unreadMessages', href: '/admin/messages', label: "O'qilmagan xabarlar", icon: '💬', bg: 'rgba(99,102,241,0.12)', color: '#6366F1' }
 ];
 
 const QUICK_ACTIONS = [
@@ -43,31 +43,36 @@ const QUICK_ACTIONS = [
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const [counts, setCounts] = useState<Counts>({
-    news: 0,
-    teachers: 0,
-    olympiad: 0,
-    gallery: 0,
-    faq: 0,
-    unreadMessages: 0,
-    newApplications: 0
-  });
+  const [counts, setCounts] = useState<Counts | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const seq = useRef(0);
+
+  const load = useCallback(async () => {
+    const mine = ++seq.current;
+    try {
+      const data = await apiFetch<Counts>('/api/admin/stats');
+      if (mine !== seq.current) return;
+      setCounts(data);
+      setError(null);
+    } catch (err) {
+      if (mine !== seq.current) return;
+      console.error('Dashboard counts error:', err);
+      setError((err as Error).message || "Statistikani yuklab bo'lmadi");
+    }
+  }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const data = await apiFetch<Counts>('/api/admin/stats');
-        if (cancelled) return;
-        setCounts(data);
-      } catch (err) {
-        console.error('Dashboard counts error:', err);
-      }
-    })();
-    return () => {
-      cancelled = true;
+    void load();
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void load();
     };
-  }, []);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- so'rov hisoblagichi, DOM ref emas: eskirgan javoblarni bekor qilish uchun ataylab oshiriladi
+      seq.current++;
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [load]);
 
   const greeting = user.name || user.email.split('@')[0] || 'Admin';
 
@@ -84,6 +89,14 @@ export default function DashboardPage() {
         </div>
 
         <h2 className="admin-section-title">📊 Statistika</h2>
+        {error && (
+          <div className="alert alert-error" role="alert">
+            <span>Statistikani yuklab bo&apos;lmadi: {error}</span>
+            <button type="button" className="btn btn-outline btn-sm" onClick={() => void load()}>
+              Qayta urinish
+            </button>
+          </div>
+        )}
         <div className="stat-cards">
           {STAT_CARDS.map((card) => (
             <Link key={card.key} href={card.href}>
@@ -93,7 +106,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="stat-info">
                   <h3>{card.label}</h3>
-                  <div className="value">{counts[card.key]}</div>
+                  <div className="value">{counts ? counts[card.key] : '—'}</div>
                 </div>
               </div>
             </Link>
@@ -109,7 +122,9 @@ export default function DashboardPage() {
                 <div className="quick-action-title">{q.title}</div>
                 <div className="quick-action-desc">{q.desc}</div>
               </div>
-              <svg className="quick-action-arrow" width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <svg
+                aria-hidden="true"
+                className="quick-action-arrow" width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </Link>

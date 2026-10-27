@@ -1,176 +1,196 @@
 'use client';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { toast } from '@/components/admin/Toast';
-import { apiFetch } from '@/lib/admin-api';
+import { LANGS, type Lang } from '@/components/admin/lang';
+import { LangPanel, LangTabs } from '@/components/admin/LangTabs';
+import { useUnsavedGuard } from '@/components/admin/useUnsavedGuard';
+import { validateFields } from '@/components/admin/validate';
+import { apiFetch, isSessionError } from '@/lib/admin-api';
 
-type Lang = 'uz' | 'ru' | 'kk' | 'en';
-const LANGS: Lang[] = ['uz', 'ru', 'kk', 'en'];
-const LANG_LABELS: Record<Lang, string> = {
-  uz: "🇺🇿 O'zbek",
-  ru: '🇷🇺 Русский',
-  kk: '🏳️ Qaraqalpaq',
-  en: '🇬🇧 English'
-};
+type TextKey =
+  | `fullName_${Lang}`
+  | `shortName_${Lang}`
+  | 'address'
+  | 'phone'
+  | 'email'
+  | 'hours'
+  | 'telegram'
+  | 'instagram'
+  | 'facebook'
+  | 'youtube';
 
-interface Settings {
-  fullName_uz?: string;
-  fullName_ru?: string;
-  fullName_kk?: string;
-  fullName_en?: string;
-  shortName_uz?: string;
-  shortName_ru?: string;
-  shortName_kk?: string;
-  shortName_en?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  hours?: string;
-  telegram?: string;
-  instagram?: string;
-  facebook?: string;
-  youtube?: string;
-  students_count?: number;
-  teachers_count?: number;
-  experience_years?: number;
-  olympiad_winners?: number;
+const TEXT_KEYS: TextKey[] = [
+  ...LANGS.flatMap((l): TextKey[] => [`fullName_${l}`, `shortName_${l}`]),
+  'address',
+  'phone',
+  'email',
+  'hours',
+  'telegram',
+  'instagram',
+  'facebook',
+  'youtube',
+];
+
+const STAT_KEYS = ['students_count', 'teachers_count', 'experience_years', 'olympiad_winners'] as const;
+
+type StatKey = (typeof STAT_KEYS)[number];
+type FieldKey = TextKey | StatKey;
+/** Barcha maydonlar string holatda (raqamli maydonni tozalaganda qiymat "sakrab" qaytmasin). */
+type FormState = Record<FieldKey, string>;
+
+const ALL_KEYS: FieldKey[] = [...TEXT_KEYS, ...STAT_KEYS];
+const isStat = (k: FieldKey): k is StatKey => (STAT_KEYS as readonly string[]).includes(k);
+const MAX_STAT = 1_000_000;
+
+function toForm(d: Record<string, unknown>): FormState {
+  const out = {} as FormState;
+  for (const k of ALL_KEYS) {
+    const v = d[k];
+    out[k] = v === null || v === undefined ? '' : String(v);
+  }
+  return out;
 }
 
-interface FormState {
-  fullName: Record<Lang, string>;
-  shortName: Record<Lang, string>;
-  address: string;
-  phone: string;
-  email: string;
-  hours: string;
-  telegram: string;
-  instagram: string;
-  facebook: string;
-  youtube: string;
-  students_count: number;
-  teachers_count: number;
-  experience_years: number;
-  olympiad_winners: number;
-}
+const SOCIALS: { key: FieldKey; label: string; placeholder: string }[] = [
+  { key: 'telegram', label: 'Telegram', placeholder: 'https://t.me/kanal_nomi' },
+  { key: 'instagram', label: 'Instagram', placeholder: 'https://instagram.com/sahifa' },
+  { key: 'facebook', label: 'Facebook', placeholder: 'https://facebook.com/sahifa' },
+  { key: 'youtube', label: 'YouTube', placeholder: 'https://youtube.com/@kanal' },
+];
 
-const emptyForm = (): FormState => ({
-  fullName: { uz: '', ru: '', kk: '', en: '' },
-  shortName: { uz: '', ru: '', kk: '', en: '' },
-  address: '',
-  phone: '',
-  email: '',
-  hours: '',
-  telegram: '',
-  instagram: '',
-  facebook: '',
-  youtube: '',
-  students_count: 0,
-  teachers_count: 0,
-  experience_years: 0,
-  olympiad_winners: 0
-});
+const STATS: { key: StatKey; label: string }[] = [
+  { key: 'students_count', label: "O'quvchilar" },
+  { key: 'teachers_count', label: "O'qituvchilar" },
+  { key: 'experience_years', label: 'Tajriba (yil)' },
+  { key: 'olympiad_winners', label: "Olimpiada g'oliblari" },
+];
 
 export default function SettingsAdminPage() {
-  const [form, setForm] = useState<FormState>(emptyForm());
+  const [snapshot, setSnapshot] = useState<FormState | null>(null);
+  const [form, setForm] = useState<FormState | null>(null);
   const [activeLang, setActiveLang] = useState<Lang>('uz');
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const d = await apiFetch<Settings>('/api/admin/settings');
-        if (cancelled) return;
-          setForm({
-            fullName: {
-              uz: d.fullName_uz || '',
-              ru: d.fullName_ru || '',
-              kk: d.fullName_kk || '',
-              en: d.fullName_en || ''
-            },
-            shortName: {
-              uz: d.shortName_uz || '',
-              ru: d.shortName_ru || '',
-              kk: d.shortName_kk || '',
-              en: d.shortName_en || ''
-            },
-            address: d.address || '',
-            phone: d.phone || '',
-            email: d.email || '',
-            hours: d.hours || '',
-            telegram: d.telegram || '',
-            instagram: d.instagram || '',
-            facebook: d.facebook || '',
-            youtube: d.youtube || '',
-            students_count: d.students_count || 0,
-            teachers_count: d.teachers_count || 0,
-            experience_years: d.experience_years || 0,
-            olympiad_winners: d.olympiad_winners || 0
-          });
-      } catch (err) {
-        console.error('Load settings error:', err);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
+  const load = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const d = await apiFetch<Record<string, unknown>>('/api/admin/settings');
+      const f = toForm(d);
+      setSnapshot(f);
+      setForm(f);
+    } catch (err) {
+      console.error('Load settings error:', err);
+      setLoadError((err as Error).message || "Sozlamalarni yuklab bo'lmadi");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const changedKeys =
+    form && snapshot ? ALL_KEYS.filter((k) => form[k].trim() !== snapshot[k].trim()) : [];
+  const dirty = changedKeys.length > 0;
+  useUnsavedGuard(dirty);
+
+  const set = (key: FieldKey, value: string) => {
+    setForm((f) => (f ? { ...f, [key]: value } : f));
+    setMsg(null);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!form || !snapshot) return;
+    if (!dirty) {
+      toast.info("O'zgarish yo'q");
+      return;
+    }
+    const valid = validateFields(
+      STATS.map(({ key, label }) => {
+        const raw = form[key].trim();
+        const n = Number(raw);
+        return {
+          valid: raw === '' || (Number.isInteger(n) && n >= 0 && n <= MAX_STAT),
+          fieldId: `settings-${key}`,
+          message: `${label}: 0 dan ${MAX_STAT.toLocaleString('uz-UZ')} gacha butun son kiriting`,
+        };
+      })
+    );
+    if (!valid) return;
+
+    // Faqat o'zgargan maydonlar yuboriladi — boshqa admin bir vaqtda o'zgartirgan maydonlar bosilib ketmaydi.
+    const payload: Record<string, string | number> = {};
+    for (const k of changedKeys) {
+      const v = form[k].trim();
+      payload[k] = isStat(k) ? (v === '' ? '' : Number(v)) : v;
+    }
+
     setSaving(true);
     setMsg(null);
     try {
-      await apiFetch('/api/admin/settings', {
-        method: 'PUT',
-        body: JSON.stringify({
-          fullName_uz: form.fullName.uz.trim(),
-          fullName_ru: form.fullName.ru.trim(),
-          fullName_kk: form.fullName.kk.trim(),
-          fullName_en: form.fullName.en.trim(),
-          shortName_uz: form.shortName.uz.trim(),
-          shortName_ru: form.shortName.ru.trim(),
-          shortName_kk: form.shortName.kk.trim(),
-          shortName_en: form.shortName.en.trim(),
-          address: form.address.trim(),
-          phone: form.phone.trim(),
-          email: form.email.trim(),
-          hours: form.hours.trim(),
-          telegram: form.telegram.trim(),
-          instagram: form.instagram.trim(),
-          facebook: form.facebook.trim(),
-          youtube: form.youtube.trim(),
-          students_count: form.students_count,
-          teachers_count: form.teachers_count,
-          experience_years: form.experience_years,
-          olympiad_winners: form.olympiad_winners
-        })
-      });
+      const res = await apiFetch<{ ok: boolean; settings?: Record<string, unknown> }>(
+        '/api/admin/settings',
+        { method: 'PUT', body: JSON.stringify(payload) }
+      );
+      const next = res.settings ? toForm(res.settings) : form;
+      setSnapshot(next);
+      setForm(next);
       setMsg({ text: 'Sozlamalar saqlandi', ok: true });
       toast.success('Sozlamalar saqlandi');
     } catch (err) {
-      const text = 'Xatolik: ' + (err as Error).message;
-      setMsg({ text, ok: false });
-      toast.error(text);
+      if (!isSessionError(err)) {
+        const text = (err as Error).message;
+        setMsg({ text, ok: false });
+        toast.error('Xatolik: ' + text);
+      }
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
+  if (loading || loadError || !form) {
     return (
       <>
         <AdminHeader title="Sozlamalar" />
         <div className="content-area">
-          <div style={{ padding: 40, textAlign: 'center', color: '#64748B' }}>Yuklanmoqda...</div>
+          {loading ? (
+            <div className="list-state" role="status">
+              Yuklanmoqda...
+            </div>
+          ) : (
+            <div className="list-state list-state-error" role="alert">
+              <p>Sozlamalarni yuklab bo&apos;lmadi: {loadError}</p>
+              <button type="button" className="btn btn-outline btn-sm" onClick={() => void load()}>
+                Qayta yuklash
+              </button>
+            </div>
+          )}
         </div>
       </>
     );
   }
+
+  const textInput = (key: FieldKey, label: string, opts: { type?: string; placeholder?: string; inputMode?: 'url' | 'tel' | 'email' } = {}) => (
+    <div className="form-group">
+      <label htmlFor={`settings-${key}`}>{label}</label>
+      <input
+        id={`settings-${key}`}
+        type={opts.type ?? 'text'}
+        inputMode={opts.inputMode}
+        placeholder={opts.placeholder}
+        className="form-control"
+        value={form[key]}
+        onChange={(e) => set(key, e.target.value)}
+      />
+    </div>
+  );
 
   return (
     <>
@@ -181,117 +201,91 @@ export default function SettingsAdminPage() {
             <div className="card-header">
               <h2 className="card-title">Maktab nomi</h2>
             </div>
-            <div className="lang-tabs-bar">
-              {LANGS.map((l) => (
-                <button key={l} type="button" className={'lang-tab ' + (activeLang === l ? 'active' : '')} onClick={() => setActiveLang(l)}>
-                  {LANG_LABELS[l]}
-                </button>
-              ))}
-            </div>
+            <LangTabs idPrefix="settings" active={activeLang} onChange={setActiveLang} />
             {LANGS.map((l) => (
-              <div key={l} style={{ display: activeLang === l ? 'block' : 'none' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <div className="form-group">
-                    <label>To&apos;liq nom ({l.toUpperCase()})</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={form.fullName[l]}
-                      onChange={(e) => setForm({ ...form, fullName: { ...form.fullName, [l]: e.target.value } })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Qisqa nom ({l.toUpperCase()})</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={form.shortName[l]}
-                      onChange={(e) => setForm({ ...form, shortName: { ...form.shortName, [l]: e.target.value } })}
-                    />
-                  </div>
+              <LangPanel key={l} idPrefix="settings" lang={l} active={activeLang}>
+                <div className="form-grid form-grid-2">
+                  {textInput(`fullName_${l}`, `To'liq nom (${l.toUpperCase()})`)}
+                  {textInput(`shortName_${l}`, `Qisqa nom (${l.toUpperCase()})`)}
                 </div>
-              </div>
+              </LangPanel>
             ))}
           </div>
 
-          <div className="admin-card" style={{ marginTop: 20 }}>
+          <div className="admin-card">
             <div className="card-header">
               <h2 className="card-title">Kontakt</h2>
             </div>
-            <div className="form-group">
-              <label>Manzil</label>
-              <input type="text" className="form-control" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+            {textInput('address', 'Manzil')}
+            <div className="form-grid form-grid-2">
+              {textInput('phone', 'Telefon', { type: 'tel', placeholder: '+998 61 000 00 00' })}
+              {textInput('email', 'Email', { type: 'email', placeholder: 'info@alxorezmiy.uz' })}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div className="form-group">
-                <label>Telefon</label>
-                <input type="text" className="form-control" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Email</label>
-                <input type="email" className="form-control" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-              </div>
-            </div>
-            <div className="form-group">
-              <label>Ish vaqti</label>
-              <input type="text" className="form-control" value={form.hours} onChange={(e) => setForm({ ...form, hours: e.target.value })} />
-            </div>
+            {textInput('hours', 'Ish vaqti')}
           </div>
 
-          <div className="admin-card" style={{ marginTop: 20 }}>
+          <div className="admin-card">
             <div className="card-header">
               <h2 className="card-title">Ijtimoiy tarmoqlar</h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div className="form-group">
-                <label>Telegram</label>
-                <input type="text" className="form-control" value={form.telegram} onChange={(e) => setForm({ ...form, telegram: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Instagram</label>
-                <input type="text" className="form-control" value={form.instagram} onChange={(e) => setForm({ ...form, instagram: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Facebook</label>
-                <input type="text" className="form-control" value={form.facebook} onChange={(e) => setForm({ ...form, facebook: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>YouTube</label>
-                <input type="text" className="form-control" value={form.youtube} onChange={(e) => setForm({ ...form, youtube: e.target.value })} />
-              </div>
+            <p className="form-hint form-hint-block">
+              To&apos;liq havola kiriting. &quot;https://&quot; yozilmasa, avtomatik qo&apos;shiladi.
+            </p>
+            <div className="form-grid form-grid-2">
+              {SOCIALS.map((s) => (
+                <div key={s.key}>
+                  {textInput(s.key, s.label, { inputMode: 'url', placeholder: s.placeholder })}
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="admin-card" style={{ marginTop: 20 }}>
+          <div className="admin-card">
             <div className="card-header">
               <h2 className="card-title">Statistika</h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-              <div className="form-group">
-                <label>O&apos;quvchilar</label>
-                <input type="number" className="form-control" value={form.students_count} onChange={(e) => setForm({ ...form, students_count: parseInt(e.target.value, 10) || 0 })} />
-              </div>
-              <div className="form-group">
-                <label>O&apos;qituvchilar</label>
-                <input type="number" className="form-control" value={form.teachers_count} onChange={(e) => setForm({ ...form, teachers_count: parseInt(e.target.value, 10) || 0 })} />
-              </div>
-              <div className="form-group">
-                <label>Tajriba (yil)</label>
-                <input type="number" className="form-control" value={form.experience_years} onChange={(e) => setForm({ ...form, experience_years: parseInt(e.target.value, 10) || 0 })} />
-              </div>
-              <div className="form-group">
-                <label>Olimpiada g&apos;oliblari</label>
-                <input type="number" className="form-control" value={form.olympiad_winners} onChange={(e) => setForm({ ...form, olympiad_winners: parseInt(e.target.value, 10) || 0 })} />
-              </div>
+            <p className="form-hint form-hint-block">
+              Bo&apos;sh qoldirilgan ko&apos;rsatkich saytda ko&apos;rsatilmaydi.
+            </p>
+            <div className="form-grid form-grid-4">
+              {STATS.map((s) => (
+                <div className="form-group" key={s.key}>
+                  <label htmlFor={`settings-${s.key}`}>{s.label}</label>
+                  <input
+                    id={`settings-${s.key}`}
+                    type="number"
+                    inputMode="numeric"
+                    min={0}
+                    max={MAX_STAT}
+                    className="form-control"
+                    value={form[s.key]}
+                    onChange={(e) => set(s.key, e.target.value)}
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
-          <div style={{ marginTop: 20, display: 'flex', gap: 12, alignItems: 'center' }}>
-            <button type="submit" className="btn btn-primary" disabled={saving}>
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary" disabled={saving || !dirty}>
               {saving ? 'Saqlanmoqda...' : 'Saqlash'}
             </button>
+            {dirty && !saving && (
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => {
+                  setForm(snapshot);
+                  setMsg(null);
+                }}
+              >
+                O&apos;zgarishlarni bekor qilish
+              </button>
+            )}
             {msg && (
-              <span style={{ color: msg.ok ? '#10B981' : '#EF4444' }}>{msg.text}</span>
+              <span className={msg.ok ? 'text-success' : 'text-danger'} role={msg.ok ? 'status' : 'alert'}>
+                {msg.text}
+              </span>
             )}
           </div>
         </form>

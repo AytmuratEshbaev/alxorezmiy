@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { SIDEBAR_ID, useSidebar } from '@/components/admin/SidebarContext';
 
 const NAV: { section: string; items: { href: string; label: string; icon: JSX.Element }[] }[] = [
   {
@@ -122,13 +123,16 @@ const NAV: { section: string; items: { href: string; label: string; icon: JSX.El
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const { open, setOpen } = useSidebar();
   return (
-    <aside className="sidebar">
+    <>
+      {open && <div className="sidebar-backdrop" onClick={() => setOpen(false)} aria-hidden="true" />}
+      <aside id={SIDEBAR_ID} className={'sidebar' + (open ? ' active' : '')} aria-label="Admin menyusi">
       <div className="sidebar-header">
         <div className="sidebar-logo">AX</div>
         <div className="sidebar-title">Admin Panel</div>
       </div>
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Bo'limlar">
         {NAV.map((sec) => (
           <div key={sec.section}>
             <div className="nav-section">{sec.section}</div>
@@ -138,7 +142,12 @@ export function AdminSidebar() {
                   ? pathname === '/admin'
                   : pathname === item.href || pathname.startsWith(item.href + '/');
               return (
-                <Link key={item.href} href={item.href} className={active ? 'active' : ''}>
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={active ? 'active' : ''}
+                  aria-current={active ? 'page' : undefined}
+                >
                   {item.icon}
                   {item.label}
                 </Link>
@@ -147,6 +156,7 @@ export function AdminSidebar() {
           </div>
         ))}
       </nav>
-    </aside>
+      </aside>
+    </>
   );
 }

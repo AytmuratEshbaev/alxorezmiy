@@ -1,9 +1,13 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
 import { toast } from '@/components/admin/Toast';
-import { subscribeCollection, updateDocument, updateMany, deleteDocument } from '@/lib/admin-api';
+import { toastError } from '@/components/admin/errors';
+import { APPLICATION_STATUSES } from '@/components/admin/labels';
+import { ListErrorBanner, ListStatus, LoadMoreButton } from '@/components/admin/ListStatus';
+import { useCollection } from '@/components/admin/useCollection';
+import { updateDocument, updateMany, deleteDocument } from '@/lib/admin-api';
 import { formatDate } from '@/lib/utils';
 
 interface Application {
@@ -17,27 +21,29 @@ interface Application {
   createdAt: string;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  new: 'Yangi',
-  contacted: "Bog'lanildi",
-  accepted: 'Qabul qilindi',
-  rejected: 'Rad etildi'
-};
-
-type Filter = 'all' | 'unread' | keyof typeof STATUS_LABELS;
+type Filter = 'all' | 'unread' | string;
 
 export default function ApplicationsAdminPage() {
-  const [items, setItems] = useState<Application[]>([]);
+  const list = useCollection<Application>('applications', {
+    orderBy: 'createdAt',
+    direction: 'desc',
+    pageSize: 100,
+    paginate: true,
+  });
+  const { items } = list;
   const [filter, setFilter] = useState<Filter>('all');
+  const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    return subscribeCollection<Application>('applications', setItems, { orderBy: 'createdAt', direction: 'desc' });
-  }, []);
-
+  const q = search.trim().toLowerCase();
   const filtered = items.filter((a) => {
-    if (filter === 'all') return true;
-    if (filter === 'unread') return !a.read;
-    return a.status === filter;
+    if (filter === 'unread' && a.read) return false;
+    if (filter !== 'all' && filter !== 'unread' && a.status !== filter) return false;
+    if (
+      q &&
+      ![a.studentName, a.phone, a.grade, a.message].some((v) => (v || '').toLowerCase().includes(q))
+    )
+      return false;
+    return true;
   });
   const unread = items.filter((a) => !a.read).length;
 
@@ -45,7 +51,7 @@ export default function ApplicationsAdminPage() {
     try {
       await updateDocument('applications', id, data);
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     }
   };
 
@@ -56,7 +62,7 @@ export default function ApplicationsAdminPage() {
       await updateMany('applications', ids, { read: true });
       toast.success(`${ids.length} ta ariza ko'rildi deb belgilandi`);
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     }
   };
 
@@ -65,21 +71,21 @@ export default function ApplicationsAdminPage() {
       title: "O'chirish",
       message: `${a.studentName} arizasini butunlay o'chirmoqchimisiz?`,
       confirmText: "Ha, o'chirish",
-      danger: true
+      danger: true,
     });
     if (!ok) return;
     try {
       await deleteDocument('applications', a.id);
       toast.success("Ariza o'chirildi");
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     }
   };
 
   const filters: { key: Filter; label: string }[] = [
-    { key: 'all', label: `Barchasi (${items.length})` },
+    { key: 'all', label: `Barchasi (${items.length}${list.hasMore ? '+' : ''})` },
     { key: 'unread', label: `Ko'rilmagan (${unread})` },
-    ...Object.entries(STATUS_LABELS).map(([key, label]) => ({ key: key as Filter, label }))
+    ...APPLICATION_STATUSES.map((s) => ({ key: s.value, label: s.label })),
   ];
 
   return (
@@ -90,29 +96,53 @@ export default function ApplicationsAdminPage() {
           <div className="card-header">
             <h2 className="card-title">Onlayn qabul arizalari</h2>
             {unread > 0 && (
-              <button className="btn btn-outline" onClick={markAllRead}>
-                ✓ Hammasini ko&apos;rildi deb belgilash
+              <button type="button" className="btn btn-outline" onClick={markAllRead}>
+                ✓ Yuklanganlarni ko&apos;rildi deb belgilash
               </button>
             )}
           </div>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-            {filters.map((f) => (
-              <button
-                key={f.key}
-                className={'btn ' + (filter === f.key ? 'btn-primary' : 'btn-outline')}
-                onClick={() => setFilter(f.key)}
-              >
-                {f.label}
-              </button>
-            ))}
+          <div className="admin-toolbar">
+            <div className="admin-filters" role="group" aria-label="Arizalar filtri">
+              {filters.map((f) => (
+                <button
+                  key={f.key}
+                  type="button"
+                  className={'btn ' + (filter === f.key ? 'btn-primary' : 'btn-outline')}
+                  aria-pressed={filter === f.key}
+                  onClick={() => setFilter(f.key)}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+            <input
+              type="search"
+              className="form-control toolbar-search"
+              placeholder="Ism, telefon yoki izoh bo'yicha qidirish..."
+              aria-label="Arizalarni qidirish"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
 
-          {filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: 60, color: '#94A3B8' }}>
-              <div style={{ fontSize: '3rem', marginBottom: 12 }}>📭</div>
-              <p>Arizalar yo&apos;q</p>
-            </div>
-          ) : (
+          <ListErrorBanner error={list.error} hasItems={items.length > 0} onRetry={list.reload} />
+          <ListStatus
+            loading={list.loading}
+            error={list.error}
+            total={items.length}
+            shown={filtered.length}
+            emptyText={
+              <>
+                <div className="list-state-icon" aria-hidden="true">
+                  📭
+                </div>
+                <p>Arizalar yo&apos;q</p>
+              </>
+            }
+            noMatchText="Mos ariza topilmadi"
+            onRetry={list.reload}
+          />
+          {filtered.length > 0 && (
             <div className="table-responsive">
               <table className="admin-table">
                 <thead>
@@ -128,29 +158,28 @@ export default function ApplicationsAdminPage() {
                 </thead>
                 <tbody>
                   {filtered.map((a) => (
-                    <tr key={a.id} style={a.read ? undefined : { background: 'rgba(99,102,241,0.06)' }}>
+                    <tr key={a.id} className={a.read ? undefined : 'row-unread'}>
                       <td>
                         <strong>{a.studentName}</strong>
                       </td>
                       <td>
-                        <a href={`tel:${a.phone.replace(/[^\d+]/g, '')}`} style={{ color: 'var(--primary)' }}>
+                        <a href={`tel:${a.phone.replace(/[^\d+]/g, '')}`} className="text-primary">
                           {a.phone}
                         </a>
                       </td>
                       <td>{a.grade}</td>
-                      <td style={{ maxWidth: 280, whiteSpace: 'pre-line', color: '#475569' }}>{a.message || '—'}</td>
+                      <td className="cell-note">{a.message || '—'}</td>
                       <td>{formatDate(a.createdAt)}</td>
                       <td>
                         <select
-                          className="form-control"
-                          style={{ minWidth: 140 }}
+                          className="form-control status-select"
                           value={a.status}
-                          aria-label="Ariza holati"
+                          aria-label={`${a.studentName} — ariza holati`}
                           onChange={(e) => update(a.id, { status: e.target.value, read: true })}
                         >
-                          {Object.entries(STATUS_LABELS).map(([k, label]) => (
-                            <option key={k} value={k}>
-                              {label}
+                          {APPLICATION_STATUSES.map((s) => (
+                            <option key={s.value} value={s.value}>
+                              {s.label}
                             </option>
                           ))}
                         </select>
@@ -158,13 +187,23 @@ export default function ApplicationsAdminPage() {
                       <td>
                         <div className="table-actions">
                           <button
+                            type="button"
                             className="action-btn edit"
                             onClick={() => update(a.id, { read: !a.read })}
                             title={a.read ? "Ko'rilmagan deb belgilash" : "Ko'rildi deb belgilash"}
+                            aria-label={
+                              a.read ? "Ko'rilmagan deb belgilash" : "Ko'rildi deb belgilash"
+                            }
                           >
                             {a.read ? '↺' : '✓'}
                           </button>
-                          <button className="action-btn delete" onClick={() => handleDelete(a)} title="O'chirish">
+                          <button
+                            type="button"
+                            className="action-btn delete"
+                            onClick={() => handleDelete(a)}
+                            title="O'chirish"
+                            aria-label={`${a.studentName} arizasini o'chirish`}
+                          >
                             🗑️
                           </button>
                         </div>
@@ -175,6 +214,11 @@ export default function ApplicationsAdminPage() {
               </table>
             </div>
           )}
+          <LoadMoreButton
+            hasMore={list.hasMore}
+            loadingMore={list.loadingMore}
+            onLoadMore={list.loadMore}
+          />
         </div>
       </div>
     </>

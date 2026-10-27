@@ -1,26 +1,25 @@
 'use client';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
+import { AdminModal } from '@/components/admin/AdminModal';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
+import { ImageField } from '@/components/admin/ImageField';
 import { toast } from '@/components/admin/Toast';
-import { useEscapeKey } from '@/components/admin/useEscapeKey';
+import { toastError } from '@/components/admin/errors';
 import {
-  subscribeCollection,
-  addDocument,
-  updateDocument,
-  deleteDocument,
-  uploadImage
-} from '@/lib/admin-api';
+  NEWS_CATEGORIES,
+  NEWS_CATEGORY_LABELS,
+  NEWS_STATUSES,
+  NEWS_STATUS_LABELS,
+} from '@/components/admin/labels';
+import { LANGS, emptyLangRecord, pickLang, spreadLang, type Lang } from '@/components/admin/lang';
+import { LangPanel, LangTabs } from '@/components/admin/LangTabs';
+import { ListErrorBanner, ListStatus, LoadMoreButton } from '@/components/admin/ListStatus';
+import { useCollection } from '@/components/admin/useCollection';
+import { useEditorModal } from '@/components/admin/useEditorModal';
+import { validateFields } from '@/components/admin/validate';
+import { addDocument, updateDocument, deleteDocument } from '@/lib/admin-api';
 import { formatDate } from '@/lib/utils';
-
-type Lang = 'uz' | 'ru' | 'kk' | 'en';
-const LANGS: Lang[] = ['uz', 'ru', 'kk', 'en'];
-const LANG_LABELS: Record<Lang, string> = {
-  uz: "🇺🇿 O'zbek",
-  ru: '🇷🇺 Русский',
-  kk: '🏳️ Qaraqalpaq',
-  en: '🇬🇧 English'
-};
 
 interface NewsItem {
   id: string;
@@ -29,6 +28,7 @@ interface NewsItem {
   image?: string;
   imageId?: string;
   createdAt?: string;
+  publishedAt?: string;
   title_uz?: string;
   title_ru?: string;
   title_kk?: string;
@@ -39,14 +39,13 @@ interface NewsItem {
   content_en?: string;
 }
 
-const CAT_LABELS: Record<string, string> = { events: 'Tadbir', announcements: "E'lon" };
-const STATUS_LABELS: Record<string, string> = { published: 'Nashr etilgan', draft: 'Qoralama' };
-
 interface FormState {
   category: string;
   status: string;
   imageUrl: string;
   imageId: string;
+  /** `YYYY-MM-DD` (mahalliy sana) yoki bo'sh — server o'zi qo'yadi. */
+  publishedDate: string;
   titles: Record<Lang, string>;
   contents: Record<Lang, string>;
 }
@@ -56,37 +55,54 @@ const emptyForm = (): FormState => ({
   status: 'published',
   imageUrl: '',
   imageId: '',
-  titles: { uz: '', ru: '', kk: '', en: '' },
-  contents: { uz: '', ru: '', kk: '', en: '' }
+  publishedDate: '',
+  titles: emptyLangRecord(),
+  contents: emptyLangRecord(),
 });
 
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** ISO → `<input type="date">` qiymati (mahalliy vaqt bo'yicha). */
+function toDateInput(iso: string | undefined): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/**
+ * Sana → ISO. Bugungi sana tanlansa — hozirgi vaqt; boshqa kun uchun mahalliy tush vaqti
+ * (UTC'ga o'girilganda sana boshqa kunga surilib ketmasligi uchun).
+ */
+function fromDateInput(date: string): string {
+  if (toDateInput(new Date().toISOString()) === date) return new Date().toISOString();
+  const d = new Date(`${date}T12:00:00`);
+  return isNaN(d.getTime()) ? '' : d.toISOString();
+}
+
 export default function NewsAdminPage() {
-  const [items, setItems] = useState<NewsItem[]>([]);
+  const list = useCollection<NewsItem>('news', {
+    orderBy: 'createdAt',
+    direction: 'desc',
+    pageSize: 100,
+    paginate: true,
+  });
+  const { items } = list;
+  const modal = useEditorModal<FormState>(emptyForm);
+  const { form, setForm } = modal;
+  const [activeLang, setActiveLang] = useState<Lang>('uz');
+  const [originalPublishedAt, setOriginalPublishedAt] = useState('');
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [activeLang, setActiveLang] = useState<Lang>('uz');
-  const [form, setForm] = useState<FormState>(emptyForm());
-  const [submitting, setSubmitting] = useState(false);
-  const [uploadPct, setUploadPct] = useState<number | null>(null);
 
-  useEffect(() => {
-    const unsub = subscribeCollection<NewsItem>(
-      'news',
-      (data) => setItems(data),
-      { orderBy: 'createdAt', direction: 'desc' }
-    );
-    return () => unsub();
-  }, []);
-
+  const q = search.trim().toLowerCase();
   const filtered = items.filter((n) => {
-    if (search) {
-      const q = search.toLowerCase();
-      if (!(n.title_uz || '').toLowerCase().includes(q) && !(n.content_uz || '').toLowerCase().includes(q)) {
-        return false;
-      }
+    if (q) {
+      const hit =
+        LANGS.some((l) => (n[`title_${l}`] || '').toLowerCase().includes(q)) ||
+        (n.content_uz || '').toLowerCase().includes(q);
+      if (!hit) return false;
     }
     if (filterCat !== 'all' && n.category !== filterCat) return false;
     if (filterStatus !== 'all' && n.status !== filterStatus) return false;
@@ -94,92 +110,75 @@ export default function NewsAdminPage() {
   });
 
   const openCreate = () => {
-    setEditingId(null);
-    setForm(emptyForm());
     setActiveLang('uz');
-    setModalOpen(true);
+    setOriginalPublishedAt('');
+    modal.openWith(null, emptyForm());
   };
 
   const openEdit = (item: NewsItem) => {
-    setEditingId(item.id);
-    setForm({
+    setActiveLang('uz');
+    setOriginalPublishedAt(item.publishedAt || '');
+    modal.openWith(item.id, {
       category: item.category || 'announcements',
       status: item.status || 'published',
       imageUrl: item.image || '',
       imageId: item.imageId || '',
-      titles: {
-        uz: item.title_uz || '',
-        ru: item.title_ru || '',
-        kk: item.title_kk || '',
-        en: item.title_en || ''
-      },
-      contents: {
-        uz: item.content_uz || '',
-        ru: item.content_ru || '',
-        kk: item.content_kk || '',
-        en: item.content_en || ''
-      }
+      publishedDate: toDateInput(item.publishedAt),
+      titles: pickLang(item, 'title'),
+      contents: pickLang(item, 'content'),
     });
-    setActiveLang('uz');
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-    setEditingId(null);
-    setUploadPct(null);
-  };
-
-  useEscapeKey(modalOpen, closeModal);
-
-  const handleFile = async (file?: File) => {
-    if (!file) return;
-    setUploadPct(0);
-    try {
-      const res = await uploadImage(file, 'news', (pct) => setUploadPct(pct));
-      setForm((f) => ({ ...f, imageUrl: res.url, imageId: res.fileId }));
-      setUploadPct(100);
-      setTimeout(() => setUploadPct(null), 1200);
-    } catch (err) {
-      toast.error('Rasm yuklashda xato: ' + (err as Error).message);
-      setUploadPct(null);
-    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!form.titles.uz.trim()) {
-      toast.error("O'zbek tilida sarlavha majburiy");
-      return;
-    }
-    setSubmitting(true);
+    if (modal.uploading) return;
+    const valid = validateFields(
+      [
+        {
+          valid: !!form.titles.uz.trim(),
+          fieldId: 'news-title-uz',
+          message: "O'zbek tilida sarlavha majburiy",
+          lang: 'uz',
+        },
+        {
+          valid: !!form.contents.uz.trim(),
+          fieldId: 'news-content-uz',
+          message: "O'zbek tilida matn majburiy",
+          lang: 'uz',
+        },
+      ],
+      setActiveLang
+    );
+    if (!valid) return;
+    modal.setSubmitting(true);
+    // Sana o'zgarmagan bo'lsa asl vaqtni (soat/daqiqa bilan) saqlab qolamiz.
+    const publishedAt = !form.publishedDate
+      ? ''
+      : form.publishedDate === toDateInput(originalPublishedAt)
+        ? originalPublishedAt
+        : fromDateInput(form.publishedDate);
     const data = {
       category: form.category,
       status: form.status,
       image: form.imageUrl,
       imageId: form.imageId,
-      title_uz: form.titles.uz.trim(),
-      title_ru: form.titles.ru.trim(),
-      title_kk: form.titles.kk.trim(),
-      title_en: form.titles.en.trim(),
-      content_uz: form.contents.uz.trim(),
-      content_ru: form.contents.ru.trim(),
-      content_kk: form.contents.kk.trim(),
-      content_en: form.contents.en.trim()
+      publishedAt,
+      ...spreadLang('title', form.titles),
+      ...spreadLang('content', form.contents),
     };
     try {
-      if (editingId) {
-        await updateDocument('news', editingId, data);
+      if (modal.editingId) {
+        await updateDocument('news', modal.editingId, data);
         toast.success('Yangilik yangilandi');
       } else {
         await addDocument('news', data);
         toast.success("Yangilik qo'shildi");
       }
-      closeModal();
+      modal.closeSaved();
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     } finally {
-      setSubmitting(false);
+      modal.setSubmitting(false);
     }
   };
 
@@ -188,14 +187,14 @@ export default function NewsAdminPage() {
       title: "O'chirish",
       message: `"${item.title_uz}" yangiligini o'chirmoqchimisiz?`,
       confirmText: "Ha, o'chirish",
-      danger: true
+      danger: true,
     });
     if (!ok) return;
     try {
       await deleteDocument('news', item.id);
       toast.success("Yangilik o'chirildi");
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     }
   };
 
@@ -206,28 +205,47 @@ export default function NewsAdminPage() {
         <div className="admin-card">
           <div className="card-header">
             <h2 className="card-title">Barcha yangiliklar</h2>
-            <button className="btn btn-primary" onClick={openCreate}>+ Qo&apos;shish</button>
+            <button type="button" className="btn btn-primary" onClick={openCreate}>
+              + Qo&apos;shish
+            </button>
           </div>
-          <div className="admin-toolbar" style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+          <div className="admin-toolbar">
             <input
-              type="text"
-              className="form-control"
-              placeholder="Sarlavha bo'yicha qidirish..."
-              style={{ flex: 1, minWidth: 240, maxWidth: 400 }}
+              type="search"
+              className="form-control toolbar-search"
+              placeholder="Sarlavha bo'yicha qidirish (barcha tillar)..."
+              aria-label="Yangiliklarni qidirish"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <select className="form-control" style={{ maxWidth: 180 }} value={filterCat} onChange={(e) => setFilterCat(e.target.value)}>
+            <select
+              className="form-control toolbar-select"
+              aria-label="Kategoriya filtri"
+              value={filterCat}
+              onChange={(e) => setFilterCat(e.target.value)}
+            >
               <option value="all">Barcha kategoriya</option>
-              <option value="announcements">📢 E&apos;lonlar</option>
-              <option value="events">🎉 Tadbirlar</option>
+              {NEWS_CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
             </select>
-            <select className="form-control" style={{ maxWidth: 160 }} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+            <select
+              className="form-control toolbar-select"
+              aria-label="Holat filtri"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
               <option value="all">Barcha holat</option>
-              <option value="published">✅ Nashr etilgan</option>
-              <option value="draft">📝 Qoralama</option>
+              {NEWS_STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
             </select>
           </div>
+          <ListErrorBanner error={list.error} hasItems={items.length > 0} onRetry={list.reload} />
           <div className="table-responsive">
             <table className="admin-table">
               <thead>
@@ -241,133 +259,207 @@ export default function NewsAdminPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} style={{ textAlign: 'center', padding: 40, color: '#94A3B8' }}>
-                      {items.length === 0 ? "Hali yangiliklar yo'q." : 'Filterga mos yangilik topilmadi'}
+                <ListStatus
+                  colSpan={6}
+                  loading={list.loading}
+                  error={list.error}
+                  total={items.length}
+                  shown={filtered.length}
+                  emptyText="Hali yangiliklar yo'q."
+                  noMatchText="Filterga mos yangilik topilmadi"
+                  onRetry={list.reload}
+                />
+                {filtered.map((n) => (
+                  <tr key={n.id}>
+                    <td className="thumb-cell">
+                      {n.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={n.image} alt="" className="thumb" width={48} height={48} />
+                      ) : (
+                        <div className="thumb thumb-placeholder" aria-hidden="true">
+                          📰
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <strong>{n.title_uz || '—'}</strong>
+                    </td>
+                    <td>
+                      {formatDate(n.publishedAt || n.createdAt) || '—'}
+                      {!n.publishedAt && n.createdAt && (
+                        <div className="text-muted small">yaratilgan</div>
+                      )}
+                    </td>
+                    <td>
+                      <span className="badge badge-warning">
+                        {NEWS_CATEGORY_LABELS[n.category || ''] || n.category}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className={
+                          'badge ' + (n.status === 'published' ? 'badge-success' : 'badge-warning')
+                        }
+                      >
+                        {NEWS_STATUS_LABELS[n.status || ''] || n.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="table-actions">
+                        <button
+                          type="button"
+                          className="action-btn edit"
+                          onClick={() => openEdit(n)}
+                          title="Tahrirlash"
+                          aria-label="Tahrirlash"
+                        >
+                          ✍️
+                        </button>
+                        <button
+                          type="button"
+                          className="action-btn delete"
+                          onClick={() => handleDelete(n)}
+                          title="O'chirish"
+                          aria-label="O'chirish"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                ) : (
-                  filtered.map((n) => (
-                    <tr key={n.id}>
-                      <td style={{ width: 60 }}>
-                        {n.image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={n.image} alt="" style={{ width: 48, height: 48, borderRadius: 6, objectFit: 'cover' }} />
-                        ) : (
-                          <div style={{ width: 48, height: 48, borderRadius: 6, background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📰</div>
-                        )}
-                      </td>
-                      <td><strong>{n.title_uz || '—'}</strong></td>
-                      <td>{formatDate(n.createdAt) || '—'}</td>
-                      <td><span className="badge badge-warning">{CAT_LABELS[n.category || ''] || n.category}</span></td>
-                      <td><span className={'badge ' + (n.status === 'published' ? 'badge-success' : 'badge-warning')}>{STATUS_LABELS[n.status || ''] || n.status}</span></td>
-                      <td>
-                        <div className="table-actions">
-                          <button className="action-btn edit" onClick={() => openEdit(n)} title="Tahrirlash">✍️</button>
-                          <button className="action-btn delete" onClick={() => handleDelete(n)} title="O'chirish">🗑️</button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                ))}
               </tbody>
             </table>
           </div>
+          <LoadMoreButton
+            hasMore={list.hasMore}
+            loadingMore={list.loadingMore}
+            onLoadMore={list.loadMore}
+          />
         </div>
       </div>
 
-      {modalOpen && (
-        <div className="modal-overlay active" onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}>
-          <div className="modal" style={{ maxWidth: 760 }}>
-            <div className="modal-header">
-              <h3 className="modal-title">{editingId ? 'Yangilikni tahrirlash' : "Yangi yangilik qo'shish"}</h3>
-              <button className="modal-close" type="button" onClick={closeModal}>×</button>
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div className="modal-body">
+      {modal.open && (
+        <AdminModal
+          title={modal.editingId ? 'Yangilikni tahrirlash' : "Yangi yangilik qo'shish"}
+          onRequestClose={modal.requestClose}
+          width={760}
+        >
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="modal-body">
+              <ImageField
+                id="news-image"
+                label="Rasm"
+                folder="news"
+                url={form.imageUrl}
+                fileId={form.imageId}
+                onChange={(v) => setForm((f) => ({ ...f, imageUrl: v.url, imageId: v.fileId }))}
+                tracker={modal.tracker}
+                onUploadingChange={modal.setUploading}
+              />
+
+              <div className="form-grid form-grid-3">
                 <div className="form-group">
-                  <label>Rasm</label>
-                  <div className="image-uploader">
+                  <label htmlFor="news-category">Kategoriya</label>
+                  <select
+                    id="news-category"
+                    className="form-control"
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  >
+                    {NEWS_CATEGORIES.map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="news-status">Holati</label>
+                  <select
+                    id="news-status"
+                    className="form-control"
+                    value={form.status}
+                    onChange={(e) => setForm({ ...form, status: e.target.value })}
+                  >
+                    {NEWS_STATUSES.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="news-published">Nashr sanasi</label>
+                  <input
+                    id="news-published"
+                    type="date"
+                    className="form-control"
+                    value={form.publishedDate}
+                    aria-describedby="news-published-hint"
+                    onChange={(e) => setForm({ ...form, publishedDate: e.target.value })}
+                  />
+                  <small id="news-published-hint" className="form-hint">
+                    Bo&apos;sh qoldirilsa, nashr qilingan vaqt avtomatik qo&apos;yiladi
+                  </small>
+                </div>
+              </div>
+
+              <LangTabs idPrefix="news" active={activeLang} onChange={setActiveLang} />
+
+              {LANGS.map((l) => (
+                <LangPanel key={l} idPrefix="news" lang={l} active={activeLang}>
+                  <div className="form-group">
+                    <label htmlFor={`news-title-${l}`}>
+                      Sarlavha ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}
+                    </label>
                     <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFile(e.target.files?.[0])}
+                      id={`news-title-${l}`}
+                      type="text"
+                      className="form-control"
+                      required={l === 'uz'}
+                      value={form.titles[l]}
+                      onChange={(e) =>
+                        setForm({ ...form, titles: { ...form.titles, [l]: e.target.value } })
+                      }
                     />
-                    {form.imageUrl && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={form.imageUrl} alt="" style={{ maxWidth: '100%', maxHeight: 240, objectFit: 'contain', borderRadius: 8, marginTop: 12 }} />
-                    )}
-                    {uploadPct !== null && (
-                      <div style={{ marginTop: 8 }}>
-                        <div style={{ background: '#E2E8F0', borderRadius: 4, overflow: 'hidden', height: 6 }}>
-                          <div style={{ background: '#3B82F6', height: '100%', width: `${uploadPct}%`, transition: 'width 0.2s' }} />
-                        </div>
-                        <small style={{ color: '#64748B' }}>{uploadPct}%</small>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <div className="form-group">
-                    <label>Kategoriya</label>
-                    <select className="form-control" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} required>
-                      <option value="announcements">E&apos;lon</option>
-                      <option value="events">Tadbir</option>
-                    </select>
                   </div>
                   <div className="form-group">
-                    <label>Holati</label>
-                    <select className="form-control" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} required>
-                      <option value="published">Nashr etilgan</option>
-                      <option value="draft">Qoralama</option>
-                    </select>
+                    <label htmlFor={`news-content-${l}`}>
+                      Matn ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}
+                    </label>
+                    <textarea
+                      id={`news-content-${l}`}
+                      className="form-control"
+                      rows={6}
+                      required={l === 'uz'}
+                      value={form.contents[l]}
+                      onChange={(e) =>
+                        setForm({ ...form, contents: { ...form.contents, [l]: e.target.value } })
+                      }
+                    />
                   </div>
-                </div>
-
-                <div className="lang-tabs-bar">
-                  {LANGS.map((l) => (
-                    <button key={l} type="button" className={'lang-tab ' + (activeLang === l ? 'active' : '')} onClick={() => setActiveLang(l)}>
-                      {LANG_LABELS[l]}
-                    </button>
-                  ))}
-                </div>
-
-                {LANGS.map((l) => (
-                  <div key={l} className={'lang-panel ' + (activeLang === l ? 'active' : '')} style={{ display: activeLang === l ? 'block' : 'none' }}>
-                    <div className="form-group">
-                      <label>Sarlavha ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        required={l === 'uz'}
-                        value={form.titles[l]}
-                        onChange={(e) => setForm({ ...form, titles: { ...form.titles, [l]: e.target.value } })}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Matn ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}</label>
-                      <textarea
-                        className="form-control"
-                        rows={6}
-                        required={l === 'uz'}
-                        value={form.contents[l]}
-                        onChange={(e) => setForm({ ...form, contents: { ...form.contents, [l]: e.target.value } })}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-outline" onClick={closeModal}>Bekor qilish</button>
-                <button type="submit" className="btn btn-primary" disabled={submitting}>
-                  {submitting ? 'Saqlanmoqda...' : 'Saqlash'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+                </LangPanel>
+              ))}
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-outline" onClick={modal.requestClose}>
+                Bekor qilish
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={modal.submitting || modal.uploading}
+              >
+                {modal.submitting
+                  ? 'Saqlanmoqda...'
+                  : modal.uploading
+                    ? 'Rasm yuklanmoqda...'
+                    : 'Saqlash'}
+              </button>
+            </div>
+          </form>
+        </AdminModal>
       )}
     </>
   );

@@ -1,27 +1,23 @@
 'use client';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
+import { AdminModal } from '@/components/admin/AdminModal';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
 import { toast } from '@/components/admin/Toast';
-import { useEscapeKey } from '@/components/admin/useEscapeKey';
-import {
-  subscribeCollection,
-  addDocument,
-  updateDocument,
-  deleteDocument
-} from '@/lib/admin-api';
-
-type Lang = 'uz' | 'ru' | 'kk' | 'en';
-const LANGS: Lang[] = ['uz', 'ru', 'kk', 'en'];
-const LANG_LABELS: Record<Lang, string> = {
-  uz: "🇺🇿 O'zbek",
-  ru: '🇷🇺 Русский',
-  kk: '🏳️ Qaraqalpaq',
-  en: '🇬🇧 English'
-};
+import { toastError } from '@/components/admin/errors';
+import { FAQ_CATEGORIES, FAQ_CATEGORY_LABELS } from '@/components/admin/labels';
+import { LANGS, emptyLangRecord, pickLang, spreadLang, type Lang } from '@/components/admin/lang';
+import { LangPanel, LangTabs } from '@/components/admin/LangTabs';
+import { ListErrorBanner, ListStatus } from '@/components/admin/ListStatus';
+import { moveItem } from '@/components/admin/reorder';
+import { useCollection } from '@/components/admin/useCollection';
+import { useEditorModal } from '@/components/admin/useEditorModal';
+import { parseIntField, validateFields } from '@/components/admin/validate';
+import { addDocument, updateDocument, deleteDocument } from '@/lib/admin-api';
 
 interface FaqItem {
   id: string;
+  createdAt?: string;
   category?: string;
   order?: number;
   question_uz?: string;
@@ -34,110 +30,99 @@ interface FaqItem {
   answer_en?: string;
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  admission: '📝 Qabul',
-  education: "📚 Ta'lim",
-  general: '💬 Umumiy'
-};
-
 interface FormState {
   category: string;
-  order: number;
+  order: string;
   questions: Record<Lang, string>;
   answers: Record<Lang, string>;
 }
 
-const emptyForm = (): FormState => ({
+const emptyForm = (order = 0): FormState => ({
   category: 'general',
-  order: 0,
-  questions: { uz: '', ru: '', kk: '', en: '' },
-  answers: { uz: '', ru: '', kk: '', en: '' }
+  order: String(order),
+  questions: emptyLangRecord(),
+  answers: emptyLangRecord(),
 });
 
-export default function FaqAdminPage() {
-  const [items, setItems] = useState<FaqItem[]>([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [activeLang, setActiveLang] = useState<Lang>('uz');
-  const [form, setForm] = useState<FormState>(emptyForm());
-  const [submitting, setSubmitting] = useState(false);
+const byOrder = (a: FaqItem, b: FaqItem) =>
+  (a.order ?? 0) - (b.order ?? 0) || (a.createdAt || '').localeCompare(b.createdAt || '');
 
-  useEffect(() => {
-    const unsub = subscribeCollection<FaqItem>('faq', (data) => {
-      data.sort((a, b) => (a.order || 0) - (b.order || 0));
-      setItems(data);
-    });
-    return () => unsub();
-  }, []);
+export default function FaqAdminPage() {
+  const list = useCollection<FaqItem>('faq', { orderBy: 'order', direction: 'asc', sort: byOrder });
+  const { items } = list;
+  const modal = useEditorModal<FormState>(emptyForm);
+  const { form, setForm } = modal;
+  const [activeLang, setActiveLang] = useState<Lang>('uz');
+  const [search, setSearch] = useState('');
+  const [reordering, setReordering] = useState(false);
+
+  const q = search.trim().toLowerCase();
+  const filtered = q
+    ? items.filter((item) =>
+        LANGS.some(
+          (l) =>
+            (item[`question_${l}`] || '').toLowerCase().includes(q) ||
+            (item[`answer_${l}`] || '').toLowerCase().includes(q)
+        )
+      )
+    : items;
 
   const openCreate = () => {
-    setEditingId(null);
-    setForm(emptyForm());
+    const maxOrder = items.reduce((m, i) => Math.max(m, i.order ?? 0), -1);
     setActiveLang('uz');
-    setModalOpen(true);
+    modal.openWith(null, emptyForm(maxOrder + 1));
   };
 
   const openEdit = (item: FaqItem) => {
-    setEditingId(item.id);
-    setForm({
-      category: item.category || 'general',
-      order: item.order || 0,
-      questions: {
-        uz: item.question_uz || '',
-        ru: item.question_ru || '',
-        kk: item.question_kk || '',
-        en: item.question_en || ''
-      },
-      answers: {
-        uz: item.answer_uz || '',
-        ru: item.answer_ru || '',
-        kk: item.answer_kk || '',
-        en: item.answer_en || ''
-      }
-    });
     setActiveLang('uz');
-    setModalOpen(true);
+    modal.openWith(item.id, {
+      category: item.category || 'general',
+      order: String(item.order ?? 0),
+      questions: pickLang(item, 'question'),
+      answers: pickLang(item, 'answer'),
+    });
   };
-
-  const closeModal = () => {
-    setModalOpen(false);
-    setEditingId(null);
-  };
-
-  useEscapeKey(modalOpen, closeModal);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!form.questions.uz.trim() || !form.answers.uz.trim()) {
-      toast.error('UZ savol va javob majburiy');
-      return;
-    }
-    setSubmitting(true);
+    const valid = validateFields(
+      [
+        {
+          valid: !!form.questions.uz.trim(),
+          fieldId: 'faq-question-uz',
+          message: "O'zbek tilida savol majburiy",
+          lang: 'uz',
+        },
+        {
+          valid: !!form.answers.uz.trim(),
+          fieldId: 'faq-answer-uz',
+          message: "O'zbek tilida javob majburiy",
+          lang: 'uz',
+        },
+      ],
+      setActiveLang
+    );
+    if (!valid) return;
+    modal.setSubmitting(true);
     const data = {
       category: form.category,
-      order: form.order,
-      question_uz: form.questions.uz.trim(),
-      question_ru: form.questions.ru.trim(),
-      question_kk: form.questions.kk.trim(),
-      question_en: form.questions.en.trim(),
-      answer_uz: form.answers.uz.trim(),
-      answer_ru: form.answers.ru.trim(),
-      answer_kk: form.answers.kk.trim(),
-      answer_en: form.answers.en.trim()
+      order: parseIntField(form.order, 0),
+      ...spreadLang('question', form.questions),
+      ...spreadLang('answer', form.answers),
     };
     try {
-      if (editingId) {
-        await updateDocument('faq', editingId, data);
+      if (modal.editingId) {
+        await updateDocument('faq', modal.editingId, data);
         toast.success('Savol yangilandi');
       } else {
         await addDocument('faq', data);
         toast.success("Savol qo'shildi");
       }
-      closeModal();
+      modal.closeSaved();
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     } finally {
-      setSubmitting(false);
+      modal.setSubmitting(false);
     }
   };
 
@@ -146,16 +131,23 @@ export default function FaqAdminPage() {
       title: "O'chirish",
       message: "Savolni o'chirmoqchimisiz?",
       confirmText: "Ha, o'chirish",
-      danger: true
+      danger: true,
     });
     if (!ok) return;
     try {
       await deleteDocument('faq', item.id);
       toast.success("Savol o'chirildi");
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     }
   };
+
+  const move = async (index: number, delta: -1 | 1) => {
+    setReordering(true);
+    await moveItem('faq', items, index, delta, list.mutate, list.reload);
+    setReordering(false);
+  };
+  const canReorder = !q && !reordering;
 
   return (
     <>
@@ -164,8 +156,21 @@ export default function FaqAdminPage() {
         <div className="admin-card">
           <div className="card-header">
             <h2 className="card-title">Savollar</h2>
-            <button className="btn btn-primary" onClick={openCreate}>+ Qo&apos;shish</button>
+            <button type="button" className="btn btn-primary" onClick={openCreate}>
+              + Qo&apos;shish
+            </button>
           </div>
+          <div className="admin-toolbar">
+            <input
+              type="search"
+              className="form-control toolbar-search"
+              placeholder="Savol yoki javob bo'yicha qidirish..."
+              aria-label="Savollarni qidirish"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <ListErrorBanner error={list.error} hasItems={items.length > 0} onRetry={list.reload} />
           <div className="table-responsive">
             <table className="admin-table">
               <thead>
@@ -177,99 +182,167 @@ export default function FaqAdminPage() {
                 </tr>
               </thead>
               <tbody>
-                {items.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} style={{ textAlign: 'center', padding: 40, color: '#94A3B8' }}>
-                      Hali savollar yo&apos;q.
-                    </td>
-                  </tr>
-                ) : (
-                  items.map((item) => (
+                <ListStatus
+                  colSpan={4}
+                  loading={list.loading}
+                  error={list.error}
+                  total={items.length}
+                  shown={filtered.length}
+                  emptyText="Hali savollar yo'q."
+                  onRetry={list.reload}
+                />
+                {filtered.map((item) => {
+                  const index = items.indexOf(item);
+                  return (
                     <tr key={item.id}>
-                      <td><strong>{item.question_uz || '—'}</strong></td>
-                      <td><span className="badge badge-warning">{CATEGORY_LABELS[item.category || ''] || item.category}</span></td>
-                      <td>{item.order || 0}</td>
+                      <td>
+                        <strong>{item.question_uz || '—'}</strong>
+                      </td>
+                      <td>
+                        <span className="badge badge-warning">
+                          {FAQ_CATEGORY_LABELS[item.category || ''] || item.category}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="order-cell">
+                          <span>{item.order ?? 0}</span>
+                          <button
+                            type="button"
+                            className="action-btn"
+                            onClick={() => move(index, -1)}
+                            disabled={!canReorder || index === 0}
+                            aria-label="Yuqoriga ko'chirish"
+                            title={q ? "Qidiruvni tozalab tartiblang" : "Yuqoriga"}
+                          >
+                            ↑
+                          </button>
+                          <button
+                            type="button"
+                            className="action-btn"
+                            onClick={() => move(index, 1)}
+                            disabled={!canReorder || index === items.length - 1}
+                            aria-label="Pastga ko'chirish"
+                            title={q ? "Qidiruvni tozalab tartiblang" : 'Pastga'}
+                          >
+                            ↓
+                          </button>
+                        </div>
+                      </td>
                       <td>
                         <div className="table-actions">
-                          <button className="action-btn edit" onClick={() => openEdit(item)} title="Tahrirlash">✍️</button>
-                          <button className="action-btn delete" onClick={() => handleDelete(item)} title="O'chirish">🗑️</button>
+                          <button
+                            type="button"
+                            className="action-btn edit"
+                            onClick={() => openEdit(item)}
+                            title="Tahrirlash"
+                            aria-label="Tahrirlash"
+                          >
+                            ✍️
+                          </button>
+                          <button
+                            type="button"
+                            className="action-btn delete"
+                            onClick={() => handleDelete(item)}
+                            title="O'chirish"
+                            aria-label="O'chirish"
+                          >
+                            🗑️
+                          </button>
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
+                  );
+                })}
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      {modalOpen && (
-        <div className="modal-overlay active" onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}>
-          <div className="modal" style={{ maxWidth: 720 }}>
-            <div className="modal-header">
-              <h3 className="modal-title">{editingId ? 'Savolni tahrirlash' : "Yangi savol qo'shish"}</h3>
-              <button className="modal-close" type="button" onClick={closeModal}>×</button>
+      {modal.open && (
+        <AdminModal
+          title={modal.editingId ? 'Savolni tahrirlash' : "Yangi savol qo'shish"}
+          onRequestClose={modal.requestClose}
+          width={720}
+        >
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="modal-body">
+              <div className="form-grid form-grid-2">
+                <div className="form-group">
+                  <label htmlFor="faq-category">Kategoriya</label>
+                  <select
+                    id="faq-category"
+                    className="form-control"
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  >
+                    {FAQ_CATEGORIES.map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="faq-order">Tartib</label>
+                  <input
+                    id="faq-order"
+                    type="number"
+                    inputMode="numeric"
+                    className="form-control"
+                    value={form.order}
+                    onChange={(e) => setForm({ ...form, order: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <LangTabs idPrefix="faq" active={activeLang} onChange={setActiveLang} />
+
+              {LANGS.map((l) => (
+                <LangPanel key={l} idPrefix="faq" lang={l} active={activeLang}>
+                  <div className="form-group">
+                    <label htmlFor={`faq-question-${l}`}>
+                      Savol ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}
+                    </label>
+                    <input
+                      id={`faq-question-${l}`}
+                      type="text"
+                      className="form-control"
+                      required={l === 'uz'}
+                      value={form.questions[l]}
+                      onChange={(e) =>
+                        setForm({ ...form, questions: { ...form.questions, [l]: e.target.value } })
+                      }
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor={`faq-answer-${l}`}>
+                      Javob ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}
+                    </label>
+                    <textarea
+                      id={`faq-answer-${l}`}
+                      className="form-control"
+                      rows={5}
+                      required={l === 'uz'}
+                      value={form.answers[l]}
+                      onChange={(e) =>
+                        setForm({ ...form, answers: { ...form.answers, [l]: e.target.value } })
+                      }
+                    />
+                  </div>
+                </LangPanel>
+              ))}
             </div>
-            <form onSubmit={handleSubmit}>
-              <div className="modal-body">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <div className="form-group">
-                    <label>Kategoriya</label>
-                    <select className="form-control" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-                      <option value="admission">📝 Qabul</option>
-                      <option value="education">📚 Ta&apos;lim</option>
-                      <option value="general">💬 Umumiy</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Tartib</label>
-                    <input type="number" className="form-control" value={form.order} onChange={(e) => setForm({ ...form, order: parseInt(e.target.value, 10) || 0 })} />
-                  </div>
-                </div>
-
-                <div className="lang-tabs-bar">
-                  {LANGS.map((l) => (
-                    <button key={l} type="button" className={'lang-tab ' + (activeLang === l ? 'active' : '')} onClick={() => setActiveLang(l)}>
-                      {LANG_LABELS[l]}
-                    </button>
-                  ))}
-                </div>
-
-                {LANGS.map((l) => (
-                  <div key={l} style={{ display: activeLang === l ? 'block' : 'none' }}>
-                    <div className="form-group">
-                      <label>Savol ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        required={l === 'uz'}
-                        value={form.questions[l]}
-                        onChange={(e) => setForm({ ...form, questions: { ...form.questions, [l]: e.target.value } })}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Javob ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}</label>
-                      <textarea
-                        className="form-control"
-                        rows={5}
-                        required={l === 'uz'}
-                        value={form.answers[l]}
-                        onChange={(e) => setForm({ ...form, answers: { ...form.answers, [l]: e.target.value } })}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-outline" onClick={closeModal}>Bekor qilish</button>
-                <button type="submit" className="btn btn-primary" disabled={submitting}>
-                  {submitting ? 'Saqlanmoqda...' : 'Saqlash'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-outline" onClick={modal.requestClose}>
+                Bekor qilish
+              </button>
+              <button type="submit" className="btn btn-primary" disabled={modal.submitting}>
+                {modal.submitting ? 'Saqlanmoqda...' : 'Saqlash'}
+              </button>
+            </div>
+          </form>
+        </AdminModal>
       )}
     </>
   );

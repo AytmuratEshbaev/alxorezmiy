@@ -1,25 +1,20 @@
 'use client';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
+import { AdminModal } from '@/components/admin/AdminModal';
 import { confirmDialog } from '@/components/admin/ConfirmDialog';
+import { ImageField } from '@/components/admin/ImageField';
 import { toast } from '@/components/admin/Toast';
-import { useEscapeKey } from '@/components/admin/useEscapeKey';
-import {
-  subscribeCollection,
-  addDocument,
-  updateDocument,
-  deleteDocument,
-  uploadImage
-} from '@/lib/admin-api';
-
-type Lang = 'uz' | 'ru' | 'kk' | 'en';
-const LANGS: Lang[] = ['uz', 'ru', 'kk', 'en'];
-const LANG_LABELS: Record<Lang, string> = {
-  uz: "🇺🇿 O'zbek",
-  ru: '🇷🇺 Русский',
-  kk: '🏳️ Qaraqalpaq',
-  en: '🇬🇧 English'
-};
+import { toastError } from '@/components/admin/errors';
+import { ACHIEVEMENT_TYPES } from '@/components/admin/labels';
+import { LANGS, emptyLangRecord, pickLang, spreadLang, type Lang } from '@/components/admin/lang';
+import { LangPanel, LangTabs } from '@/components/admin/LangTabs';
+import { ListErrorBanner, ListStatus } from '@/components/admin/ListStatus';
+import { moveItem } from '@/components/admin/reorder';
+import { useCollection } from '@/components/admin/useCollection';
+import { useEditorModal } from '@/components/admin/useEditorModal';
+import { parseIntField, validateFields } from '@/components/admin/validate';
+import { addDocument, updateDocument, deleteDocument } from '@/lib/admin-api';
 
 interface Achievement {
   type: string;
@@ -29,132 +24,114 @@ interface Achievement {
 
 interface Teacher {
   id: string;
+  createdAt?: string;
   name_uz?: string;
   name_ru?: string;
   name_kk?: string;
   name_en?: string;
-  subject?: string;
+  subject_uz?: string;
+  subject_ru?: string;
+  subject_kk?: string;
+  subject_en?: string;
   category?: string;
   experience?: number;
   photo?: string;
   photoId?: string;
   achievements?: Achievement[];
+  order?: number;
 }
-
-const ACHIEVEMENT_TYPES = [
-  { value: 'olympiad', label: '🏆 Olimpiada' },
-  { value: 'certificate', label: '📜 Sertifikat' },
-  { value: 'competition', label: '🥇 Musobaqa' },
-  { value: 'diploma', label: '🎓 Diplom' },
-  { value: 'other', label: '⭐ Boshqa' }
-];
 
 interface FormState {
   names: Record<Lang, string>;
-  subject: string;
+  subjects: Record<Lang, string>;
   category: string;
-  experience: number;
+  experience: string;
+  order: string;
   photoUrl: string;
   photoId: string;
   achievements: Achievement[];
 }
 
-const emptyForm = (): FormState => ({
-  names: { uz: '', ru: '', kk: '', en: '' },
-  subject: '',
+const emptyForm = (order = 0): FormState => ({
+  names: emptyLangRecord(),
+  subjects: emptyLangRecord(),
   category: '',
-  experience: 0,
+  experience: '0',
+  order: String(order),
   photoUrl: '',
   photoId: '',
-  achievements: []
+  achievements: [],
 });
 
+/** Ommaviy sayt bilan bir xil: order, keyin name_uz. */
+const byOrderName = (a: Teacher, b: Teacher) =>
+  (a.order ?? 0) - (b.order ?? 0) || (a.name_uz || '').localeCompare(b.name_uz || '', 'uz');
+
 export default function TeachersAdminPage() {
-  const [items, setItems] = useState<Teacher[]>([]);
-  const [search, setSearch] = useState('');
-  const [filterCat, setFilterCat] = useState('all');
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const list = useCollection<Teacher>('teachers', {
+    orderBy: 'order',
+    direction: 'asc',
+    sort: byOrderName,
+  });
+  const { items } = list;
+  const modal = useEditorModal<FormState>(emptyForm);
+  const { form, setForm } = modal;
   const [activeLang, setActiveLang] = useState<Lang>('uz');
-  const [form, setForm] = useState<FormState>(emptyForm());
-  const [submitting, setSubmitting] = useState(false);
-  const [uploadPct, setUploadPct] = useState<number | null>(null);
+  const [search, setSearch] = useState('');
+  const [filterCat, setFilterCat] = useState('');
+  const [reordering, setReordering] = useState(false);
 
-  useEffect(() => {
-    const unsub = subscribeCollection<Teacher>('teachers', (data) => {
-      data.sort((a, b) => (a.name_uz || '').localeCompare(b.name_uz || '', 'uz'));
-      setItems(data);
-    });
-    return () => unsub();
-  }, []);
-
+  const q = search.trim().toLowerCase();
+  const cat = filterCat.trim().toLowerCase();
   const filtered = items.filter((t) => {
-    if (search) {
-      const q = search.toLowerCase();
-      if (!(t.name_uz || '').toLowerCase().includes(q) && !(t.subject || '').toLowerCase().includes(q)) return false;
-    }
-    if (filterCat !== 'all' && !(t.category || '').toLowerCase().includes(filterCat.toLowerCase()))
+    if (
+      q &&
+      !LANGS.some(
+        (l) =>
+          (t[`name_${l}`] || '').toLowerCase().includes(q) ||
+          (t[`subject_${l}`] || '').toLowerCase().includes(q)
+      )
+    )
       return false;
+    if (cat && !(t.category || '').toLowerCase().includes(cat)) return false;
     return true;
   });
+  const isFiltered = !!(q || cat);
 
   const openCreate = () => {
-    setEditingId(null);
-    setForm(emptyForm());
+    const maxOrder = items.reduce((m, i) => Math.max(m, i.order ?? 0), -1);
     setActiveLang('uz');
-    setModalOpen(true);
+    modal.openWith(null, emptyForm(maxOrder + 1));
   };
 
   const openEdit = (t: Teacher) => {
-    setEditingId(t.id);
-    setForm({
-      names: {
-        uz: t.name_uz || '',
-        ru: t.name_ru || '',
-        kk: t.name_kk || '',
-        en: t.name_en || ''
-      },
-      subject: t.subject || '',
+    setActiveLang('uz');
+    modal.openWith(t.id, {
+      names: pickLang(t, 'name'),
+      subjects: pickLang(t, 'subject'),
       category: t.category || '',
-      experience: t.experience || 0,
+      experience: String(t.experience ?? 0),
+      order: String(t.order ?? 0),
       photoUrl: t.photo || '',
       photoId: t.photoId || '',
-      achievements: t.achievements ? [...t.achievements] : []
+      achievements: Array.isArray(t.achievements) ? t.achievements.map((a) => ({ ...a })) : [],
     });
-    setActiveLang('uz');
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-    setEditingId(null);
-    setUploadPct(null);
-  };
-
-  useEscapeKey(modalOpen, closeModal);
-
-  const handleFile = async (file?: File) => {
-    if (!file) return;
-    setUploadPct(0);
-    try {
-      const res = await uploadImage(file, 'teachers', (pct) => setUploadPct(pct));
-      setForm((f) => ({ ...f, photoUrl: res.url, photoId: res.fileId }));
-      setUploadPct(100);
-      setTimeout(() => setUploadPct(null), 1200);
-    } catch (err) {
-      toast.error('Rasm yuklashda xato: ' + (err as Error).message);
-      setUploadPct(null);
-    }
   };
 
   const addAchievement = () => {
-    setForm((f) => ({ ...f, achievements: [...f.achievements, { type: 'olympiad', title: '', year: new Date().getFullYear() }] }));
+    setForm((f) => ({
+      ...f,
+      achievements: [
+        ...f.achievements,
+        { type: 'olympiad', title: '', year: new Date().getFullYear() },
+      ],
+    }));
   };
 
   const updateAchievement = (idx: number, patch: Partial<Achievement>) => {
     setForm((f) => ({
       ...f,
-      achievements: f.achievements.map((a, i) => (i === idx ? { ...a, ...patch } : a))
+      achievements: f.achievements.map((a, i) => (i === idx ? { ...a, ...patch } : a)),
     }));
   };
 
@@ -164,40 +141,57 @@ export default function TeachersAdminPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!form.names.uz.trim()) {
-      toast.error("O'zbek tilida ism majburiy");
-      return;
-    }
-    if (!form.subject.trim()) {
-      toast.error('Fan majburiy');
-      return;
-    }
-    setSubmitting(true);
+    if (modal.uploading) return;
+    const experience = parseIntField(form.experience, 0);
+    const valid = validateFields(
+      [
+        {
+          valid: !!form.names.uz.trim(),
+          fieldId: 'teacher-name-uz',
+          message: "O'zbek tilida ism majburiy",
+          lang: 'uz',
+        },
+        {
+          valid: !!form.subjects.uz.trim(),
+          fieldId: 'teacher-subject-uz',
+          message: "O'zbek tilida fan majburiy",
+          lang: 'uz',
+        },
+        {
+          valid: experience >= 0,
+          fieldId: 'teacher-experience',
+          message: "Tajriba manfiy bo'lishi mumkin emas",
+        },
+      ],
+      setActiveLang
+    );
+    if (!valid) return;
+    modal.setSubmitting(true);
     const data = {
-      name_uz: form.names.uz.trim(),
-      name_ru: form.names.ru.trim(),
-      name_kk: form.names.kk.trim(),
-      name_en: form.names.en.trim(),
-      subject: form.subject.trim(),
+      ...spreadLang('name', form.names),
+      ...spreadLang('subject', form.subjects),
       category: form.category.trim(),
-      experience: form.experience,
+      experience,
+      order: parseIntField(form.order, 0),
       photo: form.photoUrl,
       photoId: form.photoId,
-      achievements: form.achievements.filter((a) => a.title.trim())
+      achievements: form.achievements
+        .filter((a) => a.title.trim())
+        .map((a) => ({ ...a, title: a.title.trim() })),
     };
     try {
-      if (editingId) {
-        await updateDocument('teachers', editingId, data);
+      if (modal.editingId) {
+        await updateDocument('teachers', modal.editingId, data);
         toast.success("O'qituvchi yangilandi");
       } else {
         await addDocument('teachers', data);
         toast.success("O'qituvchi qo'shildi");
       }
-      closeModal();
+      modal.closeSaved();
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     } finally {
-      setSubmitting(false);
+      modal.setSubmitting(false);
     }
   };
 
@@ -206,16 +200,24 @@ export default function TeachersAdminPage() {
       title: "O'chirish",
       message: `"${t.name_uz}" o'qituvchisini o'chirmoqchimisiz?`,
       confirmText: "Ha, o'chirish",
-      danger: true
+      danger: true,
     });
     if (!ok) return;
     try {
       await deleteDocument('teachers', t.id);
       toast.success("O'qituvchi o'chirildi");
     } catch (err) {
-      toast.error('Xatolik: ' + (err as Error).message);
+      toastError(err);
     }
   };
+
+  const move = async (index: number, delta: -1 | 1) => {
+    setReordering(true);
+    await moveItem('teachers', items, index, delta, list.mutate, list.reload);
+    setReordering(false);
+  };
+  const canReorder = !isFiltered && !reordering;
+  const reorderHint = isFiltered ? 'Filtrni tozalab tartiblang' : undefined;
 
   return (
     <>
@@ -224,26 +226,29 @@ export default function TeachersAdminPage() {
         <div className="admin-card">
           <div className="card-header">
             <h2 className="card-title">Barcha o&apos;qituvchilar</h2>
-            <button className="btn btn-primary" onClick={openCreate}>+ Qo&apos;shish</button>
+            <button type="button" className="btn btn-primary" onClick={openCreate}>
+              + Qo&apos;shish
+            </button>
           </div>
-          <div className="admin-toolbar" style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+          <div className="admin-toolbar">
             <input
-              type="text"
-              className="form-control"
+              type="search"
+              className="form-control toolbar-search"
               placeholder="Ism yoki fan bo'yicha qidirish..."
-              style={{ flex: 1, minWidth: 240, maxWidth: 400 }}
+              aria-label="O'qituvchilarni qidirish"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <input
               type="text"
-              className="form-control"
+              className="form-control toolbar-select"
               placeholder="Kategoriya filtri"
-              style={{ maxWidth: 200 }}
-              value={filterCat === 'all' ? '' : filterCat}
-              onChange={(e) => setFilterCat(e.target.value.trim() ? e.target.value : 'all')}
+              aria-label="Kategoriya filtri"
+              value={filterCat}
+              onChange={(e) => setFilterCat(e.target.value)}
             />
           </div>
+          <ListErrorBanner error={list.error} hasItems={items.length > 0} onRetry={list.reload} />
           <div className="table-responsive">
             <table className="admin-table">
               <thead>
@@ -254,154 +259,274 @@ export default function TeachersAdminPage() {
                   <th>Kategoriya</th>
                   <th>Tajriba</th>
                   <th>Yutuqlar</th>
+                  <th>Tartib</th>
                   <th>Amallar</th>
                 </tr>
               </thead>
               <tbody>
-                {filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} style={{ textAlign: 'center', padding: 40, color: '#94A3B8' }}>
-                      {items.length === 0 ? "Hali o'qituvchilar yo'q." : 'Topilmadi'}
-                    </td>
-                  </tr>
-                ) : (
-                  filtered.map((t) => {
-                    const ach = Array.isArray(t.achievements) ? t.achievements.length : 0;
-                    return (
-                      <tr key={t.id}>
-                        <td style={{ width: 60 }}>
-                          {t.photo ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={t.photo} alt="" style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover' }} />
-                          ) : (
-                            <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👤</div>
-                          )}
-                        </td>
-                        <td><strong>{t.name_uz || '—'}</strong></td>
-                        <td>{t.subject || '—'}</td>
-                        <td><span className="badge badge-warning">{t.category || '—'}</span></td>
-                        <td>{t.experience || 0} yil</td>
-                        <td>{ach > 0 ? <span className="badge badge-success">{ach}</span> : '—'}</td>
-                        <td>
-                          <div className="table-actions">
-                            <button className="action-btn edit" onClick={() => openEdit(t)} title="Tahrirlash">✍️</button>
-                            <button className="action-btn delete" onClick={() => handleDelete(t)} title="O'chirish">🗑️</button>
+                <ListStatus
+                  colSpan={8}
+                  loading={list.loading}
+                  error={list.error}
+                  total={items.length}
+                  shown={filtered.length}
+                  emptyText="Hali o'qituvchilar yo'q."
+                  onRetry={list.reload}
+                />
+                {filtered.map((t) => {
+                  const ach = Array.isArray(t.achievements) ? t.achievements.length : 0;
+                  const index = items.indexOf(t);
+                  return (
+                    <tr key={t.id}>
+                      <td className="thumb-cell">
+                        {t.photo ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={t.photo}
+                            alt=""
+                            className="thumb round"
+                            width={48}
+                            height={48}
+                          />
+                        ) : (
+                          <div className="thumb round thumb-placeholder" aria-hidden="true">
+                            👤
                           </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
+                        )}
+                      </td>
+                      <td>
+                        <strong>{t.name_uz || '—'}</strong>
+                      </td>
+                      <td>{t.subject_uz || '—'}</td>
+                      <td>
+                        <span className="badge badge-warning">{t.category || '—'}</span>
+                      </td>
+                      <td>{t.experience || 0} yil</td>
+                      <td>{ach > 0 ? <span className="badge badge-success">{ach}</span> : '—'}</td>
+                      <td>
+                        <div className="order-cell">
+                          <span>{t.order ?? 0}</span>
+                          <button
+                            type="button"
+                            className="action-btn"
+                            onClick={() => move(index, -1)}
+                            disabled={!canReorder || index === 0}
+                            aria-label={`${t.name_uz || ''} — yuqoriga ko'chirish`}
+                            title={reorderHint ?? 'Yuqoriga'}
+                          >
+                            ↑
+                          </button>
+                          <button
+                            type="button"
+                            className="action-btn"
+                            onClick={() => move(index, 1)}
+                            disabled={!canReorder || index === items.length - 1}
+                            aria-label={`${t.name_uz || ''} — pastga ko'chirish`}
+                            title={reorderHint ?? 'Pastga'}
+                          >
+                            ↓
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="table-actions">
+                          <button
+                            type="button"
+                            className="action-btn edit"
+                            onClick={() => openEdit(t)}
+                            title="Tahrirlash"
+                            aria-label={`${t.name_uz || ''} — tahrirlash`}
+                          >
+                            ✍️
+                          </button>
+                          <button
+                            type="button"
+                            className="action-btn delete"
+                            onClick={() => handleDelete(t)}
+                            title="O'chirish"
+                            aria-label={`${t.name_uz || ''} — o'chirish`}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      {modalOpen && (
-        <div className="modal-overlay active" onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}>
-          <div className="modal" style={{ maxWidth: 760 }}>
-            <div className="modal-header">
-              <h3 className="modal-title">{editingId ? "O'qituvchini tahrirlash" : "Yangi o'qituvchi qo'shish"}</h3>
-              <button className="modal-close" type="button" onClick={closeModal}>×</button>
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div className="modal-body">
+      {modal.open && (
+        <AdminModal
+          title={modal.editingId ? "O'qituvchini tahrirlash" : "Yangi o'qituvchi qo'shish"}
+          onRequestClose={modal.requestClose}
+          width={760}
+        >
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="modal-body">
+              <ImageField
+                id="teacher-photo"
+                label="Foto"
+                folder="teachers"
+                shape="round"
+                url={form.photoUrl}
+                fileId={form.photoId}
+                onChange={(v) => setForm((f) => ({ ...f, photoUrl: v.url, photoId: v.fileId }))}
+                tracker={modal.tracker}
+                onUploadingChange={modal.setUploading}
+              />
+
+              <div className="form-grid form-grid-3">
                 <div className="form-group">
-                  <label>Foto</label>
-                  <input type="file" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} />
-                  {form.photoUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={form.photoUrl} alt="" style={{ maxWidth: 160, maxHeight: 160, borderRadius: '50%', objectFit: 'cover', marginTop: 12, display: 'block' }} />
-                  )}
-                  {uploadPct !== null && (
-                    <div style={{ marginTop: 8 }}>
-                      <div style={{ background: '#E2E8F0', borderRadius: 4, height: 6 }}>
-                        <div style={{ background: '#3B82F6', height: '100%', width: `${uploadPct}%`, transition: 'width 0.2s' }} />
-                      </div>
-                      <small style={{ color: '#64748B' }}>{uploadPct}%</small>
-                    </div>
-                  )}
+                  <label htmlFor="teacher-category">Kategoriya</label>
+                  <input
+                    id="teacher-category"
+                    type="text"
+                    className="form-control"
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  />
                 </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-                  <div className="form-group">
-                    <label>Fan *</label>
-                    <input type="text" className="form-control" required value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} />
-                  </div>
-                  <div className="form-group">
-                    <label>Kategoriya</label>
-                    <input type="text" className="form-control" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
-                  </div>
-                  <div className="form-group">
-                    <label>Tajriba (yil)</label>
-                    <input type="number" className="form-control" min={0} value={form.experience} onChange={(e) => setForm({ ...form, experience: parseInt(e.target.value, 10) || 0 })} />
-                  </div>
+                <div className="form-group">
+                  <label htmlFor="teacher-experience">Tajriba (yil)</label>
+                  <input
+                    id="teacher-experience"
+                    type="number"
+                    inputMode="numeric"
+                    className="form-control"
+                    min={0}
+                    value={form.experience}
+                    onChange={(e) => setForm({ ...form, experience: e.target.value })}
+                  />
                 </div>
-
-                <div className="lang-tabs-bar">
-                  {LANGS.map((l) => (
-                    <button key={l} type="button" className={'lang-tab ' + (activeLang === l ? 'active' : '')} onClick={() => setActiveLang(l)}>
-                      {LANG_LABELS[l]}
-                    </button>
-                  ))}
+                <div className="form-group">
+                  <label htmlFor="teacher-order">Tartib</label>
+                  <input
+                    id="teacher-order"
+                    type="number"
+                    inputMode="numeric"
+                    className="form-control"
+                    value={form.order}
+                    onChange={(e) => setForm({ ...form, order: e.target.value })}
+                  />
                 </div>
+              </div>
 
-                {LANGS.map((l) => (
-                  <div key={l} style={{ display: activeLang === l ? 'block' : 'none' }}>
+              <LangTabs idPrefix="teacher" active={activeLang} onChange={setActiveLang} />
+
+              {LANGS.map((l) => (
+                <LangPanel key={l} idPrefix="teacher" lang={l} active={activeLang}>
+                  <div className="form-grid form-grid-2">
                     <div className="form-group">
-                      <label>Ism ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}</label>
+                      <label htmlFor={`teacher-name-${l}`}>
+                        Ism ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}
+                      </label>
                       <input
+                        id={`teacher-name-${l}`}
                         type="text"
                         className="form-control"
                         required={l === 'uz'}
                         value={form.names[l]}
-                        onChange={(e) => setForm({ ...form, names: { ...form.names, [l]: e.target.value } })}
+                        onChange={(e) =>
+                          setForm({ ...form, names: { ...form.names, [l]: e.target.value } })
+                        }
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor={`teacher-subject-${l}`}>
+                        Fan ({l.toUpperCase()}){l === 'uz' ? ' *' : ''}
+                      </label>
+                      <input
+                        id={`teacher-subject-${l}`}
+                        type="text"
+                        className="form-control"
+                        required={l === 'uz'}
+                        value={form.subjects[l]}
+                        onChange={(e) =>
+                          setForm({ ...form, subjects: { ...form.subjects, [l]: e.target.value } })
+                        }
                       />
                     </div>
                   </div>
-                ))}
+                </LangPanel>
+              ))}
 
-                <div className="form-group">
-                  <label>Yutuqlar</label>
-                  <div>
-                    {form.achievements.map((a, idx) => (
-                      <div key={idx} className="achievement-row" style={{ display: 'grid', gridTemplateColumns: '180px 1fr 100px auto', gap: 8, marginBottom: 8 }}>
-                        <select className="form-control" value={a.type} onChange={(e) => updateAchievement(idx, { type: e.target.value })}>
-                          {ACHIEVEMENT_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-                        </select>
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Yutuq nomi"
-                          value={a.title}
-                          onChange={(e) => updateAchievement(idx, { title: e.target.value })}
-                        />
-                        <input
-                          type="number"
-                          className="form-control"
-                          placeholder="Yil"
-                          min={1990}
-                          max={2100}
-                          value={a.year ?? ''}
-                          onChange={(e) => updateAchievement(idx, { year: parseInt(e.target.value, 10) || null })}
-                        />
-                        <button type="button" className="action-btn delete" onClick={() => removeAchievement(idx)}>🗑️</button>
-                      </div>
-                    ))}
-                  </div>
-                  <button type="button" className="btn btn-outline" onClick={addAchievement} style={{ marginTop: 8 }}>+ Yutuq qo&apos;shish</button>
+              <fieldset className="form-group form-fieldset">
+                <legend>Yutuqlar</legend>
+                <div className="achievements-list">
+                  {form.achievements.map((a, idx) => (
+                    <div key={idx} className="achievement-row">
+                      <select
+                        className="form-control achievement-type"
+                        aria-label={`${idx + 1}-yutuq turi`}
+                        value={a.type}
+                        onChange={(e) => updateAchievement(idx, { type: e.target.value })}
+                      >
+                        {ACHIEVEMENT_TYPES.map((t) => (
+                          <option key={t.value} value={t.value}>
+                            {t.label}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        className="form-control achievement-title"
+                        placeholder="Yutuq nomi"
+                        aria-label={`${idx + 1}-yutuq nomi`}
+                        value={a.title}
+                        onChange={(e) => updateAchievement(idx, { title: e.target.value })}
+                      />
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        className="form-control achievement-year"
+                        placeholder="Yil"
+                        aria-label={`${idx + 1}-yutuq yili`}
+                        min={1990}
+                        max={2100}
+                        value={a.year ?? ''}
+                        onChange={(e) =>
+                          updateAchievement(idx, { year: parseInt(e.target.value, 10) || null })
+                        }
+                      />
+                      <button
+                        type="button"
+                        className="achievement-remove"
+                        onClick={() => removeAchievement(idx)}
+                        aria-label={`${idx + 1}-yutuqni o'chirish`}
+                        title="O'chirish"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-outline" onClick={closeModal}>Bekor qilish</button>
-                <button type="submit" className="btn btn-primary" disabled={submitting}>
-                  {submitting ? 'Saqlanmoqda...' : 'Saqlash'}
+                <button type="button" className="add-achievement-btn" onClick={addAchievement}>
+                  + Yutuq qo&apos;shish
                 </button>
-              </div>
-            </form>
-          </div>
-        </div>
+              </fieldset>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-outline" onClick={modal.requestClose}>
+                Bekor qilish
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={modal.submitting || modal.uploading}
+              >
+                {modal.submitting
+                  ? 'Saqlanmoqda...'
+                  : modal.uploading
+                    ? 'Rasm yuklanmoqda...'
+                    : 'Saqlash'}
+              </button>
+            </div>
+          </form>
+        </AdminModal>
       )}
     </>
   );
