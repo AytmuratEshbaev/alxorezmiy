@@ -14,6 +14,7 @@ import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
+import { fileURLToPath } from 'node:url';
 
 const ITERATIONS = 100_000;
 const MIN_LENGTH = 10;
@@ -41,15 +42,19 @@ const sqlStr = (s) => `'${String(s).replace(/'/g, "''")}'`;
 
 const email = (arg('email') || '').trim().toLowerCase();
 const name = (arg('name') || '').trim();
-const target = process.argv.includes('--local') ? '--local' : '--remote';
+const isLocal = process.argv.includes('--local');
+const isRemote = process.argv.includes('--remote');
+// Production'ga tasodifan yozib yubormaslik uchun maqsad aniq ko'rsatilishi shart.
+const target = isLocal && !isRemote ? '--local' : isRemote && !isLocal ? '--remote' : null;
 
-if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !target) {
   console.error(
-    'Foydalanish: npm run admin:create -- --email <email> [--name "Ism"] [--local|--remote]'
+    'Foydalanish: npm run admin:create -- --email <email> [--name "Ism"] (--local | --remote)'
   );
   process.exit(1);
 }
 
+// ADMIN_PASSWORD faqat CI/avtomatlashtirish uchun; qo'lda ishlatsangiz shell tarixidan o'chiring.
 const password = process.env.ADMIN_PASSWORD || (await askHidden(`Parol (${email}): `));
 if (password.length < MIN_LENGTH) {
   console.error(`Parol kamida ${MIN_LENGTH} belgidan iborat bo'lishi kerak.`);
@@ -82,14 +87,20 @@ const dir = mkdtempSync(join(tmpdir(), 'ax-admin-'));
 const file = join(dir, 'admin.sql');
 writeFileSync(file, sql);
 try {
-  const res = spawnSync(
-    'npx',
-    ['wrangler', 'd1', 'execute', 'DB', target, `--file=${file}`, '-y'],
-    {
-      stdio: 'inherit',
-      shell: process.platform === 'win32',
-    }
+  // wrangler to'g'ridan-to'g'ri Node orqali, shell'siz: yo'lda bo'sh joy yoki maxsus belgilar
+  // bo'lsa ham argumentlar buzilmaydi (Windows'da .cmd'ni shell'siz ishga tushirib bo'lmaydi).
+  const wrangler = fileURLToPath(
+    new URL('../node_modules/wrangler/bin/wrangler.js', import.meta.url)
   );
+  const res = spawnSync(
+    process.execPath,
+    [wrangler, 'd1', 'execute', 'DB', target, `--file=${file}`, '-y'],
+    { stdio: 'inherit', shell: false }
+  );
+  if (res.error) {
+    console.error(res.error.message);
+    process.exit(1);
+  }
   if (res.status !== 0) process.exit(res.status ?? 1);
   console.log(`\n✓ Admin tayyor: ${email} (${target === '--local' ? 'lokal' : 'production'} D1)`);
 } finally {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { escapeHtml } from '@/lib/utils';
-import { getDb } from '@/lib/cf';
+import { getDb, runInBackground } from '@/lib/cf';
 import { isSameOrigin, readJson, jsonError } from '@/lib/http';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { verifyTurnstile } from '@/lib/turnstile';
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     console.error('[apply] D1 persist failed:', (err as Error).message);
   }
 
-  const emailSent = await sendAdminEmail({
+  const notification = sendAdminEmail({
     subject: `[Qabul] ${studentName} — ${grade}-sinf`,
     html: emailLayout(
       '🎓 Yangi qabul arizasi — Al-Xorazmiy maktabi',
@@ -79,6 +79,12 @@ export async function POST(req: Request) {
     )
   });
 
-  if (!persisted && !emailSent) return jsonError('Application could not be processed', 503);
+  // Saqlangan bo'lsa — xatni fonda yuboramiz (foydalanuvchi Resend javobini kutmaydi).
+  // Saqlanmagan bo'lsa — xat yagona kanal, natijasini kutamiz.
+  if (persisted) {
+    runInBackground(notification);
+  } else if (!(await notification)) {
+    return jsonError('Application could not be processed', 503);
+  }
   return NextResponse.json({ ok: true });
 }

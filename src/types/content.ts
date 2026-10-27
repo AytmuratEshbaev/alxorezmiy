@@ -15,8 +15,12 @@ export interface News extends LocalizedFields {
   content_kk?: string;
   content_en?: string;
   image?: string;
+  /** R2 obyekt kaliti. */
+  imageId?: string;
   category: 'events' | 'announcements' | string;
   status: 'published' | 'draft';
+  /** Nashr sanasi (ISO). Ommaviy saytda tartib va ko'rsatiladigan sana shu. */
+  publishedAt: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -27,11 +31,23 @@ export interface Teacher extends LocalizedFields {
   name_ru?: string;
   name_kk?: string;
   name_en?: string;
-  subject: string;
+  subject_uz: string;
+  subject_ru?: string;
+  subject_kk?: string;
+  subject_en?: string;
   category: string;
   experience: number;
   photo?: string;
+  /** R2 obyekt kaliti. */
+  photoId?: string;
+  achievements?: TeacherAchievement[];
   order: number;
+}
+
+export interface TeacherAchievement {
+  type: 'olympiad' | 'certificate' | 'competition' | 'diploma' | 'other' | string;
+  title: string;
+  year: number | null;
 }
 
 export interface OlympiadResult {

@@ -1,7 +1,15 @@
 import { NextResponse } from 'next/server';
-import { requireAdmin, jsonError } from '@/lib/http';
+import { requireAdmin, jsonError, readJson } from '@/lib/http';
+import { deleteMedia, isMediaReferenced } from '@/lib/db/admin-crud';
 import { getEnv } from '@/lib/cf';
-import { ALLOWED_IMAGE_TYPES, MAX_UPLOAD_BYTES, UPLOAD_FOLDERS, mediaUrl, type UploadFolder } from '@/lib/media';
+import {
+  ALLOWED_IMAGE_TYPES,
+  MAX_UPLOAD_BYTES,
+  UPLOAD_FOLDERS,
+  isSafeMediaKey,
+  mediaUrl,
+  type UploadFolder,
+} from '@/lib/media';
 
 /** Fayl boshidagi "magic bytes" — Content-Type'ga ishonmaslik uchun. */
 function sniffImageType(b: Uint8Array): string | null {
@@ -18,8 +26,12 @@ export async function POST(req: Request) {
   const auth = await requireAdmin(req);
   if ('response' in auth) return auth.response;
 
-  const len = Number(req.headers.get('content-length') || 0);
-  if (len > MAX_UPLOAD_BYTES + 64 * 1024) return jsonError("Rasm hajmi 10MB dan oshmasligi kerak", 413);
+  // Content-Length majburiy: aks holda (chunked) butun body xotiraga o'qilgandan keyingina hajm ma'lum bo'ladi.
+  const len = Number(req.headers.get('content-length'));
+  if (!Number.isFinite(len) || len <= 0) return jsonError('Content-Length talab qilinadi', 411);
+  if (len > MAX_UPLOAD_BYTES + 64 * 1024) {
+    return jsonError('Rasm hajmi 10MB dan oshmasligi kerak', 413);
+  }
 
   let form: FormData;
   try {
@@ -50,4 +62,19 @@ export async function POST(req: Request) {
   });
 
   return NextResponse.json({ url: mediaUrl(key), fileId: key, name: file.name }, { status: 201 });
+}
+
+/**
+ * Saqlanmagan upload'ni o'chirish (modal bekor qilinganda yoki rasm almashtirilganda).
+ * Faqat hech bir yozuvga bog'lanmagan kalit o'chiriladi.
+ */
+export async function DELETE(req: Request) {
+  const auth = await requireAdmin(req);
+  if ('response' in auth) return auth.response;
+  const body = await readJson<{ key?: unknown }>(req);
+  const key = typeof body?.key === 'string' ? body.key : '';
+  if (!isSafeMediaKey(key)) return jsonError("Fayl kaliti noto'g'ri", 400);
+  if (await isMediaReferenced(key)) return NextResponse.json({ ok: true, deleted: false });
+  await deleteMedia(key);
+  return NextResponse.json({ ok: true, deleted: true });
 }

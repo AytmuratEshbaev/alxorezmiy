@@ -4,8 +4,14 @@ import { cookies } from 'next/headers';
 import { getDb } from '@/lib/cf';
 import { nowIso } from '@/lib/db/rows';
 
-export const SESSION_COOKIE = 'ax_session';
+/**
+ * `__Host-` prefiksi: cookie faqat Secure, Path=/ va Domain'siz bo'lishi shart — subdomen
+ * cookie'ni almashtira olmaydi. Brauzerlar http://localhost'da ham Secure cookie'ni qabul qiladi.
+ */
+export const SESSION_COOKIE = '__Host-ax_session';
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+/** Faollikdan qat'i nazar, kirishdan keyin shu muddatda sessiya albatta tugaydi. */
+const ABSOLUTE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 /** Sessiya muddati shu vaqtdan kam qolsa, so'rovda uzaytiriladi (sliding expiration). */
 const RENEW_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 
@@ -30,7 +36,7 @@ async function sha256Hex(input: string): Promise<string> {
 function cookieOptions(expires: Date) {
   return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     sameSite: 'lax' as const,
     path: '/',
     expires,
@@ -39,17 +45,33 @@ function cookieOptions(expires: Date) {
 
 /** Yangi sessiya yaratib, cookie'ni o'rnatadi. Route handler ichida chaqiriladi. */
 export async function createSession(adminId: string): Promise<void> {
+  const jar = await cookies();
+  const previous = jar.get(SESSION_COOKIE)?.value;
   const token = randomToken();
-  const expires = new Date(Date.now() + SESSION_TTL_MS);
+  const now = Date.now();
+  const expires = new Date(now + SESSION_TTL_MS);
+  const absolute = new Date(now + ABSOLUTE_TTL_MS);
   const db = getDb();
   await db.batch([
     // Muddati o'tgan sessiyalarni shu yerda tozalab ketamiz — alohida cron kerak emas.
-    db.prepare(`DELETE FROM sessions WHERE expiresAt < ?`).bind(nowIso()),
     db
-      .prepare(`INSERT INTO sessions (id, admin_id, expiresAt, createdAt) VALUES (?, ?, ?, ?)`)
-      .bind(await sha256Hex(token), adminId, expires.toISOString(), nowIso()),
+      .prepare(`DELETE FROM sessions WHERE expiresAt < ?1 OR absoluteExpiresAt < ?1`)
+      .bind(nowIso()),
+    // Shu brauzerdagi eski sessiya (session fixation'ga qarshi).
+    db.prepare(`DELETE FROM sessions WHERE id = ?`).bind(previous ? await sha256Hex(previous) : ''),
+    db
+      .prepare(
+        `INSERT INTO sessions (id, admin_id, expiresAt, absoluteExpiresAt, createdAt) VALUES (?, ?, ?, ?, ?)`
+      )
+      .bind(
+        await sha256Hex(token),
+        adminId,
+        expires.toISOString(),
+        absolute.toISOString(),
+        nowIso()
+      ),
   ]);
-  (await cookies()).set(SESSION_COOKIE, token, cookieOptions(expires));
+  jar.set(SESSION_COOKIE, token, cookieOptions(expires));
 }
 
 export async function destroySession(): Promise<void> {
@@ -61,7 +83,7 @@ export async function destroySession(): Promise<void> {
       .bind(await sha256Hex(token))
       .run();
   }
-  jar.delete(SESSION_COOKIE);
+  jar.set(SESSION_COOKIE, '', { ...cookieOptions(new Date(0)), maxAge: 0 });
 }
 
 /** Joriy so'rovdagi admin (yoki null). Bitta so'rov ichida keshlanadi. */
@@ -71,21 +93,23 @@ export const getSessionUser = cache(async (): Promise<AdminUser | null> => {
   const id = await sha256Hex(token);
   const row = await getDb()
     .prepare(
-      `SELECT a.id, a.email, a.name, s.expiresAt
+      `SELECT a.id, a.email, a.name, s.expiresAt, s.absoluteExpiresAt
          FROM sessions s JOIN admins a ON a.id = s.admin_id
         WHERE s.id = ?`
     )
     .bind(id)
-    .first<AdminUser & { expiresAt: string }>();
+    .first<AdminUser & { expiresAt: string; absoluteExpiresAt: string }>();
   if (!row) return null;
 
+  const now = Date.now();
   const expiresAt = Date.parse(row.expiresAt);
-  if (!(expiresAt > Date.now())) {
+  const absoluteAt = Date.parse(row.absoluteExpiresAt);
+  if (!(expiresAt > now) || !(absoluteAt > now)) {
     await getDb().prepare(`DELETE FROM sessions WHERE id = ?`).bind(id).run();
     return null;
   }
-  if (expiresAt - Date.now() < SESSION_TTL_MS - RENEW_THRESHOLD_MS) {
-    const next = new Date(Date.now() + SESSION_TTL_MS);
+  if (expiresAt - now < SESSION_TTL_MS - RENEW_THRESHOLD_MS) {
+    const next = new Date(Math.min(now + SESSION_TTL_MS, absoluteAt));
     await getDb()
       .prepare(`UPDATE sessions SET expiresAt = ? WHERE id = ?`)
       .bind(next.toISOString(), id)

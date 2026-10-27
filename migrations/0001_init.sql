@@ -17,10 +17,11 @@ CREATE TABLE news (
   content_ru  TEXT NOT NULL DEFAULT '',
   content_kk  TEXT NOT NULL DEFAULT '',
   content_en  TEXT NOT NULL DEFAULT '',
+  publishedAt TEXT NOT NULL DEFAULT '', -- nashr sanasi; status 'published' bo'lganda server to'ldiradi
   createdAt   TEXT NOT NULL,
   updatedAt   TEXT NOT NULL
 );
-CREATE INDEX idx_news_status_created ON news (status, createdAt DESC);
+CREATE INDEX idx_news_status_published ON news (status, publishedAt DESC);
 
 CREATE TABLE teachers (
   id           TEXT PRIMARY KEY,
@@ -28,7 +29,10 @@ CREATE TABLE teachers (
   name_ru      TEXT NOT NULL DEFAULT '',
   name_kk      TEXT NOT NULL DEFAULT '',
   name_en      TEXT NOT NULL DEFAULT '',
-  subject      TEXT NOT NULL DEFAULT '',
+  subject_uz   TEXT NOT NULL DEFAULT '',
+  subject_ru   TEXT NOT NULL DEFAULT '',
+  subject_kk   TEXT NOT NULL DEFAULT '',
+  subject_en   TEXT NOT NULL DEFAULT '',
   category     TEXT NOT NULL DEFAULT '',
   experience   INTEGER NOT NULL DEFAULT 0,
   photo        TEXT NOT NULL DEFAULT '',
@@ -38,6 +42,8 @@ CREATE TABLE teachers (
   createdAt    TEXT NOT NULL,
   updatedAt    TEXT NOT NULL
 );
+
+CREATE INDEX idx_teachers_order ON teachers ("order", name_uz);
 
 CREATE TABLE olympiad (
   id            TEXT PRIMARY KEY,
@@ -50,6 +56,8 @@ CREATE TABLE olympiad (
   createdAt     TEXT NOT NULL,
   updatedAt     TEXT NOT NULL
 );
+
+CREATE INDEX idx_olympiad_year_place ON olympiad (year DESC, place ASC);
 
 CREATE TABLE faq (
   id          TEXT PRIMARY KEY,
@@ -67,6 +75,8 @@ CREATE TABLE faq (
   updatedAt   TEXT NOT NULL
 );
 
+CREATE INDEX idx_faq_order ON faq ("order", createdAt);
+
 CREATE TABLE gallery (
   id         TEXT PRIMARY KEY,
   url        TEXT NOT NULL,
@@ -79,6 +89,8 @@ CREATE TABLE gallery (
   createdAt  TEXT NOT NULL,
   updatedAt  TEXT NOT NULL
 );
+
+CREATE INDEX idx_gallery_created ON gallery (createdAt DESC);
 
 CREATE TABLE messages (
   id        TEXT PRIMARY KEY,
@@ -126,8 +138,25 @@ CREATE TABLE admins (
 CREATE TABLE sessions (
   id        TEXT PRIMARY KEY, -- sha256(token), hex
   admin_id  TEXT NOT NULL REFERENCES admins(id) ON DELETE CASCADE,
-  expiresAt TEXT NOT NULL,
+  expiresAt TEXT NOT NULL, -- sliding (faollik bilan uzayadi)
+  absoluteExpiresAt TEXT NOT NULL, -- qat'iy chegara: kirishdan 30 kun
   createdAt TEXT NOT NULL
 );
 CREATE INDEX idx_sessions_admin ON sessions (admin_id);
 CREATE INDEX idx_sessions_expires ON sessions (expiresAt);
+
+-- Login brute-force himoyasi: email bo'yicha muvaffaqiyatsiz urinishlar (IP'dan qat'i nazar).
+CREATE TABLE login_failures (
+  email       TEXT PRIMARY KEY COLLATE NOCASE,
+  count       INTEGER NOT NULL DEFAULT 0,
+  windowStart TEXT NOT NULL,
+  lockedUntil TEXT NOT NULL DEFAULT ''
+);
+
+-- Edge kesh versiyasi: ommaviy kontent o'zgarganda +1 bo'ladi, Worker kesh kaliti shunga bog'liq
+-- (worker.ts). Shu tufayli admin o'zgarishlari keshdan qat'i nazar darhol ko'rinadi.
+CREATE TABLE cache_version (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  v  INTEGER NOT NULL
+);
+INSERT INTO cache_version (id, v) VALUES (1, 0);

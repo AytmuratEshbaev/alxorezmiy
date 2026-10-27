@@ -2,9 +2,10 @@ import 'server-only';
 import { getEnv } from '@/lib/cf';
 
 /**
- * Cloudflare Workers Rate Limiting binding'i orqali cheklov (global, barcha
- * instansiyalar uchun umumiy). Limit/period wrangler.jsonc'da belgilangan.
- * Binding mavjud bo'lmasa (masalan, `next dev` bindingsiz) — oddiy in-memory fallback.
+ * Cloudflare Workers Rate Limiting binding'i orqali cheklov. Hisoblagichlar har bir
+ * Cloudflare joylashuvi (PoP) uchun alohida va taxminiy — shuning uchun login uchun
+ * qo'shimcha ravishda D1'dagi akkaunt bloklash (lib/auth/lockout.ts) ham ishlatiladi.
+ * Limit/period wrangler.jsonc'da. Binding bo'lmasa (`next dev`) — in-memory fallback.
  */
 type LimiterName = 'FORM_LIMITER' | 'LOGIN_LIMITER';
 
@@ -42,12 +43,19 @@ export async function rateLimit(limiter: LimiterName, key: string): Promise<bool
   }
 }
 
-/** Cloudflare har doim haqiqiy mijoz IP'sini `cf-connecting-ip` da beradi (soxtalashtirib bo'lmaydi). */
+/**
+ * Mijoz IP'si. Cloudflare `cf-connecting-ip` ni o'zi qo'yadi (soxtalashtirib bo'lmaydi).
+ * IPv6 manzillar /64 prefiksga qisqartiriladi — bitta abonent odatda butun /64 ga ega,
+ * aks holda manzilni almashtirib limitni chetlab o'tish oson bo'lardi.
+ */
 export function clientIp(req: Request): string {
-  return (
+  const ip =
     req.headers.get('cf-connecting-ip')?.trim() ||
     req.headers.get('x-real-ip')?.trim() ||
     req.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
-    'unknown'
-  );
+    'unknown';
+  if (!ip.includes(':')) return ip;
+  const [head] = ip.split('::');
+  const groups = ip.includes('::') ? head.split(':').filter(Boolean) : ip.split(':');
+  return `${[...groups, '0', '0', '0', '0'].slice(0, 4).join(':')}::/64`;
 }

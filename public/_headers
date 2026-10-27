@@ -1,0 +1,18 @@
+# Workers Static Assets uchun headerlar (bu fayllar Worker'ni chetlab beriladi).
+
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+
+# Next.js build chunk'lari hash'li nomga ega — abadiy keshlash xavfsiz.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Service worker har doim yangilanishi tekshirilsin.
+/sw.js
+  Cache-Control: no-cache
+
+/assets/*
+  Cache-Control: public, max-age=604800

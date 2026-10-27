@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
-import { getNewsList } from '@/lib/db/queries';
+import { getNewsSitemapEntries } from '@/lib/db/queries';
 import type { News } from '@/types';
 
 // D1'dan so'rov vaqtida o'qiladi (build paytida binding yo'q).
@@ -33,12 +33,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = (process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz').replace(/\/$/, '');
   const now = new Date();
 
-  let news: News[] = [];
+  let news: Pick<News, 'id' | 'publishedAt' | 'updatedAt'>[] = [];
   try {
-    news = await getNewsList(1000);
+    news = await getNewsSitemapEntries();
   } catch (err) {
-    console.warn('[sitemap] getNewsList failed:', err);
-    news = [];
+    console.warn('[sitemap] news query failed:', err);
   }
 
   const entries: MetadataRoute.Sitemap = [];
@@ -55,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const item of news) {
       entries.push({
         url: `${base}/${locale}/news/${item.id}`,
-        lastModified: toDate(item.updatedAt || item.createdAt),
+        lastModified: toDate(item.updatedAt || item.publishedAt),
         changeFrequency: 'weekly',
         priority: 0.5,
       });

@@ -1,7 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "alxorezmiy",
-  "main": ".open-next/worker.js",
+  // worker.ts — OpenNext handler ustidan edge kesh + CSP nonce qatlami.
+  "main": "worker.ts",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
@@ -9,6 +10,11 @@
     "binding": "ASSETS"
   },
   "observability": { "enabled": true },
+
+  // Sayt faqat o'z domenida ochilsin: *.workers.dev zona darajasidagi WAF/HSTS/rate-limit
+  // qoidalarini chetlab o'tadi va u yerda Image Resizing/Cache API ishlamaydi.
+  "workers_dev": false,
+  "preview_urls": false,
 
   // Domen: Cloudflare dashboard → Workers → alxorezmiy → Settings → Domains & Routes
   // orqali alxorezmiy.uz va www.alxorezmiy.uz ni Custom Domain sifatida ulang.

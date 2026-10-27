@@ -16,3 +16,15 @@ export function getSecret(name: string): string | undefined {
   if (typeof fromEnv === 'string' && fromEnv) return fromEnv;
   return process.env[name] || undefined;
 }
+
+/**
+ * Javob qaytgandan keyin ham ishni davom ettirish (email kabi). Worker konteksti
+ * bo'lmasa (`next dev`) — oddiy fon promise sifatida.
+ */
+export function runInBackground(task: Promise<unknown>): void {
+  try {
+    getCloudflareContext().ctx.waitUntil(task);
+  } catch {
+    void task.catch(() => {});
+  }
+}
