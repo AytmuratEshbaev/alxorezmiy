@@ -23,13 +23,14 @@ export default function AchievementCard({ item }: { item: OlympiadResult }) {
   const levelIcon = LEVEL_ICON[item.level];
   const place = Number(item.place);
   const placeAttr = place === 1 || place === 2 || place === 3 ? place : undefined;
+  const placeLabel = Number.isFinite(place) && place > 0 ? tCommon('place_ordinal', { place }) : '';
+  // Olimpiada nomi bo'lmasa ham yil ko'rsatiladi.
+  const meta = [item.olympiad_name, item.year ? String(item.year) : ''].filter(Boolean).join(' · ');
 
   return (
     <div className="card card-hover achievement-card" data-place={placeAttr}>
       <div className="achievement-card-head">
-        <span className="achievement-card-badge" aria-label={`${item.place} ${tCommon('place')}`}>
-          {item.place} {tCommon('place')}
-        </span>
+        {placeLabel && <span className="achievement-card-badge">{placeLabel}</span>}
         <span className="achievement-card-level">
           {levelIcon && <Icon name={levelIcon} size={14} />}
           {levelLabel}
@@ -37,11 +38,7 @@ export default function AchievementCard({ item }: { item: OlympiadResult }) {
       </div>
       <h3 className="achievement-card-student">{item.student}</h3>
       <p className="achievement-card-subject">{item.subject}</p>
-      {item.olympiad_name && (
-        <p className="achievement-card-meta">
-          {item.olympiad_name} · {item.year}
-        </p>
-      )}
+      {meta && <p className="achievement-card-meta">{meta}</p>}
     </div>
   );
 }

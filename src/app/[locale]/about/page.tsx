@@ -1,9 +1,9 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/routing';
 import { getSettings } from '@/lib/db/queries';
-import { getLocalizedField } from '@/lib/utils';
+import { fallbackLang, getLocalizedField, safe } from '@/lib/utils';
 import { buildPageMetadata } from '@/lib/seo';
 import Icon, { type IconName } from '@/components/ui/Icon';
+import PageHeader from '@/components/ui/PageHeader';
 import type { Locale, Settings } from '@/types';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -17,32 +17,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-async function safeGetSettings(): Promise<Settings | null> {
-  try {
-    return await getSettings();
-  } catch (err) {
-    console.warn('[about] getSettings failed:', err);
-    return null;
-  }
-}
-
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
-  const settings = await safeGetSettings();
+  const settings = await safe<Settings | null>(() => getSettings(), null, 'about getSettings');
   const fullName = settings ? getLocalizedField(settings, 'fullName', locale as Locale) : '';
 
   return (
     <>
-      <div className="page-header">
-        <h1>{t('about_page.title')}</h1>
-        <div className="breadcrumb">
-          <Link href={'/' as never}>{t('common.home')}</Link>
-          <span className="separator">/</span>
-          <span className="current">{t('about_page.title')}</span>
-        </div>
-      </div>
+      <PageHeader title={t('about_page.title')} crumbs={[{ label: t('about_page.title') }]} />
 
       {fullName && (
         <section
@@ -71,7 +55,11 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   margin: 0,
                 }}
               >
-                {fullName}
+                <span
+                  lang={settings ? fallbackLang(settings, 'fullName', locale as Locale) : undefined}
+                >
+                  {fullName}
+                </span>
               </p>
             </div>
           </div>

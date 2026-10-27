@@ -42,6 +42,9 @@
   --warning-bg:   rgba(251,191,36,.14);
   --danger-bg:    rgba(248,113,113,.14);
   --info-bg:      rgba(56,189,248,.14);
+  --success-text: #4ADE80;          /* ≥8:1 on its own bg */
+  --danger-text:  #FCA5A5;          /* ≥7:1 on its own bg */
+  --info-text:    #7DD3FC;
 
   /* Brand gradient */
   --brand-grad:      linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
@@ -55,7 +58,8 @@
   --shadow-glow: 0 0 32px rgba(251,191,36,.18);
 
   /* === Legacy aliases === */
-  --primary: var(--navy);
+  /* Matn sifatida ishlatiladi — #4F4FE6 qorong'i fonda 3.4:1 edi; #8B8BFF ≥6:1 (bg, bg-2, bg-3) */
+  --primary: #8B8BFF;
   --primary-hover: var(--navy-2);
   --primary-light: var(--amber);
   --primary-bg: var(--navy-soft);
@@ -98,11 +102,10 @@
   outline-color: var(--amber-3);
 }
 
-/* Hero in dark — same photo, darker overlay */
-[data-theme="dark"] .hero {
-  background:
-    linear-gradient(95deg, rgba(4,4,15,.88) 0%, rgba(4,4,15,.68) 35%, rgba(4,4,15,.30) 65%, rgba(4,4,15,.12) 100%),
-    url('/assets/images/hero.webp') center/cover no-repeat;
+/* Hero in dark — same photo (next/image .hero-bg), darker overlay */
+[data-theme="dark"] .hero { background: #04040F; }
+[data-theme="dark"] .hero-overlay {
+  background: linear-gradient(95deg, rgba(4,4,15,.88) 0%, rgba(4,4,15,.68) 35%, rgba(4,4,15,.30) 65%, rgba(4,4,15,.12) 100%);
 }
 [data-theme="dark"] .hero h1 { color: #FFFFFF; }
 [data-theme="dark"] .hero-eyebrow {
@@ -230,8 +233,8 @@
 
 /* Footer */
 [data-theme="dark"] .footer { background: #04040F; }
-[data-theme="dark"] .footer h4 { color: var(--amber); }
-[data-theme="dark"] .footer-about h4 { color: #FFFFFF; }
+[data-theme="dark"] .footer h2 { color: var(--amber); }
+[data-theme="dark"] .footer-about .footer-brand { color: #FFFFFF; }
 [data-theme="dark"] .footer::before {
   background-image: radial-gradient(circle at 1px 1px, rgba(251,191,36,.20) 1px, transparent 0);
 }
@@ -357,6 +360,13 @@
 [data-theme="dark"] .accordion-icon { color: var(--amber); border-color: var(--navy-line); }
 [data-theme="dark"] .accordion-item.active .accordion-icon { background: var(--amber); color: var(--bg); border-color: var(--amber); }
 [data-theme="dark"] .accordion-body-content { color: var(--ink-2); }
+
+/* Carousel controls */
+[data-theme="dark"] .carousel-btn { background: var(--surface); color: var(--ink); border-color: var(--navy-line-2); }
+[data-theme="dark"] .carousel-btn:hover:not(:disabled) { background: var(--amber); color: var(--bg); border-color: var(--amber); }
+
+/* Teacher achievements */
+[data-theme="dark"] .teacher-achievement-type { color: var(--amber); }
 
 /* Breadcrumb in dark */
 [data-theme="dark"] .breadcrumb a { color: rgba(255,255,255,.78); }

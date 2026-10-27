@@ -1,5 +1,6 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
+import PageHeader from '@/components/ui/PageHeader';
 import Icon from '@/components/ui/Icon';
 import ApplicationForm from '@/components/admission/ApplicationForm';
 import { buildPageMetadata } from '@/lib/seo';
@@ -22,14 +23,7 @@ export default async function AdmissionPage({ params }: { params: Promise<{ loca
 
   return (
     <>
-      <div className="page-header">
-        <h1>{t('admission_page.title')}</h1>
-        <div className="breadcrumb">
-          <Link href={'/' as never}>{t('common.home')}</Link>
-          <span className="separator">/</span>
-          <span className="current">{t('nav.admission')}</span>
-        </div>
-      </div>
+      <PageHeader title={t('admission_page.title')} crumbs={[{ label: t('nav.admission') }]} />
 
       <section className="section">
         <div className="container">
@@ -84,7 +78,7 @@ export default async function AdmissionPage({ params }: { params: Promise<{ loca
         <div className="container">
           <div className="feature-panel feature-panel-center animate-on-scroll">
             <div className="feature-panel-icon">
-              <Icon name="download" size={26} />
+              <Icon name="file-text" size={26} />
             </div>
             <h2>{t('admission_page.download_title')}</h2>
             <p>{t('admission_page.download_text')}</p>

@@ -1,5 +1,5 @@
 {
-  "site_title": "Nukus branch specialized school named after Muhammad al-Khorezmi",
+  "site_title": "Nukus branch specialized school named after Muhammad al-Khwarizmi",
   "site_short_name": "Al-Khwarizmi School",
   "nav": {
     "home": "Home",
@@ -17,9 +17,7 @@
   },
   "hero": {
     "eyebrow": "IT and Exact Sciences School",
-    "scroll": "Scroll",
-    "title": "Nukus branch specialized school named after Muhammad al-Khorezmi",
-    "subtitle": "Nukus branch of the specialized school named after Muhammad al-Khorezmi under the Agency for Specialized Educational Institutions (ASEI) of the Ministry of Preschool and School Education of the Republic of Uzbekistan (MPSE)",
+    "title": "Nukus branch specialized school named after Muhammad al-Khwarizmi",
     "description": "Advanced education in exact and natural sciences. Preparing the intellectual leaders of tomorrow.",
     "btn_about": "About Us",
     "btn_admission": "Admission Info"
@@ -73,8 +71,6 @@
       "community": "Collaboration",
       "community_desc": "An environment of teamwork and mutual respect"
     },
-    "leadership_title": "Leadership",
-    "leadership_label": "Our Team",
     "virtual_tour": "Virtual Tour",
     "virtual_tour_label": "School Building",
     "virtual_tour_items": {
@@ -89,13 +85,9 @@
   "contact_page": {
     "title": "Contact Us",
     "address_label": "Address",
-    "address": "Nukus city, Amir Temur street, Building 1",
     "phone_label": "Phone",
-    "phone": "+998 61 222-33-44",
     "email_label": "Email",
-    "email": "info@alxorazmiy-nukus.uz",
     "hours_label": "Working Hours",
-    "hours": "Monday — Saturday, 08:00 — 17:00",
     "form_title": "Send a Message",
     "form_name": "Your Name",
     "form_email": "Your Email",
@@ -116,30 +108,19 @@
   },
   "common": {
     "read_more": "Read More",
-    "view_all": "View All",
-    "loading": "Loading...",
-    "search": "Search...",
-    "no_results": "No results found",
-    "back": "Back",
     "home": "Home",
-    "close": "Close",
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "add": "Add",
     "all": "All",
-    "download": "Download",
-    "place": "place",
-    "year": "year"
+    "place_ordinal": "{place, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} place",
+    "year_label": "{year}"
   },
   "footer": {
     "about_text": "Muhammad al-Khwarizmi Specialized School is a modern educational institution providing advanced education in exact and natural sciences.",
     "quick_links": "Quick Links",
     "contact_info": "Contact",
-    "social": "Social Media",
     "official_name": "Official name",
-    "copyright": "© 2026 Al-Khwarizmi Specialized School. All rights reserved."
+    "copyright": "© {year} Al-Khwarizmi Specialized School. All rights reserved.",
+    "location": "Nukus, Karakalpakstan",
+    "info_links": "Information"
   },
   "a11y": {
     "skip": "Skip to main content",
@@ -149,7 +130,9 @@
     "search": "Search (Ctrl+K)",
     "lang_select": "Select language",
     "theme_toggle": "Toggle theme",
-    "back_to_top": "Back to top"
+    "back_to_top": "Back to top",
+    "breadcrumb": "Breadcrumb",
+    "close_menu": "Close menu"
   },
   "search": {
     "placeholder": "Search: news, teacher...",
@@ -160,32 +143,20 @@
     "no_results": "No results found for \"{query}\"",
     "type_news": "News",
     "type_teacher": "Teacher",
-    "type_faq": "FAQ"
+    "type_faq": "FAQ",
+    "loading": "Loading search data…",
+    "error": "Couldn't load search data.",
+    "retry": "Try again",
+    "results_count": "{count, plural, =0 {No results} one {# result} other {# results}}"
   },
   "achievements": {
-    "title": "Our Achievements",
     "label": "our pride",
     "intro_title": "Olympiad Champions",
     "intro_text": "Our students conquer new peaks each year at national and international subject olympiads.",
-    "stat_total": "Total Achievements",
-    "stat_international": "International",
-    "stat_republic": "National",
-    "stat_gold": "Gold Medals",
     "level_international": "International",
     "level_republic": "National",
     "level_city": "City",
-    "level_district": "District",
-    "col_student": "Student",
-    "col_subject": "Subject",
-    "col_olympiad": "Olympiad",
-    "col_level": "Level",
-    "col_place": "Place",
-    "empty": "No results yet",
-    "cta_label": "admissions",
-    "cta_title": "Your child can be on this list too",
-    "cta_text": "Our school specializes in producing olympiad champions. Learn about admission requirements and programs.",
-    "cta_admission": "Admission →",
-    "cta_programs": "Programs"
+    "level_district": "District"
   },
   "directions_page": {
     "title": "Programs",
@@ -229,24 +200,21 @@
     "step3_title": "Interview",
     "step3_text": "Students with high test scores are invited to the final stage — an interview with school leadership and a psychologist.",
     "download_title": "Required Documents",
-    "download_text": "Download the regulations (pdf) for detailed information on admission requirements and procedures.",
-    "download_btn": "Download Regulations"
+    "download_text": "For full details on admission requirements, the list of documents and deadlines, please contact the school administration."
   },
   "faq_page": {
     "title": "Frequently Asked Questions",
     "all_questions": "All questions",
     "filter_admission": "Admission",
     "filter_education": "Education",
-    "filter_general": "General",
-    "empty": "No questions yet"
+    "filter_general": "General"
   },
   "gallery_page": {
     "title": "Photo and Video Gallery",
     "filter_building": "Building",
     "filter_lessons": "Lessons",
     "filter_sports": "Sports",
-    "filter_events": "Events",
-    "empty": "No images yet"
+    "filter_events": "Events"
   },
   "about_history": {
     "y2010": "School founded",
@@ -316,7 +284,6 @@
   },
   "news_page": {
     "title": "News & Announcements",
-    "empty": "No news yet",
     "empty_title": "No news yet",
     "empty_text": "The latest news and announcements from school life will appear here soon.",
     "category": {
@@ -335,19 +302,27 @@
     "share_native": "Share",
     "load_more": "Load more",
     "load_more_loading": "Loading...",
-    "load_more_end": "All news shown"
+    "load_more_end": "All news shown",
+    "load_more_error": "Couldn't load more news.",
+    "retry": "Try again"
   },
   "teachers_page": {
     "title": "Teachers",
     "subtitle": "Team of highly qualified educators",
-    "experience": "years of experience",
-    "empty": "No teachers yet",
     "empty_title": "Teacher list is being prepared",
-    "empty_text": "The school's team of highly qualified educators will appear here soon."
+    "empty_text": "The school's team of highly qualified educators will appear here soon.",
+    "experience_years": "{count, plural, one {# year of experience} other {# years of experience}}",
+    "achievements_label": "Achievements",
+    "achievement_types": {
+      "olympiad": "Olympiad",
+      "certificate": "Certificate",
+      "competition": "Competition",
+      "diploma": "Diploma",
+      "other": "Other"
+    }
   },
   "achievements_page": {
     "title": "Our Achievements",
-    "empty": "No results yet",
     "empty_title": "Achievements coming soon",
     "empty_text": "Our students' olympiad wins will be published here shortly."
   },
@@ -358,7 +333,8 @@
     "lightbox_label": "Image viewer",
     "close": "Close",
     "prev": "Previous image",
-    "next": "Next image"
+    "next": "Next image",
+    "counter": "{current} / {total}"
   },
   "faq_page_extra": {
     "empty_title": "Questions coming soon",
@@ -366,8 +342,8 @@
   },
   "a11y_extra": {
     "scroll_down": "Scroll down",
-    "expand": "Expand",
-    "collapse": "Collapse"
+    "carousel_prev": "Previous achievements",
+    "carousel_next": "Next achievements"
   },
   "admission_form": {
     "section_label": "Online application",
@@ -387,5 +363,17 @@
     "error_phone": "Enter a phone number",
     "error_phone_invalid": "Invalid phone number",
     "error_grade": "Select a grade"
+  },
+  "forms": {
+    "verifying": "Running security check…",
+    "captcha_unavailable": "The security check could not be loaded. Please reload the page, or call or email the school instead.",
+    "error_forbidden": "The security check failed. Please try again.",
+    "error_rate_limited": "Too many attempts. Please try again in a few minutes."
+  },
+  "error_page": {
+    "title": "Something went wrong",
+    "message": "An unexpected error occurred while loading this page. Please try again.",
+    "retry": "Try again",
+    "back_home": "Back to home"
   }
 }

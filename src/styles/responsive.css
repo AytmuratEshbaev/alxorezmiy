@@ -8,7 +8,7 @@
   .section { padding: var(--s-20) 0; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
-  .footer-grid { grid-template-columns: repeat(2, 1fr); gap: var(--s-10); }
+  .footer-grid, .footer-grid.footer-grid-3 { grid-template-columns: repeat(2, 1fr); gap: var(--s-10); }
   .hero { min-height: 100dvh; }
   .nav-links { display: none; }
   .hamburger { display: flex; }
@@ -56,6 +56,24 @@
 .mobile-nav a:hover, .mobile-nav a.active {
   color: var(--amber);
 }
+/* Yopish tugmasi — menyu ochilganda birinchi fokuslanadigan element */
+.mobile-nav-close {
+  position: absolute;
+  top: calc(var(--navbar-top) + (var(--navbar-h) - 44px) / 2);
+  right: calc(var(--navbar-top) + 12px);
+  width: 44px; height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(255,255,255,.24);
+  background: rgba(255,255,255,.06);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.mobile-nav-close:hover { background: var(--amber); border-color: var(--amber); color: var(--navy); }
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav, .mobile-nav a { transition: none; }
+}
 
 /* ── Mobile (768px) ── */
 @media (max-width: 768px) {
@@ -64,7 +82,7 @@
   .section { padding: var(--s-16) 0; }
   .section-header { margin-bottom: var(--s-12); }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr; gap: var(--s-8); }
+  .footer-grid, .footer-grid.footer-grid-3 { grid-template-columns: 1fr; gap: var(--s-8); }
   .footer-bottom { flex-direction: column; gap: var(--s-2); text-align: center; }
   .hero { min-height: 100dvh; padding: calc(var(--navbar-total) + var(--s-6)) 0 var(--s-8); }
   .hero h1 { font-size: clamp(1.375rem, 5.5vw, 2rem); }
@@ -142,7 +160,20 @@
   .timeline { padding-left: var(--s-8); }
   .timeline::before { left: 10px; }
   .timeline-item::before { left: -29px; width: 10px; height: 10px; }
-  .lightbox-prev, .lightbox-next { display: none; }
+  /* Mobil: oldingi/keyingi rasm tugmalari pastda, katta (≥44px) — surish (swipe) ham ishlaydi */
+  .lightbox { padding: var(--s-4); }
+  .lightbox-content { max-width: 100%; }
+  .lightbox-content img { max-height: 78vh; }
+  .lightbox-prev, .lightbox-next {
+    top: auto; bottom: -64px; transform: none;
+    width: 48px; height: 48px;
+    background: rgba(255,255,255,.16);
+  }
+  .lightbox-prev { left: calc(50% - 56px); }
+  .lightbox-next { right: calc(50% - 56px); }
+  .lightbox-close { top: 8px; right: 8px; background: rgba(7,7,61,.72); }
+  .lightbox-counter { top: 8px; left: 8px; }
+  .carousel-btn { width: 48px; height: 48px; }
   /* Floating navbar shrinks on mobile */
   :root { --navbar-h: 64px; --navbar-top: 12px; --navbar-total: 76px; }
   .navbar-logo-icon { width: 52px; height: 52px; }

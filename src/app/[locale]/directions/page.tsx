@@ -1,5 +1,6 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
+import PageHeader from '@/components/ui/PageHeader';
 import { buildPageMetadata } from '@/lib/seo';
 import { DIRECTION_SUBJECTS, DirectionIcon } from '@/components/home/direction-icons';
 
@@ -21,14 +22,7 @@ export default async function DirectionsPage({ params }: { params: Promise<{ loc
 
   return (
     <>
-      <div className="page-header">
-        <h1>{t('directions_page.title')}</h1>
-        <div className="breadcrumb">
-          <Link href={'/' as never}>{t('common.home')}</Link>
-          <span className="separator">/</span>
-          <span className="current">{t('nav.directions')}</span>
-        </div>
-      </div>
+      <PageHeader title={t('directions_page.title')} crumbs={[{ label: t('nav.directions') }]} />
 
       <section className="section">
         <div className="container">

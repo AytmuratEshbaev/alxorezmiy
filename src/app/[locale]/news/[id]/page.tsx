@@ -2,27 +2,25 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { getNewsById, getNewsList } from '@/lib/db/queries';
-import { getLocalizedField, formatDate, formatDateISO, readingTimeMinutes } from '@/lib/utils';
+import { getNewsById, getRelatedNews } from '@/lib/db/queries';
+import {
+  fallbackLang,
+  formatDate,
+  formatDateISO,
+  getLocalizedField,
+  htmlLang,
+  newsDate,
+  readingTimeMinutes,
+  safe,
+  toISO,
+} from '@/lib/utils';
 import { resizedImage } from '@/lib/image-loader';
-import { buildPageMetadata } from '@/lib/seo';
+import { LOGO_PATH, SITE_URL, absoluteUrl, buildPageMetadata, getSiteName } from '@/lib/seo';
 import NewsCard from '@/components/news/NewsCard';
 import NewsShareButtons from '@/components/news/NewsShareButtons';
+import PageHeader from '@/components/ui/PageHeader';
+import JsonLd from '@/components/ui/JsonLd';
 import type { Locale, News } from '@/types';
-
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz').replace(/\/$/, '');
-
-/** OG/JSON-LD rasmlari absolyut URL bo'lishi shart. */
-function absoluteUrl(src: string): string {
-  return src.startsWith('/') ? `${SITE_URL}${src}` : src;
-}
-
-/** Serialized timestamp (ISO string) → full ISO datetime. */
-function toISO(ts: string | undefined): string | undefined {
-  if (!ts) return undefined;
-  const d = new Date(ts);
-  return isNaN(d.getTime()) ? undefined : d.toISOString();
-}
 
 export async function generateMetadata({
   params,
@@ -30,27 +28,32 @@ export async function generateMetadata({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const { locale, id } = await params;
+  let item: News | null;
   try {
-    const item = await getNewsById(id);
-    if (!item) return { title: 'Al-Xorazmiy maktabi' };
-    const title = getLocalizedField(item, 'title', locale as Locale);
-    const content = getLocalizedField(item, 'content', locale as Locale);
-    const image = item.image ? absoluteUrl(resizedImage(item.image, 1200)) : undefined;
-    return buildPageMetadata({
-      locale,
-      title,
-      description: content.substring(0, 160),
-      path: `/news/${id}`,
-      image,
-      imageAlt: title,
-      ogType: 'article',
-      publishedTime: toISO(item.createdAt),
-      modifiedTime: toISO(item.updatedAt),
-    });
+    item = await getNewsById(id);
   } catch (err) {
+    // Sahifaning o'zi xatoni error.tsx'ga uzatadi; metadata faqat minimal bo'lib qoladi.
     console.warn('[news/[id]] generateMetadata failed:', err);
-    return { title: 'Al-Xorazmiy maktabi' };
+    return {};
   }
+  if (!item) {
+    const t = await getTranslations({ locale, namespace: 'not_found' });
+    return { title: t('eyebrow'), robots: { index: false } };
+  }
+  const title = getLocalizedField(item, 'title', locale as Locale);
+  const content = getLocalizedField(item, 'content', locale as Locale);
+  const image = item.image ? absoluteUrl(resizedImage(item.image, 1200)) : undefined;
+  return buildPageMetadata({
+    locale,
+    title,
+    description: content.replace(/\s+/g, ' ').trim().substring(0, 160),
+    path: `/news/${id}`,
+    image,
+    imageAlt: title,
+    ogType: 'article',
+    publishedTime: toISO(newsDate(item)),
+    modifiedTime: toISO(item.updatedAt),
+  });
 }
 
 export default async function NewsDetailPage({
@@ -61,54 +64,54 @@ export default async function NewsDetailPage({
   const { locale, id } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
+  const loc = locale as Locale;
 
-  // Fetch the article and the news pool for "related" in parallel; allSettled keeps each
-  // failure independent (a related-fetch error must not block the article).
-  const [itemResult, allNewsResult] = await Promise.allSettled([getNewsById(id), getNewsList(20)]);
-  if (itemResult.status === 'rejected') {
-    console.warn('[news/[id]] getNewsById failed:', itemResult.reason);
-  }
-  if (allNewsResult.status === 'rejected') {
-    console.warn('[news/[id]] related fetch failed:', allNewsResult.reason);
-  }
-  const item: News | null = itemResult.status === 'fulfilled' ? itemResult.value : null;
+  // Bazadagi xato notFound() EMAS — u error.tsx chegarasiga ko'tariladi (qayta urinish bilan).
+  // Faqat haqiqatan mavjud bo'lmagan (yoki nashr qilinmagan) yozuv 404 beradi.
+  const item = await getNewsById(id);
   if (!item || item.status !== 'published') notFound();
 
-  const title = getLocalizedField(item, 'title', locale as Locale);
-  const content = getLocalizedField(item, 'content', locale as Locale);
+  // "Tegishli yangiliklar" ikkinchi darajali — uning xatosi maqolani to'smasin.
+  const [related, siteName] = await Promise.all([
+    safe<News[]>(() => getRelatedNews(item.id, item.category, 3), [], 'news getRelatedNews'),
+    getSiteName(locale),
+  ]);
+
+  const title = getLocalizedField(item, 'title', loc);
+  const titleLang = fallbackLang(item, 'title', loc);
+  const content = getLocalizedField(item, 'content', loc);
+  const contentLang = fallbackLang(item, 'content', loc);
   const minutes = readingTimeMinutes(content);
+  const date = newsDate(item);
   const catLabel =
     item.category === 'events' || item.category === 'announcements'
       ? t(`news_page.category.${item.category}` as never)
       : item.category;
 
-  // Related news — same category, exclude self, up to 3
-  const allNews: News[] = allNewsResult.status === 'fulfilled' ? allNewsResult.value : [];
-  const related: News[] = allNews
-    .filter((n) => n.id !== item.id && n.status === 'published' && n.category === item.category)
-    .slice(0, 3);
-
   const articleUrl = `${SITE_URL}/${locale}/news/${id}`;
-  const publishedISO = toISO(item.createdAt);
+  const publishedISO = toISO(date);
   const modifiedISO = toISO(item.updatedAt);
+  const organization = {
+    '@type': 'EducationalOrganization',
+    name: siteName,
+    url: `${SITE_URL}/${locale}`,
+    logo: {
+      '@type': 'ImageObject',
+      url: `${SITE_URL}${LOGO_PATH}`,
+    },
+  };
   const ldArticle = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
-    headline: title,
-    image: item.image
-      ? [absoluteUrl(resizedImage(item.image, 1200))]
-      : [`${SITE_URL}/assets/images/logo.webp`],
+    headline: title.substring(0, 110),
+    description: content.replace(/\s+/g, ' ').trim().substring(0, 200),
+    image: item.image ? [absoluteUrl(resizedImage(item.image, 1200))] : [`${SITE_URL}${LOGO_PATH}`],
     datePublished: publishedISO,
     dateModified: modifiedISO || publishedISO,
-    inLanguage: locale,
-    publisher: {
-      '@type': 'EducationalOrganization',
-      name: 'Al-Xorazmiy maktabi',
-      logo: {
-        '@type': 'ImageObject',
-        url: `${SITE_URL}/assets/images/logo.webp`,
-      },
-    },
+    inLanguage: htmlLang(contentLang ?? locale),
+    articleSection: catLabel,
+    author: organization,
+    publisher: organization,
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': articleUrl,
@@ -126,58 +129,29 @@ export default async function NewsDetailPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldArticle) }}
+      <JsonLd data={ldArticle} />
+      <JsonLd data={ldBreadcrumb} />
+      <PageHeader
+        title={title}
+        titleLang={titleLang}
+        crumbs={[
+          { label: t('nav.news'), href: '/news' },
+          { label: title, lang: titleLang },
+        ]}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ldBreadcrumb) }}
-      />
-      <div className="page-header">
-        <h1>{title}</h1>
-        <div className="breadcrumb">
-          <Link href={'/' as never}>{t('common.home')}</Link>
-          <span className="separator">/</span>
-          <Link href={'/news' as never}>{t('nav.news')}</Link>
-        </div>
-      </div>
 
       <article className="section">
         <div className="container" style={{ maxWidth: 800 }}>
-          <header
-            style={{
-              marginBottom: 'var(--s-8)',
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              gap: 'var(--s-3)',
-            }}
-          >
+          <header className="article-meta">
             <span className="card-category">{catLabel}</span>
-            <time
-              dateTime={formatDateISO(item.createdAt)}
-              style={{ color: 'var(--text-tertiary)' }}
-            >
-              {formatDate(item.createdAt, locale as Locale)}
-            </time>
-            <span aria-hidden="true" style={{ color: 'var(--ink-4)' }}>
+            {date && <time dateTime={formatDateISO(date)}>{formatDate(date, loc)}</time>}
+            <span aria-hidden="true" className="article-meta-sep">
               ·
             </span>
-            <span style={{ color: 'var(--text-tertiary)', fontSize: '.9375rem' }}>
-              {t('news_page.read_time', { minutes })}
-            </span>
+            <span>{t('news_page.read_time', { minutes })}</span>
           </header>
           {item.image && (
-            <div
-              style={{
-                position: 'relative',
-                width: '100%',
-                aspectRatio: '16 / 9',
-                borderRadius: 'var(--r-lg)',
-                overflow: 'hidden',
-              }}
-            >
+            <div className="article-image">
               <Image
                 src={item.image}
                 alt={title}
@@ -188,15 +162,7 @@ export default async function NewsDetailPage({
               />
             </div>
           )}
-          <div
-            style={{
-              whiteSpace: 'pre-wrap',
-              lineHeight: 1.7,
-              marginTop: 'var(--s-6)',
-              color: 'var(--text-secondary)',
-              fontSize: '1.05rem',
-            }}
-          >
+          <div className="article-body" lang={contentLang}>
             {content}
           </div>
 
@@ -214,14 +180,17 @@ export default async function NewsDetailPage({
         <section
           className="section"
           style={{ background: 'var(--bg-secondary)', paddingTop: 'var(--s-12)' }}
+          aria-labelledby="related-news-heading"
         >
           <div className="container">
             <div className="section-header" style={{ marginBottom: 'var(--s-8)' }}>
-              <h2 style={{ fontSize: '1.75rem' }}>{t('news_page.related_title')}</h2>
+              <h2 id="related-news-heading" style={{ fontSize: '1.75rem' }}>
+                {t('news_page.related_title')}
+              </h2>
             </div>
             <div className="grid grid-3">
               {related.map((n) => (
-                <NewsCard key={n.id} item={n} locale={locale as Locale} />
+                <NewsCard key={n.id} item={n} locale={loc} />
               ))}
             </div>
           </div>

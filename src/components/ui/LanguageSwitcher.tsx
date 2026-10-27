@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, usePathname, routing } from '@/i18n/routing';
+import { htmlLang } from '@/lib/utils';
 
 const LANG_SHORT: Record<string, string> = { uz: 'UZ', ru: 'RU', kk: 'QQ', en: 'EN' };
 const LANG_NAMES: Record<string, string> = {
@@ -65,7 +66,7 @@ export default function LanguageSwitcher() {
           <button
             key={l}
             type="button"
-            lang={l}
+            lang={htmlLang(l)}
             className={l === locale ? 'active' : undefined}
             aria-current={l === locale ? 'true' : undefined}
             onClick={() => {

@@ -1,8 +1,9 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/routing';
 import { getTeachers } from '@/lib/db/queries';
 import TeacherCard from '@/components/teachers/TeacherCard';
-import Icon from '@/components/ui/Icon';
+import EmptyState from '@/components/ui/EmptyState';
+import PageHeader from '@/components/ui/PageHeader';
+import { safe } from '@/lib/utils';
 import { buildPageMetadata } from '@/lib/seo';
 import type { Teacher, Locale } from '@/types';
 
@@ -17,62 +18,30 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-async function safeGetTeachers(): Promise<Teacher[]> {
-  try {
-    return await getTeachers();
-  } catch (err) {
-    console.warn('[teachers] getTeachers failed:', err);
-    return [];
-  }
-}
-
 export default async function TeachersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
-  const items = await safeGetTeachers();
+  const items = await safe<Teacher[]>(() => getTeachers(), [], 'teachers getTeachers');
 
   return (
     <>
-      <div className="page-header">
-        <h1>{t('teachers_page.title')}</h1>
-        <div className="breadcrumb">
-          <Link href={'/' as never}>{t('common.home')}</Link>
-          <span className="separator">/</span>
-          <span className="current">{t('nav.teachers')}</span>
-        </div>
-      </div>
+      <PageHeader title={t('teachers_page.title')} crumbs={[{ label: t('nav.teachers') }]} />
 
       <section className="section">
         <div className="container">
-          <div style={{ marginBottom: 'var(--space-2xl)' }}>
-            <h2 style={{ marginBottom: 'var(--s-2)' }}>{t('teachers_page.title')}</h2>
-            <p>{t('teachers_page.subtitle')}</p>
-          </div>
+          <h2
+            style={{ marginBottom: 'var(--space-2xl)', fontSize: '1.5rem', color: 'var(--ink-2)' }}
+          >
+            {t('teachers_page.subtitle')}
+          </h2>
 
           {items.length === 0 ? (
-            <div
-              role="status"
-              style={{
-                textAlign: 'center',
-                color: 'var(--ink-3)',
-                padding: 'var(--s-16) var(--s-4)',
-                maxWidth: 480,
-                margin: '0 auto',
-              }}
-            >
-              <Icon
-                name="users"
-                size={48}
-                style={{ color: 'var(--ink-4)', marginBottom: 'var(--s-4)' }}
-              />
-              <h2
-                style={{ fontSize: '1.25rem', marginBottom: 'var(--s-2)', color: 'var(--ink-2)' }}
-              >
-                {t('teachers_page.empty_title')}
-              </h2>
-              <p style={{ margin: 0, fontSize: '0.9375rem' }}>{t('teachers_page.empty_text')}</p>
-            </div>
+            <EmptyState
+              icon="users"
+              title={t('teachers_page.empty_title')}
+              text={t('teachers_page.empty_text')}
+            />
           ) : (
             <div className="grid grid-4">
               {items.map((item) => (

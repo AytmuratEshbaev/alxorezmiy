@@ -1,46 +1,64 @@
 import Image from 'next/image';
-import { getLocalizedField } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+import { fallbackLang, getLocalizedField } from '@/lib/utils';
 import type { Teacher, Locale } from '@/types';
+
+const ACHIEVEMENT_TYPES = ['olympiad', 'certificate', 'competition', 'diploma', 'other'] as const;
 
 export default function TeacherCard({ item, locale }: { item: Teacher; locale: Locale }) {
   const t = useTranslations('teachers_page');
   const name = getLocalizedField(item, 'name', locale);
+  const subject = getLocalizedField(item, 'subject', locale);
+  const experience = Number(item.experience);
+  const achievements = (item.achievements ?? []).filter((a) => a && a.title);
+
   return (
-    <div className="card card-hover teacher-card" style={{ padding: 0, overflow: 'hidden' }}>
+    // Qidiruvdan `/teachers#teacher-<id>` havolasi shu kartaga olib keladi.
+    <article id={`teacher-${item.id}`} className="card card-hover teacher-card">
       {item.photo && (
-        <div className="card-img" style={{ position: 'relative', aspectRatio: '3 / 4' }}>
+        <div className="card-img teacher-card-photo">
           <Image
             src={item.photo}
             alt={name}
             fill
-            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
             style={{ objectFit: 'cover' }}
           />
         </div>
       )}
-      <div style={{ padding: 'var(--s-6)' }}>
-        <h3 style={{ marginBottom: 'var(--s-1)' }}>{name}</h3>
-        <p style={{ color: 'var(--primary)', fontWeight: 600, marginBottom: 'var(--s-2)' }}>
-          {item.subject}
-        </p>
-        {item.category && (
-          <p
-            style={{
-              fontSize: '0.9rem',
-              color: 'var(--text-tertiary)',
-              marginBottom: 'var(--s-1)',
-            }}
-          >
-            {item.category}
+      <div className="teacher-card-body">
+        <h3 lang={fallbackLang(item, 'name', locale)}>{name}</h3>
+        {subject && (
+          <p className="teacher-card-subject" lang={fallbackLang(item, 'subject', locale)}>
+            {subject}
           </p>
         )}
-        {item.experience > 0 && (
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-tertiary)', margin: 0 }}>
-            {item.experience} {t('experience')}
-          </p>
+        {item.category && <p className="teacher-card-meta">{item.category}</p>}
+        {Number.isFinite(experience) && experience > 0 && (
+          <p className="teacher-card-meta">{t('experience_years', { count: experience })}</p>
+        )}
+        {achievements.length > 0 && (
+          <div className="teacher-achievements">
+            <h4 className="teacher-achievements-title">{t('achievements_label')}</h4>
+            <ul>
+              {achievements.map((a, i) => {
+                const type = (ACHIEVEMENT_TYPES as readonly string[]).includes(a.type)
+                  ? a.type
+                  : 'other';
+                return (
+                  <li key={`${type}-${i}`}>
+                    <span className="teacher-achievement-type">
+                      {t(`achievement_types.${type}` as never)}
+                    </span>
+                    <span className="teacher-achievement-title">{a.title}</span>
+                    {a.year ? <span className="teacher-achievement-year">{a.year}</span> : null}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         )}
       </div>
-    </div>
+    </article>
   );
 }

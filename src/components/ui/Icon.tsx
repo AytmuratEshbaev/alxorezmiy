@@ -23,7 +23,12 @@ export type IconName =
   | 'search'
   | 'link'
   | 'share'
-  | 'check';
+  | 'check'
+  | 'x'
+  | 'chevron-left'
+  | 'chevron-right'
+  | 'file-text'
+  | 'refresh';
 
 // Single inline-SVG icon language for the public site.
 // Style-matched to the home-page direction cards: 24 viewBox, no fill,
@@ -186,6 +191,23 @@ const PATHS: Record<IconName, ReactNode> = {
     </>
   ),
   check: <polyline points="20 6 9 17 4 12" />,
+  x: <path d="M18 6 6 18M6 6l12 12" />,
+  'chevron-left': <path d="M15 18l-6-6 6-6" />,
+  'chevron-right': <path d="M9 18l6-6-6-6" />,
+  'file-text': (
+    <>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+    </>
+  ),
+  refresh: (
+    <>
+      <polyline points="23 4 23 10 17 10" />
+      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+    </>
+  ),
 };
 
 export default function Icon({

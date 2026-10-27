@@ -1,24 +1,19 @@
 'use client';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import Turnstile from '@/components/ui/Turnstile';
+import Turnstile, { submitErrorFromStatus, useTurnstileGate } from '@/components/ui/Turnstile';
+import FormFeedback, { type FormState } from '@/components/ui/FormFeedback';
+import { SendIcon, Spinner } from '@/components/ui/FormStatus';
 
 type FieldErrors = Partial<Record<'name' | 'email' | 'subject' | 'message', string>>;
 
-const errorTextStyle: React.CSSProperties = {
-  margin: 'var(--s-1) 0 0',
-  color: 'var(--danger)',
-  fontSize: '0.8125rem',
-};
-
 export default function ContactForm() {
   const t = useTranslations('contact_page');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<FormState>('idle');
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [website, setWebsite] = useState(''); // honeypot — always empty for humans
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [turnstileToken, setTurnstileToken] = useState('');
-  const [turnstileReset, setTurnstileReset] = useState(0);
+  const turnstile = useTurnstileGate();
 
   function validate(): FieldErrors {
     const next: FieldErrors = {};
@@ -33,6 +28,7 @@ export default function ContactForm() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (turnstile.blocked) return;
     const found = validate();
     if (Object.keys(found).length > 0) {
       setErrors(found);
@@ -54,16 +50,20 @@ export default function ContactForm() {
       const res = await fetch('/api/send-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, website, turnstileToken }),
+        body: JSON.stringify({ ...form, website, turnstileToken: turnstile.token }),
       });
-      if (!res.ok) throw new Error('failed');
+      if (!res.ok) {
+        setStatus(submitErrorFromStatus(res.status));
+        return;
+      }
       setStatus('success');
       setForm({ name: '', email: '', subject: '', message: '' });
     } catch (err) {
       console.error('Send error:', err);
       setStatus('error');
     } finally {
-      setTurnstileReset((k) => k + 1);
+      // Token bir martalik — har urinishdan keyin yangisi olinadi.
+      turnstile.reset();
     }
   }
 
@@ -99,7 +99,7 @@ export default function ContactForm() {
             aria-describedby={errors.name ? 'contactName-error' : undefined}
           />
           {errors.name && (
-            <p id="contactName-error" role="alert" style={errorTextStyle}>
+            <p id="contactName-error" role="alert" className="field-error">
               {errors.name}
             </p>
           )}
@@ -119,7 +119,7 @@ export default function ContactForm() {
             aria-describedby={errors.email ? 'contactEmail-error' : undefined}
           />
           {errors.email && (
-            <p id="contactEmail-error" role="alert" style={errorTextStyle}>
+            <p id="contactEmail-error" role="alert" className="field-error">
               {errors.email}
             </p>
           )}
@@ -138,7 +138,7 @@ export default function ContactForm() {
             aria-describedby={errors.subject ? 'contactSubject-error' : undefined}
           />
           {errors.subject && (
-            <p id="contactSubject-error" role="alert" style={errorTextStyle}>
+            <p id="contactSubject-error" role="alert" className="field-error">
               {errors.subject}
             </p>
           )}
@@ -157,90 +157,27 @@ export default function ContactForm() {
             aria-describedby={errors.message ? 'contactMessage-error' : undefined}
           />
           {errors.message && (
-            <p id="contactMessage-error" role="alert" style={errorTextStyle}>
+            <p id="contactMessage-error" role="alert" className="field-error">
               {errors.message}
             </p>
           )}
         </div>
-        <Turnstile onToken={setTurnstileToken} resetKey={turnstileReset} />
-        <button type="submit" className="btn btn-primary btn-lg w-full" disabled={sending}>
+        <Turnstile {...turnstile.props} />
+        <button
+          type="submit"
+          className="btn btn-primary btn-lg w-full"
+          disabled={sending || turnstile.blocked}
+        >
           <span>{sending ? t('form_sending') : t('form_send')}</span>
-          {sending ? (
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              aria-hidden="true"
-              className="contact-spin"
-            >
-              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-            </svg>
-          ) : (
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              aria-hidden="true"
-            >
-              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
-            </svg>
-          )}
+          {sending ? <Spinner /> : <SendIcon />}
         </button>
       </fieldset>
-      <div role="status" aria-live="polite" style={{ minHeight: 'var(--s-6)' }}>
-        {status === 'success' && (
-          <p
-            style={{
-              padding: 'var(--s-3) var(--s-4)',
-              background: 'var(--success-bg)',
-              color: 'var(--success)',
-              borderRadius: 'var(--r-md)',
-              borderLeft: '3px solid var(--success)',
-              margin: 'var(--s-4) 0 0',
-            }}
-          >
-            {t('form_success')}
-          </p>
-        )}
-        {status === 'error' && (
-          <p
-            style={{
-              padding: 'var(--s-3) var(--s-4)',
-              background: 'var(--danger-bg)',
-              color: 'var(--danger)',
-              borderRadius: 'var(--r-md)',
-              borderLeft: '3px solid var(--danger)',
-              margin: 'var(--s-4) 0 0',
-            }}
-          >
-            {t('form_error')}
-          </p>
-        )}
-      </div>
-      <style jsx>{`
-        .contact-spin {
-          animation: contact-spin 1s linear infinite;
-        }
-        @keyframes contact-spin {
-          from {
-            transform: rotate(0);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .contact-spin {
-            animation: none;
-          }
-        }
-      `}</style>
+      <FormFeedback
+        state={status}
+        waitingReason={turnstile.waitingReason}
+        successText={t('form_success')}
+        errorText={t('form_error')}
+      />
     </form>
   );
 }

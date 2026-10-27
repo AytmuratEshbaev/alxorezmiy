@@ -1,11 +1,26 @@
 'use client';
 import { useEffect, useRef } from 'react';
 
+// Chiziqlar shaffofligi bo'yicha guruhlanadi: har kadrda har bir juft uchun alohida
+// stroke() o'rniga har guruhga bitta yo'l va bitta stroke() — GPU/CPU ishi bir necha marta kam.
+const BUCKETS = 6;
+
+/** Kuchsiz qurilma, kichik ekran, trafikni tejash yoki reduced-motion — animatsiya yo'q. */
+function shouldAnimate(): boolean {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  if (window.innerWidth < 768) return false;
+  const cores = navigator.hardwareConcurrency;
+  if (typeof cores === 'number' && cores > 0 && cores <= 4) return false;
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (conn?.saveData) return false;
+  return true;
+}
+
 export default function HeroParticles() {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!shouldAnimate()) return;
     const canvas = ref.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -13,7 +28,7 @@ export default function HeroParticles() {
 
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const config = {
-      count: window.innerWidth < 768 ? 32 : 48,
+      count: window.innerWidth < 1280 ? 36 : 44,
       maxDist: 140,
       speed: 0.25,
       size: 1.6,
@@ -22,12 +37,15 @@ export default function HeroParticles() {
     let particles: { x: number; y: number; vx: number; vy: number }[] = [];
     let w = 0;
     let h = 0;
+    let cssW = 0;
     const mouse: { x: number | null; y: number | null } = { x: null, y: null };
-    let visible = true;
+    let inView = true;
     let raf = 0;
+    const lineBuckets: Path2D[] = [];
 
     const resize = () => {
       const rect = canvas.parentElement!.getBoundingClientRect();
+      cssW = rect.width;
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       canvas.style.width = `${rect.width}px`;
@@ -43,8 +61,15 @@ export default function HeroParticles() {
         vy: (Math.random() - 0.5) * config.speed * dpr,
       }));
     };
+    const strokeBuckets = (rgb: string, maxOpacity: number) => {
+      for (let b = 0; b < BUCKETS; b++) {
+        ctx.strokeStyle = `rgba(${rgb}, ${(((b + 1) / BUCKETS) * maxOpacity).toFixed(3)})`;
+        ctx.stroke(lineBuckets[b]);
+      }
+    };
     const draw = () => {
       const maxDist = config.maxDist * dpr;
+      const maxDist2 = maxDist * maxDist;
       ctx.clearRect(0, 0, w, h);
       for (const p of particles) {
         p.x += p.vx;
@@ -55,53 +80,71 @@ export default function HeroParticles() {
         else if (p.y > h) p.y = 0;
       }
       ctx.lineWidth = dpr;
+      for (let b = 0; b < BUCKETS; b++) lineBuckets[b] = new Path2D();
       for (let i = 0; i < particles.length; i++) {
         const a = particles[i];
         for (let j = i + 1; j < particles.length; j++) {
-          const b = particles[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < maxDist) {
-            const op = (1 - d / maxDist) * 0.32;
-            ctx.strokeStyle = `rgba(245, 158, 11, ${op})`;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-          }
+          const bp = particles[j];
+          const dx = a.x - bp.x;
+          const dy = a.y - bp.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 >= maxDist2) continue;
+          const strength = 1 - Math.sqrt(d2) / maxDist;
+          const bucket = Math.min(BUCKETS - 1, Math.floor(strength * BUCKETS));
+          lineBuckets[bucket].moveTo(a.x, a.y);
+          lineBuckets[bucket].lineTo(bp.x, bp.y);
         }
       }
+      strokeBuckets('245, 158, 11', 0.32);
+
       if (mouse.x !== null && mouse.y !== null) {
         const mr = config.mouseRadius * dpr;
+        const mr2 = mr * mr;
+        for (let b = 0; b < BUCKETS; b++) lineBuckets[b] = new Path2D();
         for (const p of particles) {
           const dx = p.x - mouse.x;
           const dy = p.y - mouse.y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < mr) {
-            const op = (1 - d / mr) * 0.55;
-            ctx.strokeStyle = `rgba(251, 191, 36, ${op})`;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.stroke();
-          }
+          const d2 = dx * dx + dy * dy;
+          if (d2 >= mr2) continue;
+          const strength = 1 - Math.sqrt(d2) / mr;
+          const bucket = Math.min(BUCKETS - 1, Math.floor(strength * BUCKETS));
+          lineBuckets[bucket].moveTo(p.x, p.y);
+          lineBuckets[bucket].lineTo(mouse.x, mouse.y);
         }
+        strokeBuckets('251, 191, 36', 0.55);
       }
+
       ctx.fillStyle = 'rgba(252, 211, 77, 0.65)';
+      ctx.beginPath();
+      const r = config.size * dpr;
       for (const p of particles) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, config.size * dpr, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.moveTo(p.x + r, p.y);
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
       }
+      ctx.fill();
     };
     const loop = () => {
-      if (visible) draw();
+      draw();
       raf = requestAnimationFrame(loop);
     };
+    const start = () => {
+      if (!raf && inView && !document.hidden) raf = requestAnimationFrame(loop);
+    };
+    const stop = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    };
+
+    let resizeTimer = 0;
     const onResize = () => {
-      resize();
-      create();
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        // Mobil brauzerlarda manzil paneli yashirilganda faqat balandlik o'zgaradi —
+        // zarrachalarni qayta yaratmaymiz.
+        const widthChanged = canvas.parentElement!.getBoundingClientRect().width !== cssW;
+        resize();
+        if (widthChanged) create();
+      }, 150);
     };
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -112,27 +155,31 @@ export default function HeroParticles() {
       mouse.x = null;
       mouse.y = null;
     };
+    const onVisibility = () => (document.hidden ? stop() : start());
     const obs = new IntersectionObserver(([e]) => {
-      visible = e.isIntersecting;
-      if (visible && !raf) raf = requestAnimationFrame(loop);
-      else if (!visible && raf) {
-        cancelAnimationFrame(raf);
-        raf = 0;
-      }
+      inView = e.isIntersecting;
+      if (inView) start();
+      else stop();
     });
+
     resize();
     create();
     obs.observe(canvas);
     window.addEventListener('resize', onResize, { passive: true });
-    canvas.addEventListener('mousemove', onMove, { passive: true });
-    canvas.addEventListener('mouseleave', onLeave);
-    raf = requestAnimationFrame(loop);
+    document.addEventListener('visibilitychange', onVisibility);
+    // Canvas kontent ostida (z-index 0) — sichqonchani butun hero bo'yicha kuzatamiz.
+    const host = canvas.parentElement!;
+    host.addEventListener('mousemove', onMove, { passive: true });
+    host.addEventListener('mouseleave', onLeave);
+    start();
     return () => {
-      cancelAnimationFrame(raf);
+      stop();
+      window.clearTimeout(resizeTimer);
       obs.disconnect();
       window.removeEventListener('resize', onResize);
-      canvas.removeEventListener('mousemove', onMove);
-      canvas.removeEventListener('mouseleave', onLeave);
+      document.removeEventListener('visibilitychange', onVisibility);
+      host.removeEventListener('mousemove', onMove);
+      host.removeEventListener('mouseleave', onLeave);
     };
   }, []);
 

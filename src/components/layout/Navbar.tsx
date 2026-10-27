@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useEffect, useState, type RefObject } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
-import { NAV_ITEMS } from './nav-config';
+import { NAV_ITEMS, isItemActive } from './nav-config';
 import NavbarDropdown from './NavbarDropdown';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import ThemeToggle from '@/components/ui/ThemeToggle';
@@ -29,13 +29,6 @@ export default function Navbar({
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  function isActive(item: { key: string; href: string; childKeys?: string[] }) {
-    const path = pathname === '/' ? '/' : pathname.replace(/\/$/, '');
-    if (item.href === path) return true;
-    if (item.childKeys && item.childKeys.some((k) => path.endsWith(`/${k}`))) return true;
-    return false;
-  }
-
   return (
     <>
       <a href="#main-content" className="skip-link">
@@ -49,20 +42,21 @@ export default function Navbar({
             </span>
           </Link>
           <div className="nav-links">
-            {NAV_ITEMS.map((item) =>
-              item.children ? (
-                <NavbarDropdown key={item.key} item={item} active={isActive(item)} />
+            {NAV_ITEMS.map((item) => {
+              const active = isItemActive(pathname, item);
+              return item.children ? (
+                <NavbarDropdown key={item.key} item={item} active={active} />
               ) : (
                 <Link
                   key={item.key}
                   href={item.href as never}
-                  className={isActive(item) ? 'active' : undefined}
-                  aria-current={isActive(item) ? 'page' : undefined}
+                  className={active ? 'active' : undefined}
+                  aria-current={active ? 'page' : undefined}
                 >
                   {t(item.i18nKey as never)}
                 </Link>
-              )
-            )}
+              );
+            })}
           </div>
           <div className="nav-actions">
             <SearchTrigger />
@@ -70,7 +64,7 @@ export default function Navbar({
             <ThemeToggle />
             <button
               type="button"
-              className="hamburger"
+              className={`hamburger${mobileOpen ? ' active' : ''}`}
               ref={hamburgerRef}
               aria-label={t('a11y.menu')}
               aria-expanded={mobileOpen}

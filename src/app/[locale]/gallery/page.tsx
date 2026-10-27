@@ -1,8 +1,9 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/routing';
 import { getGallery } from '@/lib/db/queries';
 import GalleryGrid from '@/components/gallery/GalleryGrid';
+import PageHeader from '@/components/ui/PageHeader';
 import { buildPageMetadata } from '@/lib/seo';
+import { safe } from '@/lib/utils';
 import type { GalleryItem, Locale } from '@/types';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -16,31 +17,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-async function safeGetGallery(): Promise<GalleryItem[]> {
-  try {
-    return await getGallery();
-  } catch (err) {
-    console.warn('[gallery] getGallery failed:', err);
-    return [];
-  }
-}
-
 export default async function GalleryPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
-  const items = await safeGetGallery();
+  const items = await safe<GalleryItem[]>(() => getGallery(), [], 'gallery getGallery');
 
   return (
     <>
-      <div className="page-header">
-        <h1>{t('gallery_page.title')}</h1>
-        <div className="breadcrumb">
-          <Link href={'/' as never}>{t('common.home')}</Link>
-          <span className="separator">/</span>
-          <span className="current">{t('nav.gallery')}</span>
-        </div>
-      </div>
+      <PageHeader title={t('gallery_page.title')} crumbs={[{ label: t('nav.gallery') }]} />
 
       <section className="section">
         <div className="container">

@@ -17,9 +17,7 @@
   },
   "hero": {
     "eyebrow": "IT va Aniq fanlar maktabi",
-    "scroll": "Quyiroq",
     "title": "Muhammad al-Xorazmiy nomidagi ixtisoslashtirilgan maktabining Nukus filiali",
-    "subtitle": "O'zbekiston Respublikasi Maktabgacha va maktab ta'limi vazirligi (MMTV) huzuridagi Ixtisoslashtirilgan ta'lim muassasalari agentligi (ITMA) tizimidagi Muhammad al-Xorazmiy nomidagi ixtisoslashtirilgan maktabi Nukus filiali",
     "description": "Aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim. Kelajak intellektual yetakchilarini tayyorlaymiz.",
     "btn_about": "Maktab haqida",
     "btn_admission": "Qabul shartlari"
@@ -73,8 +71,6 @@
       "community": "Hamkorlik",
       "community_desc": "Jamoaviy ishlash va o'zaro hurmat muhiti"
     },
-    "leadership_title": "Rahbariyat",
-    "leadership_label": "Bizning jamoa",
     "virtual_tour": "Virtual tur",
     "virtual_tour_label": "Maktab binosi",
     "virtual_tour_items": {
@@ -89,13 +85,9 @@
   "contact_page": {
     "title": "Bog'lanish",
     "address_label": "Manzil",
-    "address": "Nukus shahri, Amir Temur ko'chasi 1-uy",
     "phone_label": "Telefon",
-    "phone": "+998 61 222-33-44",
     "email_label": "Elektron pochta",
-    "email": "info@alxorazmiy-nukus.uz",
     "hours_label": "Ish vaqti",
-    "hours": "Dushanba — Shanba, 08:00 — 17:00",
     "form_title": "Xabar yuborish",
     "form_name": "Ismingiz",
     "form_email": "Email manzilingiz",
@@ -116,30 +108,19 @@
   },
   "common": {
     "read_more": "Batafsil",
-    "view_all": "Barchasini ko'rish",
-    "loading": "Yuklanmoqda...",
-    "search": "Qidirish...",
-    "no_results": "Natija topilmadi",
-    "back": "Orqaga",
     "home": "Bosh sahifa",
-    "close": "Yopish",
-    "save": "Saqlash",
-    "cancel": "Bekor qilish",
-    "delete": "O'chirish",
-    "edit": "Tahrirlash",
-    "add": "Qo'shish",
     "all": "Barchasi",
-    "download": "Yuklab olish",
-    "place": "o'rin",
-    "year": "yil"
+    "place_ordinal": "{place}-o'rin",
+    "year_label": "{year}-yil"
   },
   "footer": {
     "about_text": "Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi — aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim beruvchi zamonaviy ta'lim muassasasi.",
     "quick_links": "Tezkor havolalar",
     "contact_info": "Kontakt",
-    "social": "Ijtimoiy tarmoqlar",
     "official_name": "Rasmiy nomi",
-    "copyright": "© 2026 Al-Xorazmiy ixtisoslashtirilgan maktabi. Barcha huquqlar himoyalangan."
+    "copyright": "© {year} Al-Xorazmiy ixtisoslashtirilgan maktabi. Barcha huquqlar himoyalangan.",
+    "location": "Nukus, Qoraqalpog'iston",
+    "info_links": "Ma'lumot"
   },
   "a11y": {
     "skip": "Asosiy mazmunga o'tish",
@@ -149,7 +130,9 @@
     "search": "Qidirish (Ctrl+K)",
     "lang_select": "Tilni tanlash",
     "theme_toggle": "Tema almashtirish",
-    "back_to_top": "Yuqoriga"
+    "back_to_top": "Yuqoriga",
+    "breadcrumb": "Navigatsiya zanjiri",
+    "close_menu": "Menyuni yopish"
   },
   "search": {
     "placeholder": "Qidirish: yangilik, o'qituvchi...",
@@ -160,32 +143,20 @@
     "no_results": "\"{query}\" bo'yicha hech narsa topilmadi",
     "type_news": "Yangilik",
     "type_teacher": "O'qituvchi",
-    "type_faq": "Savol-javob"
+    "type_faq": "Savol-javob",
+    "loading": "Qidiruv ma'lumotlari yuklanmoqda…",
+    "error": "Qidiruv ma'lumotlarini yuklab bo'lmadi.",
+    "retry": "Qayta urinish",
+    "results_count": "{count, plural, =0 {Natija topilmadi} other {# ta natija}}"
   },
   "achievements": {
-    "title": "Yutuqlarimiz",
     "label": "faxrimiz",
     "intro_title": "Olimpiada g'oliblari",
     "intro_text": "O'quvchilarimiz respublika va xalqaro miqyosdagi fan olimpiadalarida har yili yangi cho'qqilarni egallaydi.",
-    "stat_total": "Jami yutuqlar",
-    "stat_international": "Xalqaro",
-    "stat_republic": "Respublika",
-    "stat_gold": "Oltin medal",
     "level_international": "Xalqaro",
     "level_republic": "Respublika",
     "level_city": "Shahar",
-    "level_district": "Tuman",
-    "col_student": "O'quvchi",
-    "col_subject": "Fan",
-    "col_olympiad": "Olimpiada",
-    "col_level": "Daraja",
-    "col_place": "Natija",
-    "empty": "Hozircha natijalar yo'q",
-    "cta_label": "qabul",
-    "cta_title": "Sizning bolangiz ham bu ro'yxatda bo'lishi mumkin",
-    "cta_text": "Maktabimiz olimpiada g'oliblarini yetishtirishga ixtisoslashgan. Qabul shartlari va dasturlar haqida ma'lumot oling.",
-    "cta_admission": "Qabul shartlari →",
-    "cta_programs": "Dasturlar"
+    "level_district": "Tuman"
   },
   "directions_page": {
     "title": "Yo'nalishlar",
@@ -194,7 +165,7 @@
     "checklist_1": "Haftasiga qo'shimcha soatlar",
     "checklist_2": "Amaliy laboratoriya mashg'ulotlari",
     "checklist_3": "Muammoli masalalarni yechishga doir to'garaklar",
-    "checklist_4": "Olimpiadalarga intesiv tayyorgarlik",
+    "checklist_4": "Olimpiadalarga intensiv tayyorgarlik",
     "subjects_title": "Asosiy Fanlar",
     "math_desc": "Algebra, geometriya, sonlar nazariyasi, kombinatorika va mantiqiy fikrlash masalalari ustida chuqurlashtirilgan o'qitish.",
     "physics_desc": "Klassik mexanika, elektrodinamika, termodinamika va zamonaviy kvant fizikasi masalalari.",
@@ -221,7 +192,7 @@
     "section_text": "Ixtisoslashtirilgan maktabimizga kirish uch bosqichdan iborat.",
     "step1_title": "Hujjat topshirish",
     "step1_text": "Ochiq eshiklar kuni e'lon qilingandan so'ng, ota-onalar farzandining hujjatlarini onlayn ariza shaklida maktab ma'muriyatiga taqdim etishi kerak.",
-    "doc1": "Pasport yoka Tug'ilganlik haqida guvohnoma nusxasi",
+    "doc1": "Pasport yoki Tug'ilganlik haqida guvohnoma nusxasi",
     "doc2": "3x4 o'lchamdagi 6 ta rasm",
     "doc3": "O'quvchining baholar tabeli",
     "step2_title": "Saralash Test Imtihonlari",
@@ -229,24 +200,21 @@
     "step3_title": "Suhbat jarayoni",
     "step3_text": "Testda yuqori ball to'plagan o'quvchilar yakuniy bosqich — maktab rahbariyati va psixolog ishtirokidagi suhbatga chaqiriladi.",
     "download_title": "Zarur Hujjatlar",
-    "download_text": "Qabul talablari va tartib-qoidalari bilan batafsil tanishish uchun nizamnoma (pdf) ni yuklab oling.",
-    "download_btn": "Nizamnomani yuklab olish"
+    "download_text": "Qabul talablari, topshiriladigan hujjatlar ro'yxati va muddatlar haqida batafsil ma'lumot olish uchun maktab ma'muriyati bilan bog'laning."
   },
   "faq_page": {
     "title": "Ko'p beriladigan savollar",
     "all_questions": "Barcha savollar",
     "filter_admission": "Qabul",
     "filter_education": "O'quv tizimi",
-    "filter_general": "Umumiy",
-    "empty": "Hozircha savollar yo'q"
+    "filter_general": "Umumiy"
   },
   "gallery_page": {
     "title": "Foto va Video Galereya",
     "filter_building": "Bino",
     "filter_lessons": "Darslar",
     "filter_sports": "Sport",
-    "filter_events": "Tadbirlar",
-    "empty": "Hozircha rasmlar yo'q"
+    "filter_events": "Tadbirlar"
   },
   "about_history": {
     "y2010": "Maktab tashkil etildi",
@@ -316,7 +284,6 @@
   },
   "news_page": {
     "title": "Yangiliklar va E'lonlar",
-    "empty": "Hozircha yangiliklar yo'q",
     "empty_title": "Hozircha yangilik yo'q",
     "empty_text": "Yaqin orada bu yerda maktab hayotidan eng so'nggi yangilik va e'lonlar paydo bo'ladi.",
     "category": {
@@ -335,19 +302,27 @@
     "share_native": "Ulashish",
     "load_more": "Ko'proq yuklash",
     "load_more_loading": "Yuklanmoqda...",
-    "load_more_end": "Barcha yangiliklar ko'rsatildi"
+    "load_more_end": "Barcha yangiliklar ko'rsatildi",
+    "load_more_error": "Yangiliklarni yuklab bo'lmadi.",
+    "retry": "Qayta urinish"
   },
   "teachers_page": {
     "title": "O'qituvchilar",
     "subtitle": "Oliy toifali va tajribali ustozlar jamoasi",
-    "experience": "yil tajriba",
-    "empty": "Hozircha o'qituvchilar yo'q",
     "empty_title": "O'qituvchilar ro'yxati tayyorlanmoqda",
-    "empty_text": "Tez orada bu yerda maktabning oliy toifali pedagoglari jamoasini ko'rishingiz mumkin."
+    "empty_text": "Tez orada bu yerda maktabning oliy toifali pedagoglari jamoasini ko'rishingiz mumkin.",
+    "experience_years": "{count, plural, other {# yil tajriba}}",
+    "achievements_label": "Yutuqlari",
+    "achievement_types": {
+      "olympiad": "Olimpiada",
+      "certificate": "Sertifikat",
+      "competition": "Musobaqa",
+      "diploma": "Diplom",
+      "other": "Boshqa"
+    }
   },
   "achievements_page": {
     "title": "Yutuqlarimiz",
-    "empty": "Hozircha natijalar yo'q",
     "empty_title": "Yutuqlar yaqin orada",
     "empty_text": "O'quvchilarimizning olimpiadalardagi g'alabalari tez orada shu yerda e'lon qilinadi."
   },
@@ -358,7 +333,8 @@
     "lightbox_label": "Rasm ko'rinishi",
     "close": "Yopish",
     "prev": "Oldingi rasm",
-    "next": "Keyingi rasm"
+    "next": "Keyingi rasm",
+    "counter": "{current} / {total}"
   },
   "faq_page_extra": {
     "empty_title": "Savollar yaqin orada",
@@ -366,8 +342,8 @@
   },
   "a11y_extra": {
     "scroll_down": "Quyiroq aylantirish",
-    "expand": "Kengaytirish",
-    "collapse": "Yopish"
+    "carousel_prev": "Oldingi yutuqlar",
+    "carousel_next": "Keyingi yutuqlar"
   },
   "admission_form": {
     "section_label": "Onlayn ariza",
@@ -387,5 +363,17 @@
     "error_phone": "Telefon raqamini kiriting",
     "error_phone_invalid": "Telefon raqami noto'g'ri",
     "error_grade": "Sinfni tanlang"
+  },
+  "forms": {
+    "verifying": "Xavfsizlik tekshiruvi bajarilmoqda…",
+    "captcha_unavailable": "Xavfsizlik tekshiruvini yuklab bo'lmadi. Sahifani yangilang yoki maktabga telefon qiling yoxud elektron pochta orqali yozing.",
+    "error_forbidden": "Xavfsizlik tekshiruvidan o'tib bo'lmadi. Iltimos, qaytadan urinib ko'ring.",
+    "error_rate_limited": "Juda ko'p urinish. Iltimos, bir necha daqiqadan so'ng qayta yuboring."
+  },
+  "error_page": {
+    "title": "Nimadir noto'g'ri ketdi",
+    "message": "Sahifani yuklashda kutilmagan xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.",
+    "retry": "Qayta urinish",
+    "back_home": "Bosh sahifaga"
   }
 }

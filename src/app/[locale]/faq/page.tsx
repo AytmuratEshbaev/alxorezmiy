@@ -1,7 +1,8 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/routing';
 import { getFaq } from '@/lib/db/queries';
-import { getLocalizedField } from '@/lib/utils';
+import { getLocalizedField, htmlLang, safe } from '@/lib/utils';
+import PageHeader from '@/components/ui/PageHeader';
+import JsonLd from '@/components/ui/JsonLd';
 import FaqAccordion from '@/components/faq/FaqAccordion';
 import { buildPageMetadata } from '@/lib/seo';
 import type { FaqItem, Locale } from '@/types';
@@ -17,26 +18,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   });
 }
 
-async function safeGetFaq(): Promise<FaqItem[]> {
-  try {
-    return await getFaq();
-  } catch (err) {
-    console.warn('[faq] getFaq failed:', err);
-    return [];
-  }
-}
-
 export default async function FaqPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
-  const items = await safeGetFaq();
+  const items = await safe<FaqItem[]>(() => getFaq(), [], 'faq getFaq');
 
   const faqLd =
     items.length > 0
       ? {
           '@context': 'https://schema.org',
           '@type': 'FAQPage',
+          inLanguage: htmlLang(locale),
           mainEntity: items.map((item) => ({
             '@type': 'Question',
             name: getLocalizedField(item, 'question', locale as Locale),
@@ -50,20 +43,8 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
 
   return (
     <>
-      {faqLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
-        />
-      )}
-      <div className="page-header">
-        <h1>{t('faq_page.title')}</h1>
-        <div className="breadcrumb">
-          <Link href={'/' as never}>{t('common.home')}</Link>
-          <span className="separator">/</span>
-          <span className="current">{t('nav.faq')}</span>
-        </div>
-      </div>
+      {faqLd && <JsonLd data={faqLd} />}
+      <PageHeader title={t('faq_page.title')} crumbs={[{ label: t('nav.faq') }]} />
 
       <section className="section">
         <div className="container" style={{ maxWidth: 800 }}>

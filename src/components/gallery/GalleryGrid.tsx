@@ -2,8 +2,9 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { getLocalizedField } from '@/lib/utils';
+import { fallbackLang, getLocalizedField } from '@/lib/utils';
 import { resizedImage } from '@/lib/image-loader';
+import EmptyState from '@/components/ui/EmptyState';
 import Icon from '@/components/ui/Icon';
 import type { GalleryItem, Locale } from '@/types';
 
@@ -12,6 +13,8 @@ interface Props {
   locale: Locale;
 }
 
+const SWIPE_MIN_PX = 50;
+
 export default function GalleryGrid({ items, locale }: Props) {
   const t = useTranslations();
   const [filter, setFilter] = useState<string>('all');
@@ -19,6 +22,7 @@ export default function GalleryGrid({ items, locale }: Props) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const filtered = useMemo(() => {
     if (filter === 'all') return items;
@@ -33,8 +37,8 @@ export default function GalleryGrid({ items, locale }: Props) {
     { value: 'events', label: t('gallery_page.filter_events') },
   ];
 
-  const openAt = (idx: number) => {
-    triggerRef.current = document.activeElement as HTMLElement;
+  const openAt = (idx: number, trigger: HTMLElement) => {
+    triggerRef.current = trigger;
     setLightboxIdx(idx);
   };
   const close = useCallback(() => setLightboxIdx(null), []);
@@ -49,13 +53,21 @@ export default function GalleryGrid({ items, locale }: Props) {
 
   const open = lightboxIdx !== null;
 
-  // Keyboard: Escape / arrows / focus trap. Body scroll lock + focus restore.
+  // Ochilganda: scroll lock + yopish tugmasiga fokus; yopilganda fokus bosilgan rasmga qaytadi.
   useEffect(() => {
     if (!open) return;
-    const previouslyFocused = triggerRef.current;
+    const trigger = triggerRef.current;
     document.body.style.overflow = 'hidden';
     closeBtnRef.current?.focus();
+    return () => {
+      document.body.style.overflow = '';
+      trigger?.focus();
+    };
+  }, [open]);
 
+  // Klaviatura: Escape / strelkalar / fokus tuzog'i.
+  useEffect(() => {
+    if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -67,43 +79,58 @@ export default function GalleryGrid({ items, locale }: Props) {
         e.preventDefault();
         next();
       } else if (e.key === 'Tab') {
-        // Trap focus within the dialog.
         const focusables = dialogRef.current?.querySelectorAll<HTMLElement>('button');
         if (!focusables || focusables.length === 0) return;
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
+        const active = document.activeElement;
+        if (!dialogRef.current?.contains(active)) {
+          e.preventDefault();
+          first.focus();
+        } else if (e.shiftKey && active === first) {
           e.preventDefault();
           last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
+        } else if (!e.shiftKey && active === last) {
           e.preventDefault();
           first.focus();
         }
       }
     };
     document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
-      previouslyFocused?.focus();
-    };
+    return () => document.removeEventListener('keydown', onKey);
   }, [open, close, prev, next]);
+
+  function onTouchStart(e: React.TouchEvent) {
+    const p = e.touches[0];
+    touchStart.current = p ? { x: p.clientX, y: p.clientY } : null;
+  }
+  function onTouchEnd(e: React.TouchEvent) {
+    const start = touchStart.current;
+    touchStart.current = null;
+    const p = e.changedTouches[0];
+    if (!start || !p || filtered.length < 2) return;
+    const dx = p.clientX - start.x;
+    const dy = p.clientY - start.y;
+    // Faqat aniq gorizontal surish — vertikal harakat va kichik tebranishlar e'tiborsiz.
+    if (Math.abs(dx) < SWIPE_MIN_PX || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    if (dx < 0) next();
+    else prev();
+  }
 
   const current = open ? filtered[lightboxIdx] : null;
   const currentCaption = current ? getLocalizedField(current, 'caption', locale) : '';
+  const currentLang = current ? fallbackLang(current, 'caption', locale) : undefined;
 
   return (
     <>
-      <div
-        className="flex-between"
-        style={{ marginBottom: 'var(--space-xl)', flexWrap: 'wrap', gap: 'var(--space-md)' }}
-      >
-        <div className="filter-group" style={{ marginBottom: 0 }}>
+      <div className="gallery-toolbar">
+        <div className="filter-group" role="group" aria-label={t('gallery_page.title')}>
           {filters.map((f) => (
             <button
               key={f.value}
               type="button"
               className={`filter-btn${filter === f.value ? ' active' : ''}`}
+              aria-pressed={filter === f.value}
               onClick={() => {
                 setFilter(f.value);
                 setLightboxIdx(null);
@@ -115,31 +142,16 @@ export default function GalleryGrid({ items, locale }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-3">
-        {filtered.length === 0 ? (
-          <div
-            role="status"
-            style={{
-              gridColumn: '1/-1',
-              textAlign: 'center',
-              color: 'var(--ink-3)',
-              padding: 'var(--s-12) var(--s-4)',
-            }}
-          >
-            <Icon
-              name="image"
-              size={44}
-              style={{ color: 'var(--ink-4)', marginBottom: 'var(--s-3)' }}
-            />
-            <p style={{ margin: 0, fontWeight: 500, color: 'var(--ink-2)' }}>
-              {t('gallery_page_extra.empty_title')}
-            </p>
-            <p style={{ margin: 'var(--s-2) 0 0', fontSize: '0.9375rem' }}>
-              {t('gallery_page_extra.empty_text')}
-            </p>
-          </div>
-        ) : (
-          filtered.map((item, idx) => {
+      {filtered.length === 0 ? (
+        <EmptyState
+          compact
+          icon="image"
+          title={t('gallery_page_extra.empty_title')}
+          text={t('gallery_page_extra.empty_text')}
+        />
+      ) : (
+        <div className="grid grid-3">
+          {filtered.map((item, idx) => {
             const caption = getLocalizedField(item, 'caption', locale);
             const altText = caption || t('gallery_page.title');
             return (
@@ -147,22 +159,30 @@ export default function GalleryGrid({ items, locale }: Props) {
                 key={item.id}
                 type="button"
                 className="gallery-item"
-                onClick={() => openAt(idx)}
+                onClick={(e) => openAt(idx, e.currentTarget)}
                 aria-label={`${t('gallery_page_extra.open_image')}: ${altText}`}
                 aria-haspopup="dialog"
               >
                 <Image
                   src={item.url}
-                  alt={altText}
+                  alt=""
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
-                {caption && <div className="gallery-caption">{caption}</div>}
+                {caption && (
+                  <div
+                    className="gallery-caption"
+                    aria-hidden="true"
+                    lang={fallbackLang(item, 'caption', locale)}
+                  >
+                    {caption}
+                  </div>
+                )}
               </button>
             );
-          })
-        )}
-      </div>
+          })}
+        </div>
+      )}
 
       {open && current && (
         <div
@@ -177,13 +197,28 @@ export default function GalleryGrid({ items, locale }: Props) {
             role="dialog"
             aria-modal="true"
             aria-label={currentCaption || t('gallery_page_extra.lightbox_label')}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={resizedImage(current.url, 1600)}
               alt={currentCaption || t('gallery_page.title')}
+              lang={currentLang}
             />
-            {currentCaption && <div className="lightbox-caption">{currentCaption}</div>}
+            {currentCaption && (
+              <div className="lightbox-caption" aria-hidden="true" lang={currentLang}>
+                {currentCaption}
+              </div>
+            )}
+            {filtered.length > 1 && (
+              <p className="lightbox-counter" aria-live="polite">
+                {t('gallery_page_extra.counter', {
+                  current: lightboxIdx + 1,
+                  total: filtered.length,
+                })}
+              </p>
+            )}
             <button
               type="button"
               className="lightbox-close"
@@ -191,18 +226,7 @@ export default function GalleryGrid({ items, locale }: Props) {
               onClick={close}
               aria-label={t('gallery_page_extra.close')}
             >
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                aria-hidden="true"
-              >
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
+              <Icon name="x" size={22} />
             </button>
             {filtered.length > 1 && (
               <>
@@ -212,19 +236,7 @@ export default function GalleryGrid({ items, locale }: Props) {
                   onClick={prev}
                   aria-label={t('gallery_page_extra.prev')}
                 >
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M15 18l-6-6 6-6" />
-                  </svg>
+                  <Icon name="chevron-left" size={24} />
                 </button>
                 <button
                   type="button"
@@ -232,19 +244,7 @@ export default function GalleryGrid({ items, locale }: Props) {
                   onClick={next}
                   aria-label={t('gallery_page_extra.next')}
                 >
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
+                  <Icon name="chevron-right" size={24} />
                 </button>
               </>
             )}

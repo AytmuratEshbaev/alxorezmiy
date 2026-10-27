@@ -5,13 +5,16 @@ import { Geist, Geist_Mono } from 'next/font/google';
 export const geistSans = Geist({
   subsets: ['latin', 'latin-ext', 'cyrillic'],
   display: 'swap',
-  variable: '--font-geist'
+  variable: '--font-geist',
 });
 
+// Mono faqat kichik bezak matnlarida (yorliqlar, footer) — LCP'ga ta'sir qilmasin,
+// shuning uchun oldindan yuklanmaydi (preload: false).
 export const geistMono = Geist_Mono({
   subsets: ['latin', 'latin-ext', 'cyrillic'],
   display: 'swap',
-  variable: '--font-geist-mono'
+  variable: '--font-geist-mono',
+  preload: false,
 });
 
 export const fontVariables = `${geistSans.variable} ${geistMono.variable}`;

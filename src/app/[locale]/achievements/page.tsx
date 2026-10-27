@@ -1,8 +1,9 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/routing';
 import { getOlympiad } from '@/lib/db/queries';
 import AchievementCard from '@/components/achievements/AchievementCard';
-import Icon from '@/components/ui/Icon';
+import EmptyState from '@/components/ui/EmptyState';
+import PageHeader from '@/components/ui/PageHeader';
+import { safe } from '@/lib/utils';
 import { buildPageMetadata } from '@/lib/seo';
 import type { OlympiadResult } from '@/types';
 
@@ -15,15 +16,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: t('description'),
     path: '/achievements',
   });
-}
-
-async function safeGetOlympiad(): Promise<OlympiadResult[]> {
-  try {
-    return await getOlympiad();
-  } catch (err) {
-    console.warn('[achievements] getOlympiad failed:', err);
-    return [];
-  }
 }
 
 function groupByYear(items: OlympiadResult[]): Array<[number, OlympiadResult[]]> {
@@ -44,19 +36,15 @@ export default async function AchievementsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
-  const items = await safeGetOlympiad();
+  const items = await safe<OlympiadResult[]>(() => getOlympiad(), [], 'achievements getOlympiad');
   const grouped = groupByYear(items);
 
   return (
     <>
-      <div className="page-header">
-        <h1>{t('achievements_page.title')}</h1>
-        <div className="breadcrumb">
-          <Link href={'/' as never}>{t('common.home')}</Link>
-          <span className="separator">/</span>
-          <span className="current">{t('nav.achievements')}</span>
-        </div>
-      </div>
+      <PageHeader
+        title={t('achievements_page.title')}
+        crumbs={[{ label: t('nav.achievements') }]}
+      />
 
       <section className="section">
         <div className="container">
@@ -67,35 +55,16 @@ export default async function AchievementsPage({
           </div>
 
           {grouped.length === 0 ? (
-            <div
-              role="status"
-              style={{
-                textAlign: 'center',
-                color: 'var(--ink-3)',
-                padding: 'var(--s-16) var(--s-4)',
-                maxWidth: 480,
-                margin: '0 auto',
-              }}
-            >
-              <Icon
-                name="trophy"
-                size={48}
-                style={{ color: 'var(--ink-4)', marginBottom: 'var(--s-4)' }}
-              />
-              <h2
-                style={{ fontSize: '1.25rem', marginBottom: 'var(--s-2)', color: 'var(--ink-2)' }}
-              >
-                {t('achievements_page.empty_title')}
-              </h2>
-              <p style={{ margin: 0, fontSize: '0.9375rem' }}>
-                {t('achievements_page.empty_text')}
-              </p>
-            </div>
+            <EmptyState
+              icon="trophy"
+              title={t('achievements_page.empty_title')}
+              text={t('achievements_page.empty_text')}
+            />
           ) : (
             grouped.map(([year, list]) => (
               <div key={year} style={{ marginBottom: 'var(--space-2xl)' }}>
                 <h2 style={{ marginBottom: 'var(--space-lg)' }}>
-                  {year} {t('common.year')}
+                  {year ? t('common.year_label', { year: String(year) }) : '—'}
                 </h2>
                 <div className="grid grid-3">
                   {list.map((item) => (

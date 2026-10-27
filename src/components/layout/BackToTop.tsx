@@ -16,7 +16,12 @@ export default function BackToTop() {
       type="button"
       className={`back-to-top${visible ? ' visible' : ''}`}
       aria-label={t('a11y.back_to_top')}
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      onClick={() => {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+        // Fokus sahifa boshiga — klaviatura foydalanuvchisi pastda "yo'qolib" qolmasin.
+        document.getElementById('main-content')?.focus({ preventScroll: true });
+      }}
     >
       <svg
         width="24"
@@ -25,6 +30,7 @@ export default function BackToTop() {
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
+        aria-hidden="true"
       >
         <path d="M18 15l-6-6-6 6" />
       </svg>

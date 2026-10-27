@@ -1,11 +1,11 @@
 {
-  "site_title": "Muxammed al-Xorezmiy atındaǵı qániygelestirilgen mektebiniń Nókis filialı",
+  "site_title": "Muhammad al-Xorezmiy atındaǵı qániygelestirilgen mektebiniń Nókis filialı",
   "site_short_name": "Al-Xorezmiy mektebi",
   "nav": {
     "home": "Bas bet",
     "about": "Mektep haqqında",
-    "directions": "Bag'darlar",
-    "teachers": "Oqıtıwshılar",
+    "directions": "Baǵdarlar",
+    "teachers": "Muǵallimler",
     "news": "Jańalıqlar",
     "contact": "Baylanısıw",
     "about_general": "Ulıwma maǵlıwmat",
@@ -17,30 +17,28 @@
   },
   "hero": {
     "eyebrow": "IT hám Anıq pánler mektebi",
-    "scroll": "Tómenge",
-    "title": "Muxammed al-Xorezmiy atındaǵı qániygelestirilgen mektebiniń Nókis filialı",
-    "subtitle": "Ózbekstan Respublikası Mektepke shekemgi hám mektep bilimlendiriw ministrligi (MShMBM) qasındaǵı Qániygelestirilgen bilimlendiriw mákemeleri agentligi (QBMA) jigindegi Muxammed al-Xorezmiy atındaǵı qániygelestirilgen mektebiniń Nókis filialı",
+    "title": "Muhammad al-Xorezmiy atındaǵı qániygelestirilgen mektebiniń Nókis filialı",
     "description": "Anıq hám tábiyiy pánler boyınsha terénlestirgen bilim. Keleshek intellektual jetekshilerin tayarlaymiz.",
     "btn_about": "Mektep haqqında",
     "btn_admission": "Qabıl shartları"
   },
   "stats": {
     "students": "Oqıwshılar",
-    "teachers": "Oqıtıwshılar",
+    "teachers": "Muǵallimler",
     "experience": "Jıllıq tájiriybe",
-    "olympiad": "Olimpiada g'alipleri"
+    "olympiad": "Olimpiada jeńimpazları"
   },
   "sections": {
     "about_short_title": "Mektep haqqında",
     "about_short_label": "Biz haqqımızda",
-    "about_short_text": "Muhammad al-Xorezmiy arnawlı mektebi (Nókis filialı) — anıq hám tábiyiy pánler boyınsha terénlestirgen bilim beretug'ın joqarı da'rejeli bilim beriwshi mákeme.",
-    "about_btn": "Tolıq mag'lıwmat",
-    "directions_title": "Bag'darlar",
-    "directions_label": "Bizin' kushimiz",
-    "directions_text": "Matematika, fizika, informatika hám basqa pánler boyınsha terénlestirgen bag'darlamalar",
-    "news_title": "Aqırg'ı jańalıqlar",
+    "about_short_text": "Muhammad al-Xorezmiy arnawlı mektebi (Nókis filialı) — anıq hám tábiyiy pánler boyınsha terénlestirgen bilim beretuǵın joqarı dárejeli bilim beriwshi mákeme.",
+    "about_btn": "Tolıq maǵlıwmat",
+    "directions_title": "Baǵdarlar",
+    "directions_label": "Bizdiń kúshimiz",
+    "directions_text": "Matematika, fizika, informatika hám basqa pánler boyınsha terénlestirgen baǵdarlamalar",
+    "news_title": "Aqırǵı jańalıqlar",
     "news_label": "Jańalıqlar",
-    "news_text": "Mektep turmusınan eń aqırg'ı jańalıq hám e'lanlar",
+    "news_text": "Mektep turmusınan eń aqırǵı jańalıq hám xabarlar",
     "news_all": "Barlıq jańalıqlar",
     "achievements_title": "Jetiskenliklerimiz",
     "achievements_label": "Paxrımız",
@@ -61,20 +59,18 @@
     "history_title": "Mektep tariyxı",
     "history_label": "Tariyxı",
     "mission_title": "Missiya hám qádriyatlar",
-    "mission_label": "Bizin' maqset",
-    "mission_text": "Hár bir oqıwshının' intellektual potentsialın tolıq ashıw hám olardı keleshek ilim-pán jetekshilerine aylantırıw.",
+    "mission_label": "Bizdiń maqset",
+    "mission_text": "Hár bir oqıwshınıń intellektual potentsialın tolıq ashıw hám olardı keleshek ilim-pán jetekshilerine aylantırıw.",
     "values": {
       "excellence": "Ilimiy mukemmellik",
-      "excellence_desc": "Eń joqarı akademik standartlarg'a jetisiw",
+      "excellence_desc": "Eń joqarı akademik standartlarǵa jetisiw",
       "innovation": "Innovatsiya",
       "innovation_desc": "Zamanagóy bilim texnologiyaların qollanıw",
       "integrity": "Halallıq",
       "integrity_desc": "Oqıwshılarda axlaqıy qádriyatlardı qáliplestiriw",
       "community": "Hámkerlik",
-      "community_desc": "Jáma'átlik islesiw hám ózara húrmet muhiti"
+      "community_desc": "Jámáátlik islesiw hám ózara húrmet muhiti"
     },
-    "leadership_title": "Basshılıq",
-    "leadership_label": "Bizin' jáma'á",
     "virtual_tour": "Virtual tur",
     "virtual_tour_label": "Mektep binası",
     "virtual_tour_items": {
@@ -89,13 +85,9 @@
   "contact_page": {
     "title": "Baylanısıw",
     "address_label": "Mánzil",
-    "address": "Nókis qalası, Ámir Temur kóshesi 1-úy",
     "phone_label": "Telefon",
-    "phone": "+998 61 222-33-44",
     "email_label": "Elektron pochta",
-    "email": "info@alxorazmiy-nukus.uz",
     "hours_label": "Is waqtı",
-    "hours": "Dúyshembi — Shenbi, 08:00 — 17:00",
     "form_title": "Xabar jiberiw",
     "form_name": "Ismińiz",
     "form_email": "Email mánzilińiz",
@@ -105,7 +97,7 @@
     "form_sending": "Jiberilmekte...",
     "form_success": "Xabarıńız tabıslı jiberildi!",
     "form_error": "Qátelik júz berdi. Qayta urınıp kóriń.",
-    "social_title": "Sociallıq tarmaqllar",
+    "social_title": "Sociallıq tarmaqlar",
     "map_title": "Kartada",
     "error_name": "Atıńızdı kiritiń",
     "error_email": "Email mánzilińizdi kiritiń",
@@ -116,30 +108,19 @@
   },
   "common": {
     "read_more": "Tolıq",
-    "view_all": "Barlıg'ın kóriw",
-    "loading": "Júklenip atır...",
-    "search": "Izlew...",
-    "no_results": "Nátiyje tabılmadı",
-    "back": "Artqa",
     "home": "Bas bet",
-    "close": "Jabıw",
-    "save": "Saqlap qoyıw",
-    "cancel": "Biykar qılıw",
-    "delete": "Óshiriw",
-    "edit": "Ózgertiw",
-    "add": "Qosıw",
-    "all": "Barlıg'ı",
-    "download": "Júklep alıw",
-    "place": "orın",
-    "year": "jıl"
+    "all": "Barlıǵı",
+    "place_ordinal": "{place}-orın",
+    "year_label": "{year}-jıl"
   },
   "footer": {
-    "about_text": "Muhammad al-Xorezmiy arnawlı mektebi — anıq hám tábiyiy pánler boyınsha terénlestirgen bilim beretug'ın zamanagóy bilim mákemesi.",
+    "about_text": "Muhammad al-Xorezmiy arnawlı mektebi — anıq hám tábiyiy pánler boyınsha terénlestirgen bilim beretuǵın zamanagóy bilim mákemesi.",
     "quick_links": "Tez siltewler",
     "contact_info": "Baylanıs",
-    "social": "Sociallıq tarmaqllar",
     "official_name": "Rásmiy atı",
-    "copyright": "© 2026 Al-Xorezmiy arnawlı mektebi. Barlıq huqıqlar qorg'alg'an."
+    "copyright": "© {year} Al-Xorezmiy arnawlı mektebi. Barlıq huqıqlar qorǵalǵan.",
+    "location": "Nókis, Qaraqalpaqstan",
+    "info_links": "Maǵlıwmat"
   },
   "a11y": {
     "skip": "Tiykarǵı mazmunǵa ótiw",
@@ -149,7 +130,9 @@
     "search": "Izlew (Ctrl+K)",
     "lang_select": "Tildi tańlaw",
     "theme_toggle": "Temanı almastırıw",
-    "back_to_top": "Joqarıǵa"
+    "back_to_top": "Joqarıǵa",
+    "breadcrumb": "Navigaciya shınjırı",
+    "close_menu": "Menyudı jabıw"
   },
   "search": {
     "placeholder": "Izlew: jańalıq, muǵallim...",
@@ -160,37 +143,25 @@
     "no_results": "\"{query}\" boyınsha esh nárse tabılmadı",
     "type_news": "Jańalıq",
     "type_teacher": "Muǵallim",
-    "type_faq": "Soraw-juwap"
+    "type_faq": "Soraw-juwap",
+    "loading": "Izlew maǵlıwmatları júklenbekte…",
+    "error": "Izlew maǵlıwmatların júklew múmkin bolmadı.",
+    "retry": "Qayta urınıw",
+    "results_count": "{count, plural, =0 {Nátiyje tabılmadı} other {# nátiyje}}"
   },
   "achievements": {
-    "title": "Jetiskenliklerimiz",
     "label": "máqtanıshımız",
     "intro_title": "Olimpiada jeńimpazları",
     "intro_text": "Oqıwshılarımız respublikalıq hám xalıqaralıq pánler olimpiadalarında har jılı jańa shoqılardı baǵındıradı.",
-    "stat_total": "Jámi jetiskenlikler",
-    "stat_international": "Xalıqaralıq",
-    "stat_republic": "Respublika",
-    "stat_gold": "Altın medal",
     "level_international": "Xalıqaralıq",
     "level_republic": "Respublika",
     "level_city": "Qala",
-    "level_district": "Rayon",
-    "col_student": "Oqıwshı",
-    "col_subject": "Pán",
-    "col_olympiad": "Olimpiada",
-    "col_level": "Dárejesi",
-    "col_place": "Orın",
-    "empty": "Házirshe nátiyjeler joq",
-    "cta_label": "qabıllaw",
-    "cta_title": "Sizdiń balańız da bul dizimde bola aladı",
-    "cta_text": "Mektebimiz olimpiada jeńimpazların tayarlawda ixtisaslasqan. Qabıllaw shártleri hám baǵdarlamalar haqqında maǵlıwmat alıń.",
-    "cta_admission": "Qabıllaw shártleri →",
-    "cta_programs": "Baǵdarlamalar"
+    "level_district": "Rayon"
   },
   "directions_page": {
-    "title": "Bag'darlar",
-    "intro_title": "Anıq pánlerge qániygelestirgen bag'darlamalar",
-    "intro_text": "Mektebimiz tiykarǵı diqqattı matematika, fizika, informatika sıyaqlı anıq pánlerge qaratadı. Oqıw bag'darlaması xalıqaralıq standartlarǵa muwapıqlastırılǵan bolıp, oqıwshılardı jergilikli ǵana emes, al xalıqaralıq olimpiadalarǵa tayarlawdı maqset etken.",
+    "title": "Baǵdarlar",
+    "intro_title": "Anıq pánlerge qániygelestirgen baǵdarlamalar",
+    "intro_text": "Mektebimiz tiykarǵı diqqattı matematika, fizika, informatika sıyaqlı anıq pánlerge qaratadı. Oqıw baǵdarlaması xalıqaralıq standartlarǵa muwapıqlastırılǵan bolıp, oqıwshılardı jergilikli ǵana emes, al xalıqaralıq olimpiadalarǵa tayarlawdı maqset etken.",
     "checklist_1": "Aptasına qosımsha saatlar",
     "checklist_2": "Ámeliy laboratoriya shınıǵıwları",
     "checklist_3": "Mashqalalı máselelerdi sheshiwge qaratılǵan tóǵerekler",
@@ -220,7 +191,7 @@
     "section_title": "Mektepke qabıllaw tártibi",
     "section_text": "Bizdiń arnawlı mektepke kiriw úsh basqıshtan ibarat.",
     "step1_title": "Hújjet tapsırıw",
-    "step1_text": "Ashıq esikler kúni daǵazalanǵannan keyin, ata-analar perzentiniń hújjetlerin onlayn arza túrinde mektep ma'múriyatına tapsırıwı kerek.",
+    "step1_text": "Ashıq esikler kúni daǵazalanǵannan keyin, ata-analar perzentiniń hújjetlerin onlayn arza túrinde mektep basqarmasına tapsırıwı kerek.",
     "doc1": "Pasport yamasa tuwılǵanlıq haqqında gúwalıq nusqası",
     "doc2": "3x4 ólshemli 6 súwret",
     "doc3": "Oqıwshınıń bahalar tabeli",
@@ -229,24 +200,21 @@
     "step3_title": "Sáwbet jarayanı",
     "step3_text": "Testten joqarı ball jıynaǵan oqıwshılar sońǵı basqıshqa — mektep basshılıǵı hám psixolog qatnasındaǵı sáwbetke shaqırıladı.",
     "download_title": "Zárúrli hújjetler",
-    "download_text": "Qabıllaw talapları hám tártibi menen tolıq tanısıw ushın nizam-qaǵıydanı (pdf) júklep alıń.",
-    "download_btn": "Nizam-qaǵıydanı júklep alıw"
+    "download_text": "Qabıllaw talapları, tapsırılatuǵın hújjetler dizimi hám múddetler haqqında tolıq maǵlıwmat alıw ushın mektep basqarmasına xabarlasıń."
   },
   "faq_page": {
     "title": "Kóp beriletuǵın sorawlar",
     "all_questions": "Barlıq sorawlar",
     "filter_admission": "Qabıl",
     "filter_education": "Oqıw sistemasi",
-    "filter_general": "Ulıwma",
-    "empty": "Házirshe sorawlar joq"
+    "filter_general": "Ulıwma"
   },
   "gallery_page": {
     "title": "Foto hám Video Galereya",
     "filter_building": "Bina",
     "filter_lessons": "Sabaqlar",
     "filter_sports": "Sport",
-    "filter_events": "Ilájlar",
-    "empty": "Házirshe súwretler joq"
+    "filter_events": "Ilájlar"
   },
   "about_history": {
     "y2010": "Mektep dúzildi",
@@ -290,8 +258,8 @@
       "description": "Mektep menen baylanısıw: mánzil, telefon, email, xarita hám onlayn xabar formı."
     },
     "directions": {
-      "title": "Bag'darlar — Al-Xorezmiy mektebi",
-      "description": "Matematika, fizika, informatika, ximiya, biologiya boyınsha terénlestirgen bag'darlamalar."
+      "title": "Baǵdarlar — Al-Xorezmiy mektebi",
+      "description": "Matematika, fizika, informatika, ximiya, biologiya boyınsha terénlestirgen baǵdarlamalar."
     },
     "faq": {
       "title": "FAQ — Al-Xorezmiy mektebi",
@@ -316,7 +284,6 @@
   },
   "news_page": {
     "title": "Jańalıqlar hám Xabarlar",
-    "empty": "Áli jańalıqlar joq",
     "empty_title": "Áli jańalıqlar joq",
     "empty_text": "Jaqında bul jerde mektep ómirinen eń jańa jańalıqlar hám xabarlar payda boladı.",
     "category": {
@@ -335,19 +302,27 @@
     "share_native": "Bólisiw",
     "load_more": "Kóbirek júklew",
     "load_more_loading": "Júklenbekte...",
-    "load_more_end": "Barlıq jańalıqlar kórsetildi"
+    "load_more_end": "Barlıq jańalıqlar kórsetildi",
+    "load_more_error": "Jańalıqlardı júklew múmkin bolmadı.",
+    "retry": "Qayta urınıw"
   },
   "teachers_page": {
     "title": "Muǵallimler",
     "subtitle": "Joqarı toyparlı tájiriybeli ustazlar jámááti",
-    "experience": "jıl tájiriybe",
-    "empty": "Áli muǵallimler joq",
     "empty_title": "Muǵallimler dizimi tayarlanbaqta",
-    "empty_text": "Tezde bul jerde mektepiymizdiń joqarı toyparlı pedagoglar jámáátın kóresiz."
+    "empty_text": "Tezde bul jerde mektepiymizdiń joqarı toyparlı pedagoglar jámáátın kóresiz.",
+    "experience_years": "{count, plural, other {# jıl tájiriybe}}",
+    "achievements_label": "Jetiskenlikleri",
+    "achievement_types": {
+      "olympiad": "Olimpiada",
+      "certificate": "Sertifikat",
+      "competition": "Jarıs",
+      "diploma": "Diplom",
+      "other": "Basqa"
+    }
   },
   "achievements_page": {
     "title": "Jetiskenliklerimiz",
-    "empty": "Áli nátiyjeler joq",
     "empty_title": "Jetiskenlikler tezde",
     "empty_text": "Oqıwshılarımızdıń olimpiadalardaǵı jeńisleri tezde usı jerde járiyalanadı."
   },
@@ -358,7 +333,8 @@
     "lightbox_label": "Súwret kórinisi",
     "close": "Jabıw",
     "prev": "Aldıńǵı súwret",
-    "next": "Keyingi súwret"
+    "next": "Keyingi súwret",
+    "counter": "{current} / {total}"
   },
   "faq_page_extra": {
     "empty_title": "Sorawlar tezde",
@@ -366,8 +342,8 @@
   },
   "a11y_extra": {
     "scroll_down": "Tómen aylandırıw",
-    "expand": "Keńeytiw",
-    "collapse": "Jabıw"
+    "carousel_prev": "Aldıńǵı jetiskenlikler",
+    "carousel_next": "Keyingi jetiskenlikler"
   },
   "admission_form": {
     "section_label": "Onlayn arza",
@@ -387,5 +363,17 @@
     "error_phone": "Telefon nomerin kiritiń",
     "error_phone_invalid": "Telefon nomeri qáte",
     "error_grade": "Klasstı saylań"
+  },
+  "forms": {
+    "verifying": "Qáwipsizlik tekseriwi orınlanbaqta…",
+    "captcha_unavailable": "Qáwipsizlik tekseriwin júklew múmkin bolmadı. Betti jańalań yamasa mektepke qońıraw etiń yaki elektron pochta arqalı jazıń.",
+    "error_forbidden": "Qáwipsizlik tekseriwinen ótiw múmkin bolmadı. Iltimas, qayta urınıp kóriń.",
+    "error_rate_limited": "Júdá kóp urınıw. Iltimas, bir neshe minuttan soń qayta jiberiń."
+  },
+  "error_page": {
+    "title": "Bir nárse qáte ketti",
+    "message": "Betti júklewde kútilmegen qátelik júz berdi. Iltimas, qayta urınıp kóriń.",
+    "retry": "Qayta urınıw",
+    "back_home": "Bas betke"
   }
 }

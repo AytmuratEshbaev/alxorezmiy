@@ -1,16 +1,16 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { getSettings, getNewsList, getOlympiad } from '@/lib/db/queries';
-import { getLocalizedField } from '@/lib/utils';
+import { filled, getLocalizedField, htmlLang, safe } from '@/lib/utils';
 import Hero from '@/components/home/Hero';
-import StatsCounter from '@/components/home/StatsCounter';
+import StatsCounter, { type StatItem } from '@/components/home/StatsCounter';
 import DirectionsGrid from '@/components/home/DirectionsGrid';
 import LatestNews from '@/components/home/LatestNews';
 import AchievementsCarousel from '@/components/home/AchievementsCarousel';
 import ContactShort from '@/components/home/ContactShort';
-import { buildPageMetadata } from '@/lib/seo';
+import { getSocialLinks } from '@/components/layout/SocialLinks';
+import JsonLd from '@/components/ui/JsonLd';
+import { LOGO_PATH, SITE_URL, buildPageMetadata } from '@/lib/seo';
 import type { Locale, News, OlympiadResult, Settings } from '@/types';
-
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://alxorezmiy.uz').replace(/\/$/, '');
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -18,13 +18,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return buildPageMetadata({ locale, title: t('title'), description: t('description'), path: '' });
 }
 
-async function safe<T>(fn: () => Promise<T>, fallback: T, label: string): Promise<T> {
-  try {
-    return await fn();
-  } catch (err) {
-    console.warn(`[home] ${label} failed:`, err);
-    return fallback;
-  }
+/** Sozlamadagi son: o'rnatilmagan (undefined/null/'') bo'lsa null; 0 — haqiqiy qiymat. */
+function statValue(v: unknown): number | null {
+  if (v === undefined || v === null || v === '') return null;
+  const n = Number(v);
+  return Number.isFinite(n) && n >= 0 ? n : null;
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -33,49 +31,61 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const t = await getTranslations();
 
   const [settings, news, olympiad] = await Promise.all([
-    safe<Settings | null>(() => getSettings(), null, 'getSettings'),
-    safe<News[]>(() => getNewsList(6), [], 'getNewsList'),
-    safe<OlympiadResult[]>(() => getOlympiad(), [], 'getOlympiad'),
+    safe<Settings | null>(() => getSettings(), null, 'home getSettings'),
+    safe<News[]>(() => getNewsList(3), [], 'home getNewsList'),
+    safe<OlympiadResult[]>(() => getOlympiad(10), [], 'home getOlympiad'),
   ]);
 
-  const stats = [
-    { label: t('stats.students'), count: settings?.students_count || 520, suffix: '+' },
-    { label: t('stats.teachers'), count: settings?.teachers_count || 65 },
-    { label: t('stats.experience'), count: settings?.experience_years || 15, suffix: '+' },
-    { label: t('stats.olympiad'), count: settings?.olympiad_winners || 180, suffix: '+' },
+  // Faqat admin kiritgan raqamlar — o'rnatilmaganlari ko'rsatilmaydi (soxta qiymat yo'q).
+  const statDefs = [
+    { key: 'students', label: t('stats.students'), value: settings?.students_count, suffix: '+' },
+    { key: 'teachers', label: t('stats.teachers'), value: settings?.teachers_count },
+    {
+      key: 'experience',
+      label: t('stats.experience'),
+      value: settings?.experience_years,
+      suffix: '+',
+    },
+    { key: 'olympiad', label: t('stats.olympiad'), value: settings?.olympiad_winners, suffix: '+' },
   ];
+  const stats: StatItem[] = statDefs.flatMap(({ value, ...rest }) => {
+    const count = statValue(value);
+    return count === null ? [] : [{ ...rest, count }];
+  });
 
   const fullName = settings ? getLocalizedField(settings, 'fullName', locale as Locale) : '';
   const shortName = settings ? getLocalizedField(settings, 'shortName', locale as Locale) : '';
+  const address = filled(settings?.address);
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'EducationalOrganization',
-    name: fullName || 'Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi — Nukus filiali',
-    alternateName: shortName || 'Al-Xorazmiy maktabi',
+    name: fullName || t('site_title'),
+    alternateName: shortName || t('site_short_name'),
     url: `${SITE_URL}/${locale}`,
-    logo: `${SITE_URL}/assets/images/logo.webp`,
+    logo: `${SITE_URL}${LOGO_PATH}`,
     image: `${SITE_URL}/assets/images/hero.webp`,
-    sameAs: [] as string[],
-    address: settings?.address
+    inLanguage: htmlLang(locale),
+    sameAs: getSocialLinks(settings).map((l) => l.href),
+    address: address
       ? {
           '@type': 'PostalAddress',
-          streetAddress: settings.address,
+          streetAddress: address,
           addressLocality: 'Nukus',
           addressCountry: 'UZ',
         }
       : undefined,
-    telephone: settings?.phone,
-    email: settings?.email,
+    telephone: filled(settings?.phone),
+    email: filled(settings?.email),
   };
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+      <JsonLd data={ld} />
       <Hero />
       <StatsCounter stats={stats} />
       <DirectionsGrid />
-      <LatestNews items={news.slice(0, 3)} locale={locale as Locale} />
-      <AchievementsCarousel items={olympiad.slice(0, 10)} />
+      <LatestNews items={news} locale={locale as Locale} />
+      <AchievementsCarousel items={olympiad} />
       <ContactShort settings={settings} />
     </>
   );
