@@ -6,6 +6,7 @@ import type {
   News,
   Teacher,
   OlympiadResult,
+  CertificateItem,
   FaqItem,
   GalleryItem,
   Settings,
@@ -107,6 +108,13 @@ export const getTeachers = cache(async (): Promise<Teacher[]> => {
   return all<Teacher>(
     'teachers',
     `SELECT * FROM teachers ORDER BY "order" ASC, name_uz COLLATE NOCASE ASC`
+  );
+});
+
+export const getCertificates = cache(async (): Promise<CertificateItem[]> => {
+  return all<CertificateItem>(
+    'certificates',
+    `SELECT id, student, type, subject, score, year FROM certificates ORDER BY year DESC, student COLLATE NOCASE ASC`
   );
 });
 

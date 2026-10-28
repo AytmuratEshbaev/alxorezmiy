@@ -50,6 +50,15 @@ export interface TeacherAchievement {
   year: number | null;
 }
 
+export interface CertificateItem {
+  id: string;
+  student: string;
+  type: 'milliy' | 'ielts' | 'sat' | 'cefr' | string;
+  subject: string;
+  score: string;
+  year: number;
+}
+
 export interface OlympiadResult {
   id: string;
   student: string;
