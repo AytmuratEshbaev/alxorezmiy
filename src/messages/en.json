@@ -326,6 +326,32 @@
     "empty_title": "Achievements coming soon",
     "empty_text": "Our students' olympiad wins will be published here shortly."
   },
+  "certificates": {
+    "label": "Certificates",
+    "title": "International and national certificates",
+    "text": "Our students achieve high results in IELTS, SAT, CEFR and National Certificate exams.",
+    "nav_olympiads": "Olympiads",
+    "nav_certificates": "Certificates",
+    "empty_title": "Certificates coming soon",
+    "empty_text": "Our students' certificate results will be published here soon.",
+    "types": {
+      "milliy": "National certificate",
+      "ielts": "IELTS",
+      "sat": "SAT",
+      "cefr": "CEFR"
+    },
+    "subjects": {
+      "english": "English",
+      "math": "Mathematics",
+      "uzbek": "Uzbek",
+      "history": "History",
+      "biology": "Biology",
+      "chemistry": "Chemistry",
+      "russian": "Russian",
+      "karakalpak": "Karakalpak",
+      "physics": "Physics"
+    }
+  },
   "gallery_page_extra": {
     "empty_title": "Gallery is being prepared",
     "empty_text": "Photos from school life will appear here soon.",

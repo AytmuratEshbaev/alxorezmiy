@@ -326,6 +326,32 @@
     "empty_title": "Jetiskenlikler tezde",
     "empty_text": "Oqıwshılarımızdıń olimpiadalardaǵı jeńisleri tezde usı jerde járiyalanadı."
   },
+  "certificates": {
+    "label": "Sertifikatlar",
+    "title": "Xalıqaralıq hám milliy sertifikatlar",
+    "text": "Oqıwshılarımız IELTS, SAT, CEFR hám Milliy sertifikat imtixanlarında joqarı nátiyjelerge erispekte.",
+    "nav_olympiads": "Olimpiadalar",
+    "nav_certificates": "Sertifikatlar",
+    "empty_title": "Sertifikatlar jaqın arada",
+    "empty_text": "Oqıwshılarımızdıń sertifikat nátiyjeleri jaqın arada usı jerde járiyalanadı.",
+    "types": {
+      "milliy": "Milliy sertifikat",
+      "ielts": "IELTS",
+      "sat": "SAT",
+      "cefr": "CEFR"
+    },
+    "subjects": {
+      "english": "Inglis tili",
+      "math": "Matematika",
+      "uzbek": "Ózbek tili",
+      "history": "Tariyx",
+      "biology": "Biologiya",
+      "chemistry": "Ximiya",
+      "russian": "Rus tili",
+      "karakalpak": "Qaraqalpaq tili",
+      "physics": "Fizika"
+    }
+  },
   "gallery_page_extra": {
     "empty_title": "Galereya tayarlanbaqta",
     "empty_text": "Jaqında bul jerde mektep ómirinen súwretler payda boladı.",

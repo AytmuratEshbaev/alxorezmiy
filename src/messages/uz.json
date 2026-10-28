@@ -326,6 +326,32 @@
     "empty_title": "Yutuqlar yaqin orada",
     "empty_text": "O'quvchilarimizning olimpiadalardagi g'alabalari tez orada shu yerda e'lon qilinadi."
   },
+  "certificates": {
+    "label": "Sertifikatlar",
+    "title": "Xalqaro va milliy sertifikatlar",
+    "text": "O'quvchilarimiz IELTS, SAT, CEFR va Milliy sertifikat imtihonlarida yuqori natijalarga erishmoqda.",
+    "nav_olympiads": "Olimpiadalar",
+    "nav_certificates": "Sertifikatlar",
+    "empty_title": "Sertifikatlar tez orada",
+    "empty_text": "O'quvchilarimizning sertifikat natijalari tez orada shu yerda e'lon qilinadi.",
+    "types": {
+      "milliy": "Milliy sertifikat",
+      "ielts": "IELTS",
+      "sat": "SAT",
+      "cefr": "CEFR"
+    },
+    "subjects": {
+      "english": "Ingliz tili",
+      "math": "Matematika",
+      "uzbek": "O'zbek tili",
+      "history": "Tarix",
+      "biology": "Biologiya",
+      "chemistry": "Kimyo",
+      "russian": "Rus tili",
+      "karakalpak": "Qoraqalpoq tili",
+      "physics": "Fizika"
+    }
+  },
   "gallery_page_extra": {
     "empty_title": "Galereya tayyorlanmoqda",
     "empty_text": "Yaqin orada bu yerda maktab hayotidan rasmlar paydo bo'ladi.",
