@@ -1,0 +1,252 @@
+/* ════════════════════════════════════════════════════════════════════
+   PAGES-INFO — Styles for /about, /directions, /admission
+   Redesign primitives: .ui-split, .ui-cells, .ui-cell, .ui-band, .ui-sticky
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── Photo ─── */
+.info-photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: var(--r-lg);
+  display: block;
+}
+
+/* ─── Official Name Section ─── */
+.info-official {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info-official-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow-wrap: break-word;
+}
+
+/* ─── Info Panel ─── */
+.info-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s-8);
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 560px) {
+  .info-panel {
+    padding: var(--s-5);
+  }
+}
+
+.info-panel h2,
+.info-panel h3 {
+  margin-top: 0;
+}
+
+.info-panel h2 {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  margin-bottom: var(--s-2);
+}
+
+.info-panel > p {
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  margin-top: 0;
+  margin-bottom: var(--s-6);
+}
+
+.info-panel .checklist {
+  margin-bottom: 0;
+}
+
+/* ─── Timeline ─── */
+.timeline {
+  max-width: none;
+  margin: 0;
+  position: relative;
+  padding-left: var(--s-12);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--border-strong);
+}
+
+[data-theme='dark'] .timeline::before {
+  background: var(--border-strong);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: var(--s-8);
+  overflow-wrap: break-word;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -36px;
+  top: 7px;
+  width: 9px;
+  height: 9px;
+  background: var(--navy);
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
+}
+
+[data-theme='dark'] .timeline-item::before {
+  background: #8fc1d6;
+}
+
+.timeline-year {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: var(--clay-ink);
+  text-transform: none;
+  margin-bottom: var(--s-2);
+}
+
+.timeline-item h3 {
+  font-size: 1.25rem;
+  margin-bottom: var(--s-2);
+  line-height: 1.25;
+}
+
+.timeline-item p {
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+@media (max-width: 560px) {
+  .timeline {
+    padding-left: var(--s-8);
+  }
+
+  .timeline::before {
+    left: 8px;
+  }
+
+  .timeline-item::before {
+    left: -28px;
+  }
+}
+
+/* ─── Checklist ─── */
+.checklist li {
+  overflow-wrap: break-word;
+}
+
+.checklist li::before {
+  background: var(--navy-soft);
+  border-color: var(--border-strong);
+}
+
+[data-theme='dark'] .checklist li::before {
+  background: rgba(143, 193, 214, 0.1);
+  border-color: rgba(143, 193, 214, 0.3);
+}
+
+.checklist li::after {
+  border-left-color: var(--navy);
+  border-bottom-color: var(--navy);
+}
+
+[data-theme='dark'] .checklist li::after {
+  border-left-color: #8fc1d6;
+  border-bottom-color: #8fc1d6;
+}
+
+/* ─── UI Cell Specifics (e.g. Virtual Tour) ─── */
+.ui-cell {
+  overflow-wrap: break-word;
+}
+
+.ui-cell > span {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+/* ─── UI Band Tweaks ─── */
+.ui-band {
+  overflow-wrap: break-word;
+}
+
+.ui-band h2 + p {
+  margin-top: var(--s-2);
+}
+
+.ui-band .btn:hover {
+  background-color: #e59a5e;
+  color: #081821;
+}
+
+@media (max-width: 560px) {
+  .ui-band {
+    padding: var(--s-6) var(--s-5);
+  }
+}
+
+/* ─── Form Inputs ─── */
+.form-group label {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  color: var(--ink);
+  text-transform: none;
+  margin-bottom: var(--s-2);
+}
+
+.form-control {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+input.form-control,
+select.form-control {
+  height: 48px;
+  min-height: 48px;
+}
+
+.form-control:focus {
+  outline: 2px solid var(--navy);
+  outline-offset: 0;
+  border-color: var(--navy);
+  box-shadow: none;
+}
+
+[data-theme='dark'] .form-control:focus {
+  outline: 2px solid #8fc1d6;
+  border-color: #8fc1d6;
+}

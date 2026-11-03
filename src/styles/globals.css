@@ -2,7 +2,7 @@
    AL-XORAZMIY — brand palette
    Primary deep teal-navy #153A4C, graphite #494949, light grey #EFEFEF.
    Light: grey page, white cards, teal accents. Dark: deep teal surfaces, light-blue accents.
-   Display / Body / Logo font: Geist (single family, weight-driven hierarchy)
+   Display font: Piazzolla, Body font: Golos Text
    ════════════════════════════════════════════════════════════════════ */
 
 /* ─── Design Tokens ─── */
@@ -26,6 +26,8 @@
   --amber-text: #153a4c; /* text on light bg — 4.6:1 on white (WCAG AA) */
   --amber-soft: rgba(21, 58, 76, 0.08);
   --amber-tint: rgba(21, 58, 76, 0.04);
+  --clay: #d98a4e;
+  --clay-ink: #a4561f;
 
   /* Surfaces */
   --bg: #efefef; /* base off-white */
@@ -59,11 +61,11 @@
   --brand-grad: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
   --brand-grad-soft: linear-gradient(135deg, var(--navy-soft) 0%, var(--amber-soft) 100%);
 
-  /* Typography — Geist is self-hosted via next/font (see src/lib/fonts.ts) */
-  --font-display:
-    var(--font-geist, 'Geist'), -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-body:
-    var(--font-geist, 'Geist'), -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  /* Typography — Piazzolla & Golos Text are self-hosted via next/font (see src/lib/fonts.ts) */
+  --font-display: var(--font-piazzolla, 'Piazzolla'), Georgia, 'Times New Roman', serif;
+
+  --font-body: var(--font-golos, 'Golos Text'), -apple-system, 'Segoe UI', system-ui, sans-serif;
+
   --font-mono:
     var(--font-geist-mono, 'Geist Mono'), 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
 
@@ -83,11 +85,11 @@
   --s-32: 128px;
 
   /* Radius — restrained, sharp-but-friendly */
-  --r-xs: 3px;
-  --r-sm: 5px;
-  --r-md: 8px;
-  --r-lg: 12px;
-  --r-xl: 16px;
+  --r-xs: 2px;
+  --r-sm: 3px;
+  --r-md: 4px;
+  --r-lg: 6px;
+  --r-xl: 8px;
   --r-pill: 999px;
 
   /* Shadows — clean, low-spread */
@@ -107,9 +109,9 @@
   --container-w: 1200px;
   --container-max: 1200px;
   --container-narrow: 780px;
-  --navbar-h: 84px; /* actual pill height */
-  --navbar-top: 18px; /* gap from viewport top */
-  --navbar-total: 102px; /* navbar-h + navbar-top (used for padding offsets) */
+  --navbar-h: 72px;
+  --navbar-top: 0px;
+  --navbar-total: 72px;
 
   /* === Legacy aliases — preserve all existing markup === */
   --primary: var(--navy);

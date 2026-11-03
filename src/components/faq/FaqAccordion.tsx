@@ -10,8 +10,8 @@ interface Props {
   locale: Locale;
 }
 
-// React 18 tiplarida `inert` yo'q — yopiq javob AT daraxtidan va tab tartibidan chiqariladi.
-const INERT = { inert: '' } as unknown as Record<string, never>;
+// Yopiq javob AT daraxtidan va tab tartibidan chiqariladi. Next'ning ichki React'ida `inert` boolean; React 18 tiplarida bu prop yo'q.
+const INERT = { inert: true } as unknown as Record<string, never>;
 
 type Filter = 'all' | 'admission' | 'education' | 'general';
 

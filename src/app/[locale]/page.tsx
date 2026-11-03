@@ -1,5 +1,6 @@
+import '@/styles/home.css';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { getSettings, getNewsList } from '@/lib/db/queries';
+import { getSettings, getNewsList, getCertificates, getOlympiad } from '@/lib/db/queries';
 import { filled, getLocalizedField, htmlLang, safe } from '@/lib/utils';
 import Hero from '@/components/home/Hero';
 import StatsCounter, { type StatItem } from '@/components/home/StatsCounter';
@@ -9,7 +10,7 @@ import ContactShort from '@/components/home/ContactShort';
 import { getSocialLinks } from '@/components/layout/SocialLinks';
 import JsonLd from '@/components/ui/JsonLd';
 import { LOGO_PATH, SITE_URL, buildPageMetadata } from '@/lib/seo';
-import type { Locale, News, Settings } from '@/types';
+import type { CertificateItem, Locale, News, OlympiadResult, Settings } from '@/types';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -29,10 +30,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
   const t = await getTranslations();
 
-  const [settings, news] = await Promise.all([
+  const [settings, news, certificates, olympiadResults] = await Promise.all([
     safe<Settings | null>(() => getSettings(), null, 'home getSettings'),
     safe<News[]>(() => getNewsList(3), [], 'home getNewsList'),
+    safe<CertificateItem[]>(() => getCertificates(), [], 'home getCertificates'),
+    safe<OlympiadResult[]>(() => getOlympiad(), [], 'home getOlympiad'),
   ]);
+
+  const winningPlacesCount = olympiadResults.filter((r) => r.place > 0).length;
+  const olympiadWinnersCount =
+    settings?.olympiad_winners ?? (winningPlacesCount > 0 ? winningPlacesCount : undefined);
 
   // Faqat admin kiritgan raqamlar — o'rnatilmaganlari ko'rsatilmaydi (soxta qiymat yo'q).
   const statDefs = [
@@ -44,7 +51,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       value: settings?.experience_years,
       suffix: '+',
     },
-    { key: 'olympiad', label: t('stats.olympiad'), value: settings?.olympiad_winners, suffix: '+' },
+    {
+      key: 'olympiad',
+      label: t('stats.olympiad'),
+      value: olympiadWinnersCount,
+      suffix: settings?.olympiad_winners != null ? '+' : undefined,
+    },
+    { key: 'certificates', label: t('stats.certificates'), value: certificates.length || undefined },
   ];
   const stats: StatItem[] = statDefs.flatMap(({ value, ...rest }) => {
     const count = statValue(value);

@@ -17,7 +17,7 @@
   },
   "hero": {
     "eyebrow": "IT hám Anıq pánler mektebi",
-    "title": "Muhammad al-Xorezmiy atındaǵı qániygelestirilgen mektebiniń Nókis filialı",
+    "title": "Muhammad al-\u2060Xorezmiy atındaǵı qániygelestirilgen mektebiniń Nókis filialı",
     "description": "Anıq hám tábiyiy pánler boyınsha terénlestirgen bilim. Keleshek intellektual jetekshilerin tayarlaymiz.",
     "btn_about": "Mektep haqqında",
     "btn_admission": "Qabıl shartları"
@@ -26,9 +26,11 @@
     "students": "Oqıwshılar",
     "teachers": "Muǵallimler",
     "experience": "Jıllıq tájiriybe",
-    "olympiad": "Olimpiada jeńimpazları"
+    "olympiad": "Olimpiada jeńimpazları",
+    "certificates": "Sertifikatlar"
   },
   "sections": {
+    "photo_alt": "Mektep imaratı, Nókis",
     "about_short_title": "Mektep haqqında",
     "about_short_label": "Biz haqqımızda",
     "about_short_text": "Muhammad al-Xorezmiy arnawlı mektebi (Nókis filialı) — anıq hám tábiyiy pánler boyınsha terénlestirgen bilim beretuǵın joqarı dárejeli bilim beriwshi mákeme.",

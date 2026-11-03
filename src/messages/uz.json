@@ -17,7 +17,7 @@
   },
   "hero": {
     "eyebrow": "IT va Aniq fanlar maktabi",
-    "title": "Muhammad al-Xorazmiy nomidagi ixtisoslashtirilgan maktabining Nukus filiali",
+    "title": "Muhammad al-\u2060Xorazmiy nomidagi ixtisoslashtirilgan maktabining Nukus filiali",
     "description": "Aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim. Kelajak intellektual yetakchilarini tayyorlaymiz.",
     "btn_about": "Maktab haqida",
     "btn_admission": "Qabul shartlari"
@@ -26,9 +26,11 @@
     "students": "O'quvchilar",
     "teachers": "O'qituvchilar",
     "experience": "Yillik tajriba",
-    "olympiad": "Olimpiada g'oliblari"
+    "olympiad": "Olimpiada g'oliblari",
+    "certificates": "Sertifikatlar"
   },
   "sections": {
+    "photo_alt": "Maktab binosi, Nukus",
     "about_short_title": "Maktab haqida",
     "about_short_label": "Biz haqimizda",
     "about_short_text": "Muhammad al-Xorazmiy ixtisoslashtirilgan maktabi (Nukus filiali) — aniq va tabiiy fanlar bo'yicha chuqurlashtirilgan ta'lim beruvchi nufuzli ta'lim muassasasi.",

@@ -17,7 +17,7 @@
   },
   "hero": {
     "eyebrow": "IT and Exact Sciences School",
-    "title": "Nukus branch specialized school named after Muhammad al-Khwarizmi",
+    "title": "Nukus branch specialized school named after Muhammad al-\u2060Khwarizmi",
     "description": "Advanced education in exact and natural sciences. Preparing the intellectual leaders of tomorrow.",
     "btn_about": "About Us",
     "btn_admission": "Admission Info"
@@ -26,9 +26,11 @@
     "students": "Students",
     "teachers": "Teachers",
     "experience": "Years of Experience",
-    "olympiad": "Olympiad Winners"
+    "olympiad": "Olympiad Winners",
+    "certificates": "Certificates"
   },
   "sections": {
+    "photo_alt": "School building, Nukus",
     "about_short_title": "About the School",
     "about_short_label": "About Us",
     "about_short_text": "Muhammad al-Khwarizmi Specialized School (Nukus Branch) is a prestigious educational institution providing advanced education in exact and natural sciences.",

@@ -14,6 +14,9 @@ import type { Locale } from '@/types';
 import '@/styles/globals.css';
 import '@/styles/dark-theme.css';
 import '@/styles/responsive.css';
+import '@/styles/redesign.css';
+import '@/styles/pages-info.css';
+import '@/styles/pages-lists.css';
 
 // Kontent D1'dan har so'rovda o'qiladi — admin o'zgarishlari darhol ko'rinadi.
 export const dynamic = 'force-dynamic';

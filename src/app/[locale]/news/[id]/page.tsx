@@ -128,7 +128,7 @@ export default async function NewsDetailPage({
   };
 
   return (
-    <>
+    <div className="news-detail-page">
       <JsonLd data={ldArticle} />
       <JsonLd data={ldBreadcrumb} />
       <PageHeader
@@ -140,8 +140,8 @@ export default async function NewsDetailPage({
         ]}
       />
 
-      <article className="section">
-        <div className="container" style={{ maxWidth: 800 }}>
+      <article className="section news-detail-article">
+        <div className="container news-detail-container">
           <header className="article-meta">
             <span className="card-category">{catLabel}</span>
             {date && <time dateTime={formatDateISO(date)}>{formatDate(date, loc)}</time>}
@@ -157,7 +157,7 @@ export default async function NewsDetailPage({
                 alt={title}
                 fill
                 priority
-                sizes="(max-width: 800px) 100vw, 800px"
+                sizes="(max-width: 760px) 100vw, 760px"
                 style={{ objectFit: 'cover' }}
               />
             </div>
@@ -168,7 +168,7 @@ export default async function NewsDetailPage({
 
           <NewsShareButtons title={title} url={articleUrl} path={`/${locale}/news/${id}`} />
 
-          <div style={{ marginTop: 'var(--s-8)' }}>
+          <div className="news-detail-back">
             <Link href={'/news' as never} className="btn btn-outline">
               {t('news_page.back_to_list')}
             </Link>
@@ -178,17 +178,16 @@ export default async function NewsDetailPage({
 
       {related.length > 0 && (
         <section
-          className="section"
-          style={{ background: 'var(--bg-secondary)', paddingTop: 'var(--s-12)' }}
+          className="section news-related-section"
           aria-labelledby="related-news-heading"
         >
           <div className="container">
-            <div className="section-header" style={{ marginBottom: 'var(--s-8)' }}>
-              <h2 id="related-news-heading" style={{ fontSize: '1.75rem' }}>
+            <div className="section-header">
+              <h2 id="related-news-heading">
                 {t('news_page.related_title')}
               </h2>
             </div>
-            <div className="grid grid-3">
+            <div className="news-grid">
               {related.map((n) => (
                 <NewsCard key={n.id} item={n} locale={loc} />
               ))}
@@ -196,6 +195,6 @@ export default async function NewsDetailPage({
           </div>
         </section>
       )}
-    </>
+    </div>
   );
 }

@@ -52,7 +52,7 @@ export default async function AchievementsPage({
 
       <section className="section">
         <div className="container">
-          <div className="text-center" style={{ marginBottom: 'var(--space-2xl)' }}>
+          <div className="achievements-header">
             <span className="section-label">{t('achievements.label')}</span>
             <h2>{t('achievements.intro_title')}</h2>
             <p>{t('achievements.intro_text')}</p>
@@ -75,11 +75,11 @@ export default async function AchievementsPage({
               />
             ) : (
               grouped.map(([year, list]) => (
-                <div key={year} style={{ marginBottom: 'var(--space-2xl)' }}>
-                  <h2 style={{ marginBottom: 'var(--space-lg)' }}>
+                <div key={year} className="achievements-year-group">
+                  <h2 className="achievements-year-heading">
                     {year ? t('common.year_label', { year: String(year) }) : '—'}
                   </h2>
-                  <div className="grid grid-3">
+                  <div className="olympiad-grid">
                     {list.map((item) => (
                       <AchievementCard key={item.id} item={item} />
                     ))}
@@ -93,7 +93,7 @@ export default async function AchievementsPage({
 
       <section className="section" id="certificates">
         <div className="container">
-          <div className="text-center" style={{ marginBottom: 'var(--space-2xl)' }}>
+          <div className="certificates-header">
             <span className="section-label">{t('certificates.label')}</span>
             <h2>{t('certificates.title')}</h2>
             <p>{t('certificates.text')}</p>
