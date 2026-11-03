@@ -1,0 +1,190 @@
+/* ==========================================================================
+   Bosh sahifa (Home) — Rasmiy uslub
+   Faqat .home-* klasslar
+   ========================================================================== */
+
+/* ─── Hero bo'limi ─── */
+.home-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background-color: #153a4c;
+  color: #efefef;
+  padding-top: var(--navbar-total);
+  min-height: min(100svh, 820px);
+}
+
+[data-theme='dark'] .home-hero {
+  background-color: #0e2a38;
+}
+
+.home-hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: var(--s-12);
+  padding-right: var(--s-12);
+  padding-left: calc(max(var(--s-8), (100vw - var(--container-w)) / 2));
+}
+
+.home-hero-eyebrow {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: rgba(239, 239, 239, 0.8);
+  text-transform: none;
+  margin-bottom: var(--s-3);
+}
+
+.home-hero-text h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.125rem, 3.5vw, 3.375rem);
+  line-height: 1.12;
+  color: #efefef;
+  margin: 0 0 var(--s-4) 0;
+  text-wrap: balance;
+}
+
+.home-hero-text p {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: rgba(239, 239, 239, 0.82);
+  max-width: 34em;
+  margin: 0 0 var(--s-8) 0;
+}
+
+.home-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+
+.home-hero-actions .btn {
+  height: 50px;
+  min-height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--s-6);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border-radius: var(--r-md);
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 160ms var(--ease-out, ease), background-color 160ms var(--ease-out, ease);
+}
+
+.home-hero-actions .btn:first-child {
+  background-color: var(--clay);
+  color: #0e2a38;
+  border: none;
+}
+
+.home-hero-actions .btn:first-child:hover {
+  opacity: 0.92;
+}
+
+.home-hero-actions .btn:nth-child(2) {
+  border: 1.5px solid #efefef;
+  color: #efefef;
+  background-color: transparent;
+}
+
+.home-hero-actions .btn:nth-child(2):hover {
+  background-color: rgba(239, 239, 239, 0.1);
+}
+
+/* ─── Hero fotosurati ─── */
+.home-hero-photo {
+  position: relative;
+  overflow: hidden;
+  min-height: 100%;
+}
+
+.home-hero-photo img {
+  object-fit: cover;
+  object-position: 25% center;
+  transform: scale(1.03);
+}
+
+/* ─── Statistika bo'limi ─── */
+.home-stats {
+  background-color: #0e2a38;
+  color: #efefef;
+  padding-block: var(--s-8);
+}
+
+[data-theme='dark'] .home-stats {
+  background-color: #081821;
+}
+
+.home-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0;
+}
+
+.home-stats-item {
+  padding: var(--s-6) var(--s-4);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.home-stats-item:not(:last-child) {
+  border-right: 1px solid rgba(239, 239, 239, 0.15);
+}
+
+.home-stats-number {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: #efefef;
+}
+
+.home-stats-label {
+  font-size: 0.9375rem;
+  color: rgba(239, 239, 239, 0.75);
+  margin-top: var(--s-2);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 960px) {
+  .home-hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .home-hero-photo {
+    order: -1;
+    aspect-ratio: 3 / 2;
+    min-height: auto;
+    width: 100%;
+  }
+
+  .home-hero-text {
+    padding-inline: var(--s-5);
+    padding-block: var(--s-8);
+  }
+
+  .home-stats-item:not(:last-child) {
+    border-right: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-hero-text {
+    padding-inline: var(--s-4);
+  }
+
+  .home-hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .home-hero-actions .btn {
+    width: 100%;
+  }
+}

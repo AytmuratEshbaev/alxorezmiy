@@ -14,19 +14,24 @@ export default function TeacherCard({ item, locale }: { item: Teacher; locale: L
 
   return (
     // Qidiruvdan `/teachers#teacher-<id>` havolasi shu kartaga olib keladi.
-    <article id={`teacher-${item.id}`} className="card card-hover teacher-card">
+    <article id={`teacher-${item.id}`} className="card teacher-card">
       {item.photo && (
         <div className="card-img teacher-card-photo">
           <Image
             src={item.photo}
             alt={name}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            sizes="(max-width: 480px) 50vw, (max-width: 960px) 50vw, 25vw"
             style={{ objectFit: 'cover' }}
           />
         </div>
       )}
       <div className="teacher-card-body">
+        {!item.photo && (
+          <div className="teacher-card-initial" aria-hidden="true">
+            {name ? name.trim().charAt(0).toUpperCase() : '?'}
+          </div>
+        )}
         <h3 lang={fallbackLang(item, 'name', locale)}>{name}</h3>
         {subject && (
           <p className="teacher-card-subject" lang={fallbackLang(item, 'subject', locale)}>

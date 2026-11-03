@@ -29,15 +29,15 @@ export default function NewsCard({
   return (
     <Link
       href={`/news/${item.id}` as never}
-      className={`card card-hover news-card${className ? ` ${className}` : ''}`}
+      className={`card news-card${className ? ` ${className}` : ''}`}
     >
       {item.image && (
-        <div className="card-img">
+        <div className="card-img news-card-image">
           <Image
             src={item.image}
             alt=""
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 600px) 100vw, (max-width: 960px) 50vw, 33vw"
             priority={priority}
           />
         </div>

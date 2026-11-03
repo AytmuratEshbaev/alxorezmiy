@@ -5,8 +5,8 @@ import { Link, usePathname } from '@/i18n/routing';
 import Icon from '@/components/ui/Icon';
 import { NAV_ITEMS, matchesPath } from './nav-config';
 
-// React 18 tiplarida `inert` yo'q — atribut sifatida satr bilan uzatamiz (SSR'da ham chiqadi).
-const INERT = { inert: '' } as unknown as Record<string, never>;
+// App Router Next'ning ichki React'ida ishlaydi: u yerda `inert` boolean, bo'sh satr false bo'ladi. package.json dagi React 18 tiplarida esa bu prop yo'q.
+const INERT = { inert: true } as unknown as Record<string, never>;
 
 export default function MobileNav({
   open,

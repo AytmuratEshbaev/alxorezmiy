@@ -28,7 +28,7 @@ export default function AchievementCard({ item }: { item: OlympiadResult }) {
   const meta = [item.olympiad_name, item.year ? String(item.year) : ''].filter(Boolean).join(' · ');
 
   return (
-    <div className="card card-hover achievement-card" data-place={placeAttr}>
+    <div className="card achievement-card" data-place={placeAttr}>
       <div className="achievement-card-head">
         {placeLabel && <span className="achievement-card-badge">{placeLabel}</span>}
         <span className="achievement-card-level">

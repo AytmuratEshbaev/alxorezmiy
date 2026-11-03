@@ -30,9 +30,7 @@ export default async function TeachersPage({ params }: { params: Promise<{ local
 
       <section className="section">
         <div className="container">
-          <h2
-            style={{ marginBottom: 'var(--space-2xl)', fontSize: '1.5rem', color: 'var(--ink-2)' }}
-          >
+          <h2 className="teachers-subtitle">
             {t('teachers_page.subtitle')}
           </h2>
 
@@ -43,7 +41,7 @@ export default async function TeachersPage({ params }: { params: Promise<{ local
               text={t('teachers_page.empty_text')}
             />
           ) : (
-            <div className="grid grid-4">
+            <div className="teachers-grid">
               {items.map((item) => (
                 <TeacherCard key={item.id} item={item} locale={locale as Locale} />
               ))}

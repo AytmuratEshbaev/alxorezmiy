@@ -74,63 +74,57 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
     <>
       <PageHeader title={t('contact_page.title')} crumbs={[{ label: t('nav.contact') }]} />
 
-      {rows.length > 0 && (
-        <section className="section" aria-labelledby="contact-info-heading">
-          <div className="container">
-            <h2 id="contact-info-heading" className="visually-hidden">
-              {t('contact_page.info_title')}
-            </h2>
-            <div className={`grid grid-${Math.max(2, rows.length)}`}>
-              {rows.map((r, i) => (
-                <div
-                  key={r.key}
-                  className={`card card-hover contact-card animate-on-scroll${i > 0 ? ` animate-delay-${i}` : ''}`}
-                >
-                  <div className="contact-icon">
-                    <Icon name={r.icon} />
-                  </div>
-                  <div>
-                    <h3>{r.label}</h3>
-                    <p>{r.href ? <a href={r.href}>{r.value}</a> : r.value}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section className="section" style={rows.length > 0 ? { paddingTop: 0 } : undefined}>
+      <section className="section contact-section">
         <div className="container">
-          <div className="grid grid-2 contact-grid-2" style={{ gap: 'var(--space-2xl)' }}>
-            <div className="animate-on-scroll">
-              <h2 style={{ marginBottom: 'var(--space-xl)' }}>{t('contact_page.form_title')}</h2>
-              <ContactForm />
-            </div>
+          <div className="ui-split ui-split--even contact-split">
+            <section className="contact-info-col" aria-labelledby="contact-info-heading">
+              <h2 id="contact-info-heading" className="visually-hidden">
+                {t('contact_page.info_title')}
+              </h2>
+              {rows.length > 0 && (
+                <ul className="contact-list">
+                  {rows.map((r) => (
+                    <li key={r.key} className="contact-row">
+                      <div className="contact-row-icon" aria-hidden="true">
+                        <Icon name={r.icon} size={20} />
+                      </div>
+                      <div className="contact-row-content">
+                        <span className="contact-row-label">{r.label}</span>
+                        <div className="contact-row-value">
+                          {r.href ? <a href={r.href}>{r.value}</a> : r.value}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
 
-            <div className="animate-on-scroll animate-delay-1">
-              <h2 style={{ marginBottom: 'var(--space-xl)' }}>{t('contact_page.map_title')}</h2>
-              <div className="map-container">
-                <iframe
-                  title={t('contact_page.map_title')}
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14792.5!2d59.603!3d42.462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x41dd9b0261fb71e9%3A0x7e8e3ad743d0e1!2sNukus%2C%20Karakalpakstan!5e0!3m2!1sen!2s!4v1"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
+              <div className="contact-map-wrapper">
+                <div className="contact-map">
+                  <iframe
+                    title={t('contact_page.map_title')}
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14792.5!2d59.603!3d42.462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x41dd9b0261fb71e9%3A0x7e8e3ad743d0e1!2sNukus%2C%20Karakalpakstan!5e0!3m2!1sen!2s!4v1"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
               </div>
 
               {social.length > 0 && (
-                <div style={{ marginTop: 'var(--space-xl)' }}>
-                  <h3 style={{ marginBottom: 'var(--space-md)' }}>
-                    {t('contact_page.social_title')}
-                  </h3>
+                <div className="contact-social">
+                  <h3>{t('contact_page.social_title')}</h3>
                   <SocialLinks links={social} variant="buttons" />
                 </div>
               )}
+            </section>
+
+            <div className="contact-form-panel">
+              <h2 className="contact-form-title">{t('contact_page.form_title')}</h2>
+              <ContactForm />
             </div>
           </div>
         </div>

@@ -150,7 +150,7 @@ export default function GalleryGrid({ items, locale }: Props) {
           text={t('gallery_page_extra.empty_text')}
         />
       ) : (
-        <div className="grid grid-3">
+        <div className="gallery-grid">
           {filtered.map((item, idx) => {
             const caption = getLocalizedField(item, 'caption', locale);
             const altText = caption || t('gallery_page.title');
@@ -167,7 +167,7 @@ export default function GalleryGrid({ items, locale }: Props) {
                   src={item.url}
                   alt=""
                   fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes="(max-width: 480px) 100vw, (max-width: 760px) 50vw, 33vw"
                 />
                 {caption && (
                   <div

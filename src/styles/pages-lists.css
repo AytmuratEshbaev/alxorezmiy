@@ -1,0 +1,1344 @@
+/* ════════════════════════════════════════════════════════════════════
+   PAGES LISTS & DETAILS — Clean, institutional, decoration-free redesign
+   Pages: /teachers, /achievements, /news, /news/[id], /gallery, /faq, /contact
+   Tokens: --font-display, --navy, --clay-ink, --surface, --bg-secondary,
+           --border, --border-strong, --ink, --ink-2, --r-md, --r-lg, --s-*
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── 1. Umumiy (General) ─── */
+
+/* Section sarlavhalari chapga tekis */
+.achievements-header,
+.certificates-header,
+.faq-toolbar,
+.section-header,
+.section-header-left {
+  text-align: left;
+  margin-bottom: var(--s-8);
+}
+
+.achievements-header h2,
+.certificates-header h2,
+.faq-toolbar h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  color: var(--ink);
+  margin: var(--s-2) 0 var(--s-3);
+  overflow-wrap: break-word;
+}
+
+.achievements-header p,
+.certificates-header p,
+.faq-toolbar p {
+  color: var(--ink-2);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 680px;
+  overflow-wrap: break-word;
+}
+
+/* Filtr tugmalari va .pill-link: 40px balandlik, radius var(--r-md), 1px var(--border-strong) */
+.filter-btn,
+.pill-link,
+.achievements-nav .pill-link {
+  height: 40px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--s-4);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: none;
+  transform: none;
+  transition:
+    background var(--t-fast) var(--ease-out),
+    border-color var(--t-fast) var(--ease-out),
+    color var(--t-fast) var(--ease-out);
+}
+
+.filter-btn:hover,
+.pill-link:hover,
+.achievements-nav .pill-link:hover {
+  background: var(--navy-soft);
+  border-color: var(--navy);
+  color: var(--navy);
+  transform: none;
+  box-shadow: none;
+}
+
+.filter-btn.active,
+.filter-btn[aria-pressed='true'],
+.pill-link.active,
+.achievements-nav .pill-link.active {
+  background: var(--navy);
+  color: #efefef;
+  border-color: var(--navy);
+}
+
+[data-theme='dark'] .filter-btn,
+[data-theme='dark'] .pill-link,
+[data-theme='dark'] .achievements-nav .pill-link {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--border-strong);
+}
+
+[data-theme='dark'] .filter-btn:hover,
+[data-theme='dark'] .pill-link:hover,
+[data-theme='dark'] .achievements-nav .pill-link:hover {
+  background: var(--navy-soft);
+  border-color: #8fc1d6;
+  color: #8fc1d6;
+}
+
+[data-theme='dark'] .filter-btn.active,
+[data-theme='dark'] .filter-btn[aria-pressed='true'],
+[data-theme='dark'] .pill-link.active,
+[data-theme='dark'] .achievements-nav .pill-link.active {
+  background: #efefef;
+  color: #0b1e27;
+  border-color: #efefef;
+}
+
+/* Filtr guruhlari kichik ekranda toshmasin */
+.filter-group,
+.achievements-nav,
+.gallery-toolbar,
+.faq-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  align-items: center;
+  max-width: 100%;
+}
+
+.achievements-nav {
+  justify-content: flex-start;
+  margin-top: var(--s-4);
+}
+
+/* Bo'sh holat (EmptyState): chapga emas markazda qoladi, lekin 1px var(--border) panel ichida, ortiqcha balandliksiz */
+.empty-state {
+  text-align: center;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: var(--s-8) var(--s-6);
+  max-width: 540px;
+  width: 100%;
+  box-shadow: none;
+}
+
+.empty-state-compact {
+  padding: var(--s-6) var(--s-4);
+  border-radius: var(--r-md);
+  max-width: 100%;
+  grid-column: 1 / -1;
+}
+
+.empty-state-icon {
+  margin: 0 auto var(--s-3);
+  color: var(--ink-2);
+}
+
+.empty-state-title {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 var(--s-1);
+  overflow-wrap: break-word;
+}
+
+.empty-state-compact .empty-state-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 var(--s-1);
+}
+
+.empty-state-text {
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+
+/* ─── 2. Teachers ─── */
+
+.teachers-subtitle {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin: 0 0 var(--s-8) 0;
+  text-align: left;
+  overflow-wrap: break-word;
+}
+
+/* 4 ustunli grid (960px gacha 2, 480px gacha 2 ixcham) */
+.teachers-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-6);
+  align-items: stretch;
+}
+
+@media (max-width: 960px) {
+  .teachers-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .teachers-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-3);
+  }
+}
+
+/* Karta: soya va translate yo'q */
+.teacher-card,
+.teacher-card:hover {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: none;
+  transform: none;
+  padding: 0;
+  height: 100%;
+}
+
+.teacher-card:hover {
+  border-color: var(--border-strong);
+}
+
+/* Yuqorida foto aspect 4/5 object-fit cover; foto bo'lmasa var(--navy-soft) fonda ism bosh harfi */
+.teacher-card-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background: var(--navy-soft);
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.teacher-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: none;
+}
+
+.teacher-card:hover .teacher-card-photo img {
+  transform: none;
+}
+
+.teacher-card-initial {
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  min-height: 72px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--navy);
+  background: var(--navy-soft);
+  border-radius: var(--r-md);
+  user-select: none;
+  margin-bottom: var(--s-2);
+}
+
+[data-theme='dark'] .teacher-card-initial {
+  color: #8fc1d6;
+}
+
+.teacher-card-body {
+  padding: var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  flex: 1 1 auto;
+}
+
+/* Ism font-display 1.125rem */
+.teacher-card-body h3 {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+/* Fan weight 500 var(--navy) (dark #8fc1d6) */
+.teacher-card-subject {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--navy);
+  margin: 0;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+[data-theme='dark'] .teacher-card-subject {
+  color: #8fc1d6;
+}
+
+/* Toifa va tajriba .875rem var(--ink-2) */
+.teacher-card-meta {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  margin: 0;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+.teacher-achievements {
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+}
+
+.teacher-achievements-title {
+  margin: 0 0 var(--s-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-2);
+}
+
+.teacher-achievements ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.teacher-achievements li {
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--ink-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px var(--s-2);
+}
+
+.teacher-achievement-type {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+[data-theme='dark'] .teacher-achievement-type {
+  color: #8fc1d6;
+}
+
+.teacher-achievement-year {
+  color: var(--ink-2);
+}
+
+@media (max-width: 480px) {
+  .teachers-grid .teacher-card-body {
+    padding: var(--s-3);
+  }
+  .teachers-grid .teacher-card-body h3 {
+    font-size: 1rem;
+  }
+  .teachers-grid .teacher-card-subject {
+    font-size: 0.875rem;
+  }
+  .teachers-grid .teacher-card-meta {
+    font-size: 0.8125rem;
+  }
+}
+
+
+/* ─── 3. Achievements ─── */
+
+.achievements-year-group {
+  margin-bottom: var(--s-12);
+}
+
+.achievements-year-group:last-child {
+  margin-bottom: 0;
+}
+
+/* Yil sarlavhasi font-display 1.75rem, ostida 1px chiziq */
+.achievements-year-heading {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--ink);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-6);
+  border-bottom: 1px solid var(--border);
+  overflow-wrap: break-word;
+}
+
+/* Olimpiada kartalari ZICH: desktopda 4 ustun (1100→3, 760→2, 480→1) */
+.olympiad-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-4);
+}
+
+@media (max-width: 1100px) {
+  .olympiad-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .olympiad-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .olympiad-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Karta padding var(--s-4); yuqorida o'rin nishoni va daraja bir qatorda, keyin ism weight 600, fan va tanlov nomi .875rem */
+.achievement-card,
+.achievement-card:hover {
+  padding: var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  box-shadow: none;
+  transform: none;
+}
+
+.achievement-card:hover {
+  border-color: var(--border-strong);
+}
+
+.achievement-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+
+.achievement-card-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--s-2);
+  border-radius: var(--r-sm);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  background: var(--navy-soft);
+  color: var(--navy);
+}
+
+[data-theme='dark'] .achievement-card-badge {
+  color: #8fc1d6;
+}
+
+.achievement-card-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--ink-2);
+}
+
+.achievement-card-level svg {
+  color: var(--ink-2);
+}
+
+.achievement-card-student {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.achievement-card-subject {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--navy);
+  margin: 0;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+
+[data-theme='dark'] .achievement-card-subject {
+  color: #8fc1d6;
+}
+
+.achievement-card-meta {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  margin: 0;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+
+/* Sertifikatlar: mavjud zich ro'yxat va ustunlar (desktopda 5) SAQLANADI, tokenlarga moslansin */
+.cert-section {
+  width: 100%;
+}
+
+.cert-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: var(--s-2);
+  margin-bottom: var(--s-8);
+}
+
+.cert-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+.cert-stat-count {
+  font-weight: 700;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-theme='dark'] .cert-stat-count {
+  color: #8fc1d6;
+}
+
+.cert-group {
+  margin-bottom: var(--s-8);
+}
+
+.cert-group:last-child {
+  margin-bottom: 0;
+}
+
+.cert-group-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 var(--s-4) 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+
+.cert-group-count {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.cert-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--s-3);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cert-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+.cert-student-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  width: 100%;
+}
+
+.cert-student {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ink);
+  overflow-wrap: break-word;
+  line-height: 1.3;
+}
+
+.cert-subject {
+  font-size: 0.8125rem;
+  color: var(--navy);
+  font-weight: 500;
+  overflow-wrap: break-word;
+  line-height: 1.25;
+}
+
+[data-theme='dark'] .cert-subject {
+  color: #8fc1d6;
+}
+
+.cert-meta {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.cert-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--s-2);
+  border-radius: var(--r-sm);
+  background: var(--navy-soft);
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+[data-theme='dark'] .cert-badge {
+  color: #8fc1d6;
+}
+
+.cert-year {
+  font-size: 0.75rem;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1100px) {
+  .cert-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .cert-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .cert-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 360px) {
+  .cert-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ─── 4. News Ro'yxati (News list) ─── */
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-6);
+}
+
+@media (max-width: 960px) {
+  .news-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-4);
+  }
+}
+
+@media (max-width: 600px) {
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Karta: butun karta bosiladi, rasm aspect 16/9 yuqorida (bo'lmasa yo'q), soya/translate yo'q */
+.news-card,
+.news-card:hover {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: none;
+  transform: none;
+  padding: 0;
+  transition: border-color var(--t-fast) var(--ease-out);
+}
+
+.news-card:hover {
+  border-color: var(--border-strong);
+}
+
+.news-card .card-img,
+.news-card-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--navy-soft);
+  border-bottom: 1px solid var(--border);
+}
+
+.news-card .card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: none;
+}
+
+.news-card:hover .card-img img {
+  transform: none;
+}
+
+.news-card-body {
+  padding: var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  flex: 1 1 auto;
+}
+
+/* Kategoriya va sana .8125rem */
+.news-card .card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.news-card .card-category {
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+
+[data-theme='dark'] .news-card .card-category {
+  color: #8fc1d6;
+}
+
+.news-card .card-date {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+
+/* Sarlavha font-display 1.25rem (3 qatordan oshsa kesiladi) */
+.news-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+.news-card:hover h3 {
+  color: var(--navy);
+}
+
+[data-theme='dark'] .news-card:hover h3 {
+  color: #8fc1d6;
+}
+
+/* Qisqa matn 2 qator */
+.news-card p {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+.news-card .read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin-top: auto;
+  padding-top: var(--s-2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+[data-theme='dark'] .news-card .read-more {
+  color: #8fc1d6;
+}
+
+.news-card:hover .read-more {
+  color: var(--navy);
+}
+
+[data-theme='dark'] .news-card:hover .read-more {
+  color: #8fc1d6;
+}
+
+.news-card:hover .read-more::after {
+  transform: none;
+}
+
+
+/* ─── 5. News Detail (/news/[id]) ─── */
+
+.news-detail-page .page-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.news-detail-container {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.news-detail-article {
+  padding-top: var(--s-8);
+}
+
+.news-detail-article .article-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  margin-bottom: var(--s-6);
+}
+
+.news-detail-article .article-meta .card-category {
+  color: var(--navy);
+  font-weight: 600;
+}
+
+[data-theme='dark'] .news-detail-article .article-meta .card-category {
+  color: #8fc1d6;
+}
+
+/* Rasm radius var(--r-lg) */
+.article-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: var(--s-8);
+  background: var(--navy-soft);
+  border: 1px solid var(--border);
+}
+
+.article-image img {
+  border-radius: var(--r-lg);
+  object-fit: cover;
+}
+
+/* Matn 1.0625rem line-height 1.75 */
+.article-body {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--ink);
+  margin-bottom: var(--s-8);
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+.news-detail-back {
+  margin-top: var(--s-8);
+}
+
+.news-related-section {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  padding: var(--s-12) 0;
+}
+
+.news-related-section .section-header {
+  margin-bottom: var(--s-6);
+}
+
+.news-related-section .section-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+
+/* ─── 6. Gallery ─── */
+
+.gallery-toolbar {
+  margin-bottom: var(--s-8);
+}
+
+/* 3 ustunli grid (760→2, 480→1) */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-4);
+}
+
+@media (max-width: 760px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Rasm aspect 4/3 object-fit cover, radius var(--r-md), hover da faqat sarlavha ko'rinadi (scale yo'q) */
+.gallery-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--navy-soft);
+  box-shadow: none;
+  transform: none;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--r-md);
+  transition: none;
+}
+
+.gallery-item:hover img {
+  transform: none;
+}
+
+.gallery-caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: var(--s-3) var(--s-4);
+  background: rgba(11, 30, 39, 0.88);
+  color: #efefef;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.35;
+  opacity: 0;
+  transform: none;
+  transition: opacity var(--t-fast) var(--ease-out);
+  pointer-events: none;
+  overflow-wrap: break-word;
+}
+
+.gallery-item:hover .gallery-caption {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ─── 7. FAQ ─── */
+
+.faq-split {
+  align-items: start;
+}
+
+.faq-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.faq-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.faq-filter-group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--s-2);
+}
+
+.faq-filter-group .filter-btn {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+@media (max-width: 960px) {
+  .faq-filter-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .faq-filter-group .filter-btn {
+    width: auto;
+    justify-content: center;
+  }
+}
+
+.faq-content {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Accordion: kartalar emas, 1px chiziq bilan ajratilgan qatorlar */
+.accordion {
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.accordion-item,
+.accordion-item:hover {
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+}
+
+.accordion-item:first-child {
+  padding-top: 0;
+}
+
+.accordion-heading {
+  margin: 0;
+}
+
+/* Savol weight 600 1.0625rem, min-height 56px; ikona o'ngda */
+.accordion-header {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  width: 100%;
+  padding: var(--s-3) 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.accordion-question {
+  font-family: inherit;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  overflow-wrap: break-word;
+  flex: 1 1 auto;
+}
+
+.accordion-header:hover .accordion-question {
+  color: var(--navy);
+}
+
+[data-theme='dark'] .accordion-header:hover .accordion-question {
+  color: #8fc1d6;
+}
+
+.accordion-icon {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-2);
+  transition: transform var(--t-fast) var(--ease-out);
+}
+
+.accordion-header:hover .accordion-icon {
+  background: transparent;
+  border-color: transparent;
+  color: var(--navy);
+}
+
+[data-theme='dark'] .accordion-header:hover .accordion-icon {
+  color: #8fc1d6;
+}
+
+.accordion-item.active .accordion-icon {
+  transform: rotate(180deg);
+  background: transparent;
+  border-color: transparent;
+  color: var(--navy);
+}
+
+[data-theme='dark'] .accordion-item.active .accordion-icon {
+  background: transparent;
+  border-color: transparent;
+  color: #8fc1d6;
+}
+
+.accordion-body-content {
+  padding: 0 0 var(--s-4) 0;
+}
+
+.accordion-answer {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+  margin: 0;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+
+/* ─── 8. Contact ─── */
+
+.contact-split {
+  gap: var(--s-10);
+  align-items: start;
+}
+
+.contact-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+  min-width: 0;
+}
+
+/* Kontakt ma'lumotlari ro'yxati (ikona + yorliq + qiymat, qatorlar 1px chiziq bilan) */
+.contact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+
+.contact-row {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-4);
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.contact-row-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-md);
+  background: var(--navy-soft);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+[data-theme='dark'] .contact-row-icon {
+  color: #8fc1d6;
+}
+
+.contact-row-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.contact-row-label {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.contact-row-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+
+.contact-row-value a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.contact-row-value a:hover {
+  color: var(--navy);
+  text-decoration: underline;
+}
+
+[data-theme='dark'] .contact-row-value a:hover {
+  color: #8fc1d6;
+}
+
+/* Xarita mavjud bo'lsa ostida radius var(--r-lg) */
+.contact-map-wrapper {
+  width: 100%;
+}
+
+.contact-map {
+  width: 100%;
+  height: 280px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.contact-map iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: var(--r-lg);
+  display: block;
+}
+
+.contact-social h3 {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 var(--s-3) 0;
+}
+
+/* O'ngda forma oq panelda (fon var(--surface), 1px var(--border), radius var(--r-lg), padding var(--s-8)) */
+.contact-form-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s-8);
+  box-shadow: none;
+}
+
+@media (max-width: 600px) {
+  .contact-form-panel {
+    padding: var(--s-5);
+  }
+}
+
+.contact-form-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 var(--s-6) 0;
+  overflow-wrap: break-word;
+}
+
+/* Forma inputlari: 48px, 1px var(--border-strong), radius var(--r-md), focus 2px var(--navy) outline */
+.contact-form-panel .form-control {
+  height: 48px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  padding: 0 var(--s-4);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.9375rem;
+  box-shadow: none;
+  transition:
+    border-color var(--t-fast) var(--ease-out),
+    outline var(--t-fast) var(--ease-out);
+}
+
+.contact-form-panel textarea.form-control {
+  height: auto;
+  min-height: 120px;
+  padding: var(--s-3) var(--s-4);
+}
+
+.contact-form-panel .form-control:focus {
+  outline: 2px solid var(--navy);
+  outline-offset: 1px;
+  border-color: var(--navy);
+}
+
+[data-theme='dark'] .contact-form-panel .form-control:focus {
+  outline: 2px solid #8fc1d6;
+  border-color: #8fc1d6;
+}
+
+.contact-form-panel .form-group {
+  margin-bottom: var(--s-4);
+}
+
+.contact-form-panel .form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: var(--s-2);
+}
+
+.contact-form-panel .btn {
+  height: 48px;
+  border-radius: var(--r-md);
+}

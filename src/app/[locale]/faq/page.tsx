@@ -47,7 +47,7 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
       <PageHeader title={t('faq_page.title')} crumbs={[{ label: t('nav.faq') }]} />
 
       <section className="section">
-        <div className="container" style={{ maxWidth: 800 }}>
+        <div className="container">
           <FaqAccordion items={items} locale={locale as Locale} />
         </div>
       </section>

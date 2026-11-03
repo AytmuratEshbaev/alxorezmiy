@@ -70,15 +70,12 @@ export default function StatsCounter({ stats }: { stats: StatItem[] }) {
   const fmt = new Intl.NumberFormat(intlLocale(locale));
 
   return (
-    <section className="stats-section">
+    <section className="home-stats">
       <div className="container">
-        <div className={`grid grid-${Math.max(2, Math.min(stats.length, 4))}`}>
+        <div className="home-stats-grid">
           {stats.map((s, i) => (
-            <div
-              key={s.key}
-              className={`stat-card animate-on-scroll${i > 0 ? ` animate-delay-${i}` : ''}`}
-            >
-              <div className="stat-number">
+            <div key={s.key} className="home-stats-item">
+              <div className="home-stats-number">
                 <span
                   ref={(el) => {
                     refs.current[i] = el;
@@ -90,7 +87,7 @@ export default function StatsCounter({ stats }: { stats: StatItem[] }) {
                 </span>
                 {s.suffix}
               </div>
-              <div className="stat-label">{s.label}</div>
+              <div className="home-stats-label">{s.label}</div>
             </div>
           ))}
         </div>

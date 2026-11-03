@@ -48,7 +48,7 @@ export default async function NewsPage({ params }: { params: Promise<{ locale: s
           ) : (
             <>
               <h2 className="visually-hidden">{t('nav.news')}</h2>
-              <div className="grid grid-3">
+              <div className="news-grid">
                 {items.map((item, i) => (
                   <NewsCard key={item.id} item={item} locale={locale as Locale} priority={i < 3} />
                 ))}
